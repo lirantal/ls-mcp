@@ -1,0 +1,94 @@
+{
+  "name": "ls-mcp",
+  "version": "1.0.0",
+  "description": "list and detect MCP servers and configurations",
+  "types": "dist/main.d.ts",
+  "type": "module",
+  "bin": "./dist/bin/cli.cjs",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.mjs"
+      },
+      "require": {
+        "types": "./dist/main.d.cts",
+        "default": "./dist/main.cjs"
+      },
+      "default": "./dist/main.mjs"
+    },
+    "./dist/*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "packageManager": "npm@8.4.0",
+  "files": [
+    "dist",
+    "src",
+    "bin"
+  ],
+  "scripts": {
+    "build": "tsc && tsup",
+    "lint": "eslint . && npm run lint:lockfile",
+    "lint:fix": "eslint . --fix",
+    "lint:lockfile": "lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm yarn",
+    "test": "c8 node --loader ts-node/esm --test __tests__/**/*.test.ts",
+    "test:watch": "c8 node --loader ts-node/esm --test --watch __tests__/**/*.test.ts",
+    "coverage:view": "open coverage/lcov-report/index.html",
+    "version": "changeset version",
+    "release": "changeset publish"
+  },
+  "author": {
+    "name": "Liran Tal",
+    "email": "liran.tal@gmail.com",
+    "url": "https://github.com/lirantal"
+  },
+  "publishConfig": {
+    "provenance": true,
+    "access": "public"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "list mcp",
+    "list mcp servers",
+    "list mcp configuration",
+    "mcp",
+    "model context protocol",
+    "admin mcp",
+    "manage mcp"
+  ],
+  "homepage": "https://github.com/lirantal/ls-mcp",
+  "bugs": {
+    "url": "https://github.com/lirantal/ls-mcp/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lirantal/ls-mcp.git"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.5.0",
+    "@changesets/cli": "^2.27.7",
+    "@types/node": "^20.14.10",
+    "c8": "^10.1.2",
+    "eslint": "^9.6.0",
+    "eslint-plugin-security": "^3.0.1",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.7",
+    "lockfile-lint": "^4.14.0",
+    "neostandard": "^0.11.0",
+    "ts-node": "^10.9.2",
+    "tsup": "^8.1.0",
+    "typescript": "^5.5.3",
+    "validate-conventional-commit": "^1.0.4"
+  },
+  "lint-staged": {
+    "**/*.{js,json}": [
+      "npm run lint:fix"
+    ]
+  }
+}
