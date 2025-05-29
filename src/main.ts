@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+import { MCPLinterService } from './services/mcp-linter-service.ts'
 
 interface MCPFilePath {
   filePath: string
@@ -48,9 +49,14 @@ export class MCPFiles {
       }
 
       for (const filePathData of clientsGroup.paths) {
-        const resolvedPath = filePathData.filePath.replace('~', process.env.HOME || '')
+        const resolvedPath: string = filePathData.filePath.replace('~', process.env.HOME || '')
         try {
           await fs.access(resolvedPath)
+
+          const MCPLinter = new MCPLinterService(resolvedPath)
+          const parsable = await MCPLinter.isValidSyntax()
+          filePathData.parsable = parsable
+
           mcpFilesPathsData[groupName].paths.push(filePathData)
         } catch (error) {
           // File does not exist, continue to next

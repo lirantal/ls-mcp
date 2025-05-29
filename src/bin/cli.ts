@@ -24,7 +24,7 @@ async function init () {
     if (group.paths.length >= 0) {
       group.paths.forEach(filePathData => {
         const filePath = filePathData.filePath.replace('~', process.env.HOME || '')
-        console.log(`- ${formatter.filePathToTerminal(filePath)} (${filePathData.type})`)
+        console.log(`- ${formatter.filePathToTerminal(filePath)} (${filePathData.type}) (${filePathData.parsable ? 'valid' : 'invalid'})`)
       })
     } else {
       console.log('No files found in this group.')

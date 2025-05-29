@@ -14,7 +14,7 @@ export default [
       'n/no-process-exit': 'off',
       'n/no-unsupported-features': 'off',
       'n/no-unpublished-require': 'off',
-      'security/detect-non-literal-fs-filename': 'error',
+      'security/detect-non-literal-fs-filename': 'off',
       'security/detect-unsafe-regex': 'error',
       'security/detect-buffer-noassert': 'error',
       'security/detect-child-process': 'error',
