@@ -13,14 +13,24 @@ async function init () {
 
   const formatter = new FormatterService()
 
-  if (mcpFilesList.length > 0) {
-    console.log('MCP files found:')
-    mcpFilesList.forEach(filePath => {
-      console.log(`- ${formatter.filePathToTerminal(filePath)}`)
-    })
-  } else {
+  if (Object.keys(mcpFilesList).length === 0) {
     console.log('No MCP files found.')
+    return
+  }
+
+  for (const groupName of Object.keys(mcpFilesList)) {
+    const group = mcpFilesList[groupName]
+    console.log(`\n${group.friendlyName} (${group.name}):`)
+    if (group.paths.length >= 0) {
+      group.paths.forEach(filePathData => {
+        const filePath = filePathData.filePath.replace('~', process.env.HOME || '')
+        console.log(`- ${formatter.filePathToTerminal(filePath)} (${filePathData.type})`)
+      })
+    } else {
+      console.log('No files found in this group.')
+    }
   }
 }
 
-init()
+await init()
+console.log()

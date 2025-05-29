@@ -1,31 +1,63 @@
 import fs from 'node:fs/promises'
 
+interface MCPFilePath {
+  filePath: string
+  type: 'relative' | 'global'
+}
+
+interface MCPFileGroups {
+  name: string
+  friendlyName: string
+  paths: MCPFilePath[]
+}
+
+type MCPFilePathGroupsRecord = Record<string, MCPFileGroups>
+
 export class MCPFiles {
-  private mcpFilePaths: string[] = [
-
-    '~/Library/Application Support/Claude/claude_desktop_config.json',
-    '.cursor/mcp.json',
-    '~/.cursor/mcp.json',
-
-  ]
-
-  constructor (mcpFilePaths?: string[]) {
-    if (mcpFilePaths) {
-      this.mcpFilePaths = mcpFilePaths
+  private mcpFilePathGroups: MCPFilePathGroupsRecord = {
+    claude: {
+      name: 'claude',
+      friendlyName: 'Claude Desktop',
+      paths: [
+        { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' },
+      ]
+    },
+    cursor: {
+      name: 'cursor',
+      friendlyName: 'Cursor',
+      paths: [
+        { filePath: '.cursor/mcp.json', type: 'relative' },
+        { filePath: '~/.cursor/mcp.json', type: 'global' },
+      ]
     }
   }
 
-  async findFiles (): Promise<string[]> {
-    const files: string[] = []
-    for (const filePath of this.mcpFilePaths) {
-      try {
-        const resolvedPath = filePath.replace('~', process.env.HOME || '')
-        await fs.access(resolvedPath)
-        files.push(resolvedPath)
-      } catch (error) {
-        // File does not exist, continue to next
+  constructor (mcpFilePathGroups?: MCPFilePathGroupsRecord) {
+    this.mcpFilePathGroups = mcpFilePathGroups || this.mcpFilePathGroups
+  }
+
+  async findFiles (): Promise<T> {
+    const mcpFilesPathsData = {}
+
+    for (const groupName of Object.keys(this.mcpFilePathGroups)) {
+      const clientsGroup = this.mcpFilePathGroups[groupName]
+      mcpFilesPathsData[groupName] = {
+        name: clientsGroup.name,
+        friendlyName: clientsGroup.friendlyName,
+        paths: []
+      }
+
+      for (const filePathData of clientsGroup.paths) {
+        const resolvedPath = filePathData.filePath.replace('~', process.env.HOME || '')
+        try {
+          await fs.access(resolvedPath)
+          mcpFilesPathsData[groupName].paths.push(filePathData)
+        } catch (error) {
+          // File does not exist, continue to next
+        }
       }
     }
-    return files
+
+    return mcpFilesPathsData
   }
 }
