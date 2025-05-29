@@ -30,8 +30,5 @@
   "exclude": [
     "dist",
     "node_modules"
-  ],
-  "ts-node": {
-    "transpileOnly": true,
-  }
+  ]
 }
