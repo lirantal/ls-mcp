@@ -33,6 +33,7 @@
     "bin"
   ],
   "scripts": {
+    "start": "node --loader ts-node/esm src/bin/cli.ts",
     "build": "tsc && tsup",
     "lint": "eslint . && npm run lint:lockfile",
     "lint:fix": "eslint . --fix",
