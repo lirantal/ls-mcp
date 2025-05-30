@@ -10,11 +10,15 @@ export class MCPLinterService {
   async isValidSyntax (): Promise<boolean> {
     // @TODO this should also support YAML files and other formats
     try {
-      const fileContent = await fs.readFile(this.filePath, 'utf-8')
+      const fileContent = await this.getFileContent()
       JSON.parse(fileContent)
       return true
     } catch (error) {
       return false
     }
+  }
+
+  async getFileContent (): Promise<string> {
+    return await fs.readFile(this.filePath, 'utf-8')
   }
 }
