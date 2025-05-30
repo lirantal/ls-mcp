@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 
 export class MCPLinterService {
   private filePath: string
+  private fileContents: string | null = null
 
   constructor (filePath: string) {
     this.filePath = filePath
@@ -19,6 +20,10 @@ export class MCPLinterService {
   }
 
   async getFileContent (): Promise<string> {
-    return await fs.readFile(this.filePath, 'utf-8')
+    if (this.fileContents) {
+      return this.fileContents
+    }
+    this.fileContents = await fs.readFile(this.filePath, 'utf-8')
+    return this.fileContents
   }
 }
