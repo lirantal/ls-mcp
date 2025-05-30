@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises'
 
-export class MCPLinterService {
+export class MCPConfigLinterService {
   private filePath: string
   private fileContents: string | null = null
 

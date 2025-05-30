@@ -1,9 +1,9 @@
 import fs from 'node:fs/promises'
-import { MCPLinterService } from './services/mcp-linter-service.ts'
+import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 
 interface MCPFilePath {
   filePath: string
-  type: 'relative' | 'global'
+  type: 'local' | 'global'
 }
 
 interface MCPFileGroups {
@@ -27,7 +27,7 @@ export class MCPFiles {
       name: 'cursor',
       friendlyName: 'Cursor',
       paths: [
-        { filePath: '.cursor/mcp.json', type: 'relative' },
+        { filePath: '.cursor/mcp.json', type: 'local' },
         { filePath: '~/.cursor/mcp.json', type: 'global' },
       ]
     }
@@ -54,11 +54,11 @@ export class MCPFiles {
         try {
           await fs.access(resolvedPath)
 
-          const MCPLinter = new MCPLinterService(resolvedPath)
-          const parsable = await MCPLinter.isValidSyntax()
+          const MCPConfigLinter = new MCPConfigLinterService(resolvedPath)
+          const parsable = await MCPConfigLinter.isValidSyntax()
           filePathData.parsable = parsable
 
-          mcpFilesPathsData[groupName]['stats']['serversCount'] = await MCPLinter.countMCPServers()
+          mcpFilesPathsData[groupName]['stats']['serversCount'] = await MCPConfigLinter.countMCPServers()
 
           mcpFilesPathsData[groupName].paths.push(filePathData)
         } catch (error) {
