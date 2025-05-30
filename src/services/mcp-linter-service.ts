@@ -19,6 +19,20 @@ export class MCPLinterService {
     }
   }
 
+  async countMCPServers (): Promise<number> {
+    const mcpServers = await this.getMCPServers()
+    return Object.keys(mcpServers).length
+  }
+
+  async getMCPServers (): Promise<string[]> {
+    const fileContentRaw = await this.getFileContent()
+    const fileContentsData = JSON.parse(fileContentRaw)
+
+    const mcpServers = fileContentsData.mcpServers
+
+    return mcpServers
+  }
+
   async getFileContent (): Promise<string> {
     if (this.fileContents) {
       return this.fileContents

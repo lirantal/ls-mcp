@@ -20,7 +20,7 @@ async function init () {
 
   for (const groupName of Object.keys(mcpFilesList)) {
     const group = mcpFilesList[groupName]
-    console.log(`\n${group.friendlyName} (${group.name}):`)
+    console.log(`\n${group.friendlyName} (${group.name}) (${group.stats.serversCount} total servers):`)
     if (group.paths.length >= 0) {
       group.paths.forEach(filePathData => {
         const filePath = filePathData.filePath.replace('~', process.env.HOME || '')

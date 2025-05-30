@@ -45,7 +45,8 @@ export class MCPFiles {
       mcpFilesPathsData[groupName] = {
         name: clientsGroup.name,
         friendlyName: clientsGroup.friendlyName,
-        paths: []
+        paths: [],
+        stats: {}
       }
 
       for (const filePathData of clientsGroup.paths) {
@@ -56,6 +57,8 @@ export class MCPFiles {
           const MCPLinter = new MCPLinterService(resolvedPath)
           const parsable = await MCPLinter.isValidSyntax()
           filePathData.parsable = parsable
+
+          mcpFilesPathsData[groupName]['stats']['serversCount'] = await MCPLinter.countMCPServers()
 
           mcpFilesPathsData[groupName].paths.push(filePathData)
         } catch (error) {
