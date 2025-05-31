@@ -1,6 +1,5 @@
 import { debuglog } from 'node:util'
 import { MCPFiles } from '../main.ts'
-import { FormatterService } from '../utils/formatter-service.ts'
 import { RenderService } from '../services/render-service.ts'
 
 // Start the CLI with a new line for better readability
@@ -11,8 +10,6 @@ const debug = debuglog('ls-mcp')
 async function init () {
   const mcpFilesManager = new MCPFiles()
   const mcpFilesList = await mcpFilesManager.findFiles()
-
-  const formatter = new FormatterService()
 
   if (Object.keys(mcpFilesList).length === 0) {
     console.log('No MCP files found.')
