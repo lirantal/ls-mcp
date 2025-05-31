@@ -5,7 +5,8 @@ import { RenderService } from '../services/render-service.ts'
 // Start the CLI with a new line for better readability
 console.log()
 
-const debug = debuglog('ls-mcp')
+// @TODO add debug logging
+// const debug = debuglog('ls-mcp')
 
 async function init () {
   const mcpFilesManager = new MCPFiles()
