@@ -2,6 +2,7 @@ import TransportComponent from '../components/transport.js'
 import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
 import MCPServerNameComponent from '../components/mcp-server-name.js'
+import FilePathComponent from '../components/file-path.js'
 
 export class RenderService {
   // Example mocked data for rendering the servers information
@@ -127,12 +128,15 @@ export class RenderService {
     for (const [index, row] of data.entries()) {
       const dataRow = keys.map((key, index) => {
         const paddingNormalizer = ColumnNameComponent(row[key]).length - row[key].length
-
         if (key === 'key') {
           return ColumnNameComponent(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
-        } else {
-          return String(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
         }
+
+        if (row['key'] === 'FILE') {
+          return FilePathComponent(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
+        }
+
+        return String(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
       }).join('  ')
       const leftPadding = index === 0 ? leftPaddingGroupLead : leftPaddingGroupData
       console.log(leftPadding + dataRow)
