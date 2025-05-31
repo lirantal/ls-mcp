@@ -24,11 +24,11 @@ export class MCPConfigLinterService {
     return Object.keys(mcpServers).length
   }
 
-  async getMCPServers (): Promise<string[]> {
+  async getMCPServers (): Promise<Record<string, object>> {
     const fileContentRaw = await this.getFileContent()
     const fileContentsData = JSON.parse(fileContentRaw)
 
-    const mcpServers = fileContentsData.mcpServers
+    const mcpServers = fileContentsData?.mcpServers
 
     return mcpServers
   }
