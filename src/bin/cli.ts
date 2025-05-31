@@ -27,18 +27,24 @@ async function init () {
         const filePath = filePathData.filePath.replace('~', process.env.HOME || '')
         const filePathValid = filePathData.parsable ? 'VALID' : 'INVALID'
         const filePathDataType = filePathData.type.toUpperCase()
+        const mcpServers = filePathData.servers || []
+
+        const totalMCPServers = filePathData.servers ? filePathData.servers.length : 0
+        const totalMCPServersRunning = mcpServers.filter(server => server.status === 'running').length
 
         const mcpGroupData = [
           { key: 'PROVIDER', value: group.friendlyName },
           { key: 'FILE', value: filePath },
           { key: 'PARSABLE', value: filePathValid },
           { key: 'TYPE', value: filePathDataType },
-          { key: 'MCP SERVERS', value: filePathData.servers ? String(filePathData.servers.length) : 0 }
         ]
 
-        const mcpServers = filePathData.servers || []
+        const groupMetadata = {
+          mcpServersTotal: totalMCPServers,
+          mcpServersRunning: totalMCPServersRunning,
+        }
 
-        RenderService.printMcpGroup(groupIndex, mcpGroupData)
+        RenderService.printMcpGroup(groupIndex, mcpGroupData, groupMetadata)
         RenderService.printMcpServers(mcpServers)
       }
     } else {

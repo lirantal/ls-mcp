@@ -1,3 +1,4 @@
+import { styleText } from 'node:util'
 import TransportComponent from '../components/transport.js'
 import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
@@ -100,7 +101,7 @@ export class RenderService {
   //   { key: 'STATUS', value: '[✓ VALID] [GLOBAL] [5 MCP SERVERS]' }
   // ]
 
-  static printMcpGroup (id: number, data: any[]) {
+  static printMcpGroup (id: number, data: any[], groupMetadata: object = {}) {
     if (data.length === 0) return
 
     console.log('\n')
@@ -114,6 +115,12 @@ export class RenderService {
     const indexText = `[${id}]`
     const leftPaddingGroupLead = indexText + ' '.repeat(6 - indexText.length)
     const leftPaddingGroupData = ' '.repeat(6)
+
+    // Append group metadata keys to the data array
+    if (Object.keys(groupMetadata).length > 0) {
+      const metadataRow = this.renderProgressBar(groupMetadata.mcpServersRunning, groupMetadata.mcpServersTotal, 'Running')
+      data.push({ key: 'MCP SERVERS', value: metadataRow })
+    }
 
     // Calculate column widths
     const columnWidths = headers.map((header, index) => {
@@ -149,5 +156,26 @@ export class RenderService {
 
     // Print bottom separator
     // console.log('')
+  }
+
+  // draws progress bar components like this
+  // "███████░░░░░░░░░░░░░ 3 / 9 Running"
+  static renderProgressBar (count: number, total: number, label: string, width: number = 20): string {
+    if (total === 0) {
+      const emptyBar = '░'.repeat(width)
+      return `${emptyBar} 0 / 0 ${label}`
+    }
+
+    const progress = Math.min(count / total, 1)
+    const filledWidth = Math.round(progress * width)
+    const emptyWidth = width - filledWidth
+
+    const colorRunning = count > 0 ? 'greenBright' : 'red'
+    const colorEmpty = count > 0 ? 'green' : 'red'
+
+    const filled = styleText([colorRunning], '█'.repeat(filledWidth))
+    const empty = styleText([colorEmpty], '░'.repeat(emptyWidth))
+
+    return `${filled}${empty} ${count} / ${total} ${label}`
   }
 }
