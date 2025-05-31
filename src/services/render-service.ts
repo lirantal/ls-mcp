@@ -6,6 +6,11 @@ import MCPServerNameComponent from '../components/mcp-server-name.js'
 import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 
+interface GroupMetadata {
+  mcpServersRunning?: number
+  mcpServersTotal?: number
+}
+
 export class RenderService {
   // Example mocked data for rendering the servers information
   // const mcpServersDataMock = [
@@ -101,7 +106,7 @@ export class RenderService {
   //   { key: 'STATUS', value: '[✓ VALID] [GLOBAL] [5 MCP SERVERS]' }
   // ]
 
-  static printMcpGroup (id: number, data: any[], groupMetadata: object = {}) {
+  static printMcpGroup (id: number, data: any[], groupMetadata: GroupMetadata = {}) {
     if (data.length === 0) return
 
     console.log('\n')
@@ -118,7 +123,9 @@ export class RenderService {
 
     // Append group metadata keys to the data array
     if (Object.keys(groupMetadata).length > 0) {
-      const metadataRow = this.renderProgressBar(groupMetadata.mcpServersRunning, groupMetadata.mcpServersTotal, 'Running')
+      const runningCount = groupMetadata.mcpServersRunning || 0
+      const totalCount = groupMetadata.mcpServersTotal || 0
+      const metadataRow = this.renderProgressBar(runningCount, totalCount, 'Running')
       data.push({ key: 'MCP SERVERS', value: metadataRow })
     }
 

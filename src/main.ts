@@ -13,7 +13,8 @@ interface MCPServerInfo {
 
 interface MCPFilePath {
   filePath: string
-  type: 'local' | 'global',
+  type: 'local' | 'global'
+  parsable?: boolean
   servers?: MCPServerInfo[]
 }
 
@@ -21,9 +22,22 @@ interface MCPFileGroups {
   name: string
   friendlyName: string
   paths: MCPFilePath[]
+  stats?: {
+    serversCount?: number
+  }
+}
+
+interface MCPFileGroupsResult {
+  name: string
+  friendlyName: string
+  paths: MCPFilePath[]
+  stats: {
+    serversCount?: number
+  }
 }
 
 type MCPFilePathGroupsRecord = Record<string, MCPFileGroups>
+type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
 
 export class MCPFiles {
   private mcpFilePathGroups: MCPFilePathGroupsRecord = {
@@ -48,8 +62,8 @@ export class MCPFiles {
     this.mcpFilePathGroups = mcpFilePathGroups || this.mcpFilePathGroups
   }
 
-  async findFiles (): Promise<T> {
-    const mcpFilesPathsData = {}
+  async findFiles (): Promise<MCPFileGroupsResultRecord> {
+    const mcpFilesPathsData: MCPFileGroupsResultRecord = {}
 
     for (const groupName of Object.keys(this.mcpFilePathGroups)) {
       const clientsGroup = this.mcpFilePathGroups[groupName]
@@ -73,7 +87,14 @@ export class MCPFiles {
           const mcpServersFromConfig = await MCPConfigLinter.getMCPServers()
           // let's iterate over the mcpServer Record and access the server objects
           for (const serverName of Object.keys(mcpServersFromConfig)) {
-            const serverConfig = { ...mcpServersFromConfig[serverName], name: serverName }
+            const serverConfigRaw = mcpServersFromConfig[serverName] as any
+            const serverConfig = {
+              name: serverName,
+              command: serverConfigRaw.command || '',
+              args: serverConfigRaw.args,
+              transport: serverConfigRaw.transport,
+              env: serverConfigRaw.env
+            }
             const MCPServerManager = new MCPServerManagerService(serverConfig)
 
             mcpServersData.push({

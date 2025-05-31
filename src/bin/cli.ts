@@ -2,6 +2,15 @@
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
 
+interface MCPServerInfo {
+  name: string
+  command: string
+  args?: string[]
+  transport?: 'stdio' | 'sse'
+  env?: Record<string, string>
+  status?: 'running' | 'stopped'
+}
+
 // Start the CLI with a new line for better readability
 console.log()
 
@@ -31,7 +40,7 @@ async function init () {
         const mcpServers = filePathData.servers || []
 
         const totalMCPServers = filePathData.servers ? filePathData.servers.length : 0
-        const totalMCPServersRunning = mcpServers.filter(server => server.status === 'running').length
+        const totalMCPServersRunning = mcpServers.filter((server: MCPServerInfo) => server.status === 'running').length
 
         const mcpGroupData = [
           { key: 'PROVIDER', value: group.friendlyName },
@@ -54,5 +63,4 @@ async function init () {
   }
 }
 
-await init()
-console.log()
+init()
