@@ -1,9 +1,20 @@
 import fs from 'node:fs/promises'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
+import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
+
+interface MCPServerInfo {
+  name: string
+  command: string
+  args?: string[]
+  transport?: 'stdio' | 'sse',
+  env?: Record<string, string>
+  status?: 'running' | 'stopped'
+}
 
 interface MCPFilePath {
   filePath: string
-  type: 'local' | 'global'
+  type: 'local' | 'global',
+  servers?: MCPServerInfo[]
 }
 
 interface MCPFileGroups {
@@ -58,8 +69,26 @@ export class MCPFiles {
           const parsable = await MCPConfigLinter.isValidSyntax()
           filePathData.parsable = parsable
 
-          mcpFilesPathsData[groupName]['stats']['serversCount'] = await MCPConfigLinter.countMCPServers()
+          const mcpServersData: MCPServerInfo[] = []
+          const mcpServersFromConfig = await MCPConfigLinter.getMCPServers()
+          // let's iterate over the mcpServer Record and access the server objects
+          for (const serverName of Object.keys(mcpServersFromConfig)) {
+            const serverConfig = { ...mcpServersFromConfig[serverName], name: serverName }
+            const MCPServerManager = new MCPServerManagerService(serverConfig)
 
+            mcpServersData.push({
+              name: MCPServerManager.getName(),
+              command: MCPServerManager.getCmd(),
+              args: MCPServerManager.getArgs(),
+              transport: MCPServerManager.getTransport(),
+              env: MCPServerManager.getEnv(),
+              status: MCPServerManager.isRunning() ? 'running' : 'stopped'
+            })
+          }
+
+          filePathData.servers = mcpServersData
+
+          mcpFilesPathsData[groupName]['stats']['serversCount'] = await MCPConfigLinter.countMCPServers()
           mcpFilesPathsData[groupName].paths.push(filePathData)
         } catch (error) {
           // File does not exist, continue to next
