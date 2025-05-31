@@ -177,11 +177,16 @@ export class RenderService {
     const filledWidth = Math.round(progress * width)
     const emptyWidth = width - filledWidth
 
-    const colorRunning = count > 0 ? 'greenBright' : 'red'
-    const colorEmpty = count > 0 ? 'green' : 'red'
+    let filled: string
+    let empty: string
 
-    const filled = styleText([colorRunning], '█'.repeat(filledWidth))
-    const empty = styleText([colorEmpty], '░'.repeat(emptyWidth))
+    if (count > 0) {
+      filled = styleText(['greenBright'], '█'.repeat(filledWidth))
+      empty = styleText(['green'], '░'.repeat(emptyWidth))
+    } else {
+      filled = '█'.repeat(filledWidth)
+      empty = '░'.repeat(emptyWidth)
+    }
 
     return `${filled}${empty} ${count} / ${total} ${label}`
   }
