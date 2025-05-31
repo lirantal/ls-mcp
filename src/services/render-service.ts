@@ -28,7 +28,7 @@ export class RenderService {
 
     const getVisibleLength = (text: string): number => {
       // Calculate visible length by removing ANSI escape codes
-      return text.replace(/\u001b\[[0-9;]*m/g, '').length
+      return text.replace(/'\x1b\\[[0-9;]*m', 'g'/, '').length
     }
 
     // Helper function to center text in a given width
