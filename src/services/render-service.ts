@@ -2,7 +2,6 @@ import TransportComponent from '../components/transport.js'
 import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
 import MCPServerNameComponent from '../components/mcp-server-name.js'
-import { get } from 'http'
 
 export class RenderService {
   // Example mocked data for rendering the servers information
