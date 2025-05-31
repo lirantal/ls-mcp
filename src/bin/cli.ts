@@ -63,4 +63,6 @@ async function init () {
   }
 }
 
-init()
+init().then(() => {
+  console.log('\n')
+})
