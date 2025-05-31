@@ -1,4 +1,4 @@
-import { debuglog } from 'node:util'
+// import { debuglog } from 'node:util'
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
 
