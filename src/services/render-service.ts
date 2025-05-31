@@ -3,6 +3,7 @@ import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
 import MCPServerNameComponent from '../components/mcp-server-name.js'
 import FilePathComponent from '../components/file-path.js'
+import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 
 export class RenderService {
   // Example mocked data for rendering the servers information
@@ -134,6 +135,10 @@ export class RenderService {
 
         if (row['key'] === 'FILE') {
           return FilePathComponent(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
+        }
+
+        if (row['key'] === 'PARSABLE') {
+          return MCPServersConfigParsableComponent(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
         }
 
         return String(row[key]).padEnd(columnWidths[index] + paddingNormalizer)
