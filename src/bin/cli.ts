@@ -31,7 +31,9 @@ async function init () {
         const mcpGroupData = [
           { key: 'PROVIDER', value: group.friendlyName },
           { key: 'FILE', value: filePath },
-          { key: 'STATUS', value: `${filePathValid} • ${filePathDataType} • ${filePathData.servers ? filePathData.servers.length : 0} MCP SERVERS` }
+          { key: 'PARSABLE', value: filePathValid },
+          { key: 'TYPE', value: filePathDataType },
+          { key: 'MCP SERVERS', value: filePathData.servers ? String(filePathData.servers.length) : 0 }
         ]
 
         const mcpServers = filePathData.servers || []
