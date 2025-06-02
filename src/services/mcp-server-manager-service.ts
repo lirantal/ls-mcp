@@ -166,6 +166,11 @@ export class MCPServerManagerService {
       return this.matchUvxProcess(commandTokens)
     }
 
+    // Map configured command to actual process command for npx case
+    if (this.command === 'npx' && baseCommand === 'npm') {
+      return this.matchNpxProcess(commandTokens)
+    }
+
     /*
     example config:
       "test_server_2": {
@@ -375,5 +380,64 @@ export class MCPServerManagerService {
     }
 
     return tokens
+  }
+
+  /*
+    example to match:
+    ```
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-postgres",
+        "postgresql://localhost/mydb"
+      ]
+    }
+    ```
+
+    with a process command like:
+    ```
+      npm exec @modelcontextprotocol/server-postgres postgresql://localhost/mydb
+    ```
+  */
+  private matchNpxProcess (commandTokens: string[]): boolean {
+    // npx command pattern: npm exec <package> [args...]
+    // Expected command tokens: ["npm", "exec", package_name, ...args]
+
+    if (commandTokens.length < 3) return false
+
+    // Check if it's the expected npm exec pattern
+    if (commandTokens[1] !== 'exec') return false
+
+    // Find the -y flag in this.args and extract args after it
+    let argsAfterY: string[] = []
+    const yIndex = this.args.indexOf('-y')
+
+    if (yIndex === -1 || yIndex + 1 >= this.args.length) {
+      // If no -y flag found or nothing after it, can't match
+      return false
+    }
+
+    argsAfterY = this.args.slice(yIndex + 1)
+
+    // Match the args after "npm exec" with args after "-y" in config
+    // commandTokens: ["npm", "exec", package_name, ...additional_args]
+    // argsAfterY: [package_name, ...additional_args]
+
+    if (commandTokens.length - 2 !== argsAfterY.length) {
+      // Length mismatch between process args and config args
+      return false
+    }
+
+    // Compare each argument starting from position 2 in commandTokens
+    for (let i = 0; i < argsAfterY.length; i++) {
+      const commandToken = commandTokens[i + 2] // Start from index 2 (after "npm exec")
+      const expectedArg = argsAfterY[i]
+
+      if (commandToken !== expectedArg) {
+        return false
+      }
+    }
+
+    return true
   }
 }
