@@ -166,11 +166,32 @@ export class MCPServerManagerService {
       return this.matchUvxProcess(commandTokens)
     }
 
+    /*
+    example config:
+      "test_server_2": {
+        "command": "uv",
+        "args": [
+          "--directory",
+          "/Users/lirantal/projects/repos/example-python-mcp-server",
+          "run",
+          "test-server.py"
+        ]
+      },
+    */
     if (this.command === 'uv' && baseCommand === 'uv') {
       return this.matchGenericArgsToArgs(commandTokens)
     }
 
     // Python Generic commands matching
+    /*
+    example config:
+        "test_server": {
+          "command": "/Users/lirantal/projects/repos/example-python-mcp-server/.venv/bin/python",
+          "args": [
+            "/Users/lirantal/projects/repos/example-python-mcp-server/test-server.py"
+          ]
+        }
+    */
     const commandConfigPythonBase: string = this.getBaseCommand(this.command)
     const commandAliasesPython = ['python3', 'python', 'python3.10', 'python3.11', 'python3.12', 'cpython3', 'cpython', 'python3', 'python2']
     if (commandAliasesPython.includes(commandConfigPythonBase) && commandAliasesPython.includes(baseCommand)) {
