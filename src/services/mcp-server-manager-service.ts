@@ -203,6 +203,14 @@ export class MCPServerManagerService {
       return this.matchGenericArgsToArgs(commandTokens)
     }
 
+    // Match generic commands with their args, one to one
+    // this matches commands like `node`
+    const commandGenericBase: string = this.getBaseCommand(this.command)
+    const commandGenericProcessBase: string = this.getBaseCommand(commandTokens[0])
+    if (commandGenericBase === commandGenericProcessBase) {
+      return this.matchGenericArgsToArgs(commandTokens)
+    }
+
     return false
   }
 
