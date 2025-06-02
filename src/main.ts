@@ -42,7 +42,7 @@ type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
 export class MCPFiles {
   private mcpFilePathGroups: MCPFilePathGroupsRecord = {
     claude: {
-      name: 'claude',
+      name: 'claude-desktop',
       friendlyName: 'Claude Desktop',
       paths: [
         { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' },
@@ -97,13 +97,21 @@ export class MCPFiles {
             }
             const MCPServerManager = new MCPServerManagerService(serverConfig)
 
+            const mcpServerProcessDetection = MCPServerManager.isRunning()
+            let mcpServerProcess = false
+            if (mcpServerProcessDetection) {
+              if (typeof mcpServerProcessDetection === 'object' && mcpServerProcessDetection.estimatedProduct === clientsGroup.name) {
+                mcpServerProcess = true
+              }
+            }
+
             mcpServersData.push({
               name: MCPServerManager.getName(),
               command: MCPServerManager.getCmd(),
               args: MCPServerManager.getArgs(),
               transport: MCPServerManager.getTransport(),
               env: MCPServerManager.getEnv(),
-              status: MCPServerManager.isRunning() ? 'running' : 'stopped'
+              status: mcpServerProcess ? 'running' : 'stopped'
             })
           }
 

@@ -9,13 +9,21 @@ interface MCPServerConfig {
   env?: Record<string, string>
 }
 
+interface MatchedProcess {
+  pid: string
+  commandLine: string
+  ppid?: string
+  parentCommandLine?: string
+  estimatedVendor?: string
+  estimatedProduct?: string
+}
+
 export class MCPServerManagerService {
   private name: string
   private command: string
   private args: string[]
   private transport?: 'stdio' | 'sse'
   private env?: Record<string, string>
-
   private running: boolean = false
 
   constructor (serverConfig: MCPServerConfig) {
@@ -46,7 +54,7 @@ export class MCPServerManagerService {
     return this.env
   }
 
-  isRunning (): boolean {
+  isRunning (): boolean | MatchedProcess {
     try {
       let psOutput: string
 
@@ -64,6 +72,7 @@ export class MCPServerManagerService {
         })
       }
 
+      const processMap = new Map<string, { ppid: string, commandTokens: string[] }>()
       const processes = psOutput.trim().split('\n')
 
       for (const processLine of processes) {
@@ -89,8 +98,34 @@ export class MCPServerManagerService {
           commandLine = match[3]
         }
 
-        if (this.isCommandMatch(commandLine, pid, ppid)) {
-          return true
+        // Parse command line and store in map
+        const commandTokens = this.parseCommandLine(commandLine)
+        if (commandTokens.length > 0) {
+          processMap.set(pid, { ppid, commandTokens })
+        }
+      }
+
+      // Then iterate the map to check for matches
+      for (const [pid, processData] of processMap) {
+        if (this.isCommandMatch(processData.commandTokens, pid, processData.ppid)) {
+          // if we matched the command let's extract the parent command information
+          const parentProcess = processMap.get(processData.ppid)
+          let vendorInfo = {}
+          if (parentProcess) {
+            const { estimatedVendor, estimatedProduct } = this.getVendorFromCommand(parentProcess.commandTokens) || {}
+            vendorInfo = {
+              parentCommandLine: parentProcess.commandTokens.join(' '),
+              estimatedVendor,
+              estimatedProduct
+            }
+          }
+
+          return {
+            pid,
+            commandLine: processData.commandTokens.join(' '),
+            ppid: processData.ppid,
+            ...vendorInfo
+          }
         }
       }
 
@@ -100,9 +135,25 @@ export class MCPServerManagerService {
     }
   }
 
-  private isCommandMatch (commandLine: string, pid: string, ppid: string): boolean {
-    const commandTokens = this.parseCommandLine(commandLine)
+  private getVendorFromCommand (commandTokens: string[]): { estimatedVendor: string, estimatedProduct: string } | undefined {
+    // match based on known vendor patterns in the command string
+    const commandString = commandTokens.join(' ').toLowerCase()
+    if (commandString.includes('claude.app')) {
+      return {
+        estimatedVendor: 'anthropic',
+        estimatedProduct: 'claude-desktop'
+      }
+    }
 
+    if (commandString.includes('claude')) {
+      return {
+        estimatedVendor: 'anthropic',
+        estimatedProduct: 'claude-desktop'
+      }
+    }
+  }
+
+  private isCommandMatch (commandTokens: string[], pid: string, ppid: string): boolean {
     // If no command tokens, cannot match
     if (commandTokens.length === 0) return false
 
@@ -116,9 +167,6 @@ export class MCPServerManagerService {
     }
 
     return false
-    // Default matching strategy for other commands
-    // const expectedArgs = [this.command, ...this.args]
-    // return this.findCommandSequence(commandTokens, expectedArgs)
   }
 
   // @TODO refactor this to use path.basename or similar
