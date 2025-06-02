@@ -27,26 +27,47 @@ export class RenderService {
   static printMcpServers (data: any[]) {
     if (data.length === 0) return
 
-    // const headers = ['STATUS', 'NAME', 'TRANSPORT', 'VERSION', 'TOOLS', 'RESOURCES']
-    // const keys = ['status', 'name', 'transport', 'version', 'tools', 'resources']
     const headers = ['STATUS', 'NAME', 'TRANSPORT']
     const keys = ['status', 'name', 'transport']
-    const centerColumns = [0, 2, 4, 5] // STATUS, TOOLS, RESOURCES column indices
+    const centerColumns = [0, 2] // STATUS and TRANSPORT column indices
     const leftPadding = '      ' // 6 characters
 
-    // Calculate column widths
+    // Calculate column widths accounting for styled text
     const columnWidths = headers.map((header, index) => {
-      const dataWidth = Math.max(...data.map(row => String(row[keys[index]]).length))
-      return Math.max(header.length, dataWidth)
+      const headerWidth = this.getVisibleLength(ColumnNameComponent(header))
+      const dataWidth = Math.max(...data.map(row => {
+        let text = String(row[keys[index]])
+
+        // Apply the same transformations used in rendering
+        if (keys[index] === 'transport') {
+          text = TransportComponent(text)
+        }
+        if (keys[index] === 'status') {
+          text = MCPServerStatusComponent(text)
+        }
+        if (keys[index] === 'name') {
+          text = MCPServerNameComponent(text)
+        }
+
+        return this.getVisibleLength(text)
+      }))
+      return Math.max(headerWidth, dataWidth)
     })
 
     // Helper function to center text in a given width
     const centerText = (text: string, width: number): string => {
-      // Calculate visible length by removing ANSI escape codes
-      const padding = width - this.getVisibleLength(text)
+      const visibleLength = this.getVisibleLength(text)
+      const padding = width - visibleLength
       const leftPad = Math.floor(padding / 2)
       const rightPad = padding - leftPad
       return ' '.repeat(leftPad) + text + ' '.repeat(rightPad)
+    }
+
+    // Helper function to pad text to the right
+    const padRight = (text: string, width: number): string => {
+      const visibleLength = this.getVisibleLength(text)
+      const padding = Math.max(0, width - visibleLength)
+      return text + ' '.repeat(padding)
     }
 
     // Calculate total table width for separator line
@@ -62,35 +83,34 @@ export class RenderService {
       if (centerColumns.includes(index)) {
         return centerText(headerText, columnWidths[index])
       }
-      // Calculate visible length by removing ANSI escape codes
-      const padding = columnWidths[index] - this.getVisibleLength(headerText)
-      return headerText + ' '.repeat(Math.max(0, padding))
+      return padRight(headerText, columnWidths[index])
     }).join('  ')
     console.log(leftPadding + headerRow)
 
-    // Print bottom separator
+    // Print separator
     console.log(leftPadding + separator)
 
     // Print data rows
     for (const row of data) {
       const dataRow = keys.map((key, index) => {
         let text = String(row[key])
+
+        // Apply styling transformations
         if (key === 'transport') {
           text = TransportComponent(text)
         }
-
         if (key === 'status') {
           text = MCPServerStatusComponent(text)
         }
-
         if (key === 'name') {
           text = MCPServerNameComponent(text)
         }
 
+        // Apply alignment
         if (centerColumns.includes(index)) {
           return centerText(text, columnWidths[index])
         }
-        return text.padEnd(columnWidths[index])
+        return padRight(text, columnWidths[index])
       }).join('  ')
       console.log(leftPadding + dataRow)
     }
