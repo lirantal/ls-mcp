@@ -106,27 +106,36 @@ export class MCPServerManagerService {
       }
 
       // Then iterate the map to check for matches
+      let mcpServerDetection: MatchedProcess | undefined
       for (const [pid, processData] of processMap) {
         if (this.isCommandMatch(processData.commandTokens, pid, processData.ppid)) {
-          // if we matched the command let's extract the parent command information
-          const parentProcess = processMap.get(processData.ppid)
-          let vendorInfo = {}
-          if (parentProcess) {
-            const { estimatedVendor, estimatedProduct } = this.getVendorFromCommand(parentProcess.commandTokens) || {}
-            vendorInfo = {
-              parentCommandLine: parentProcess.commandTokens.join(' '),
-              estimatedVendor,
-              estimatedProduct
-            }
-          }
-
-          return {
+          mcpServerDetection = {
             pid,
             commandLine: processData.commandTokens.join(' '),
             ppid: processData.ppid,
-            ...vendorInfo
+          }
+
+          // if we matched the command let's extract the parent command information
+          const parentProcess = processMap.get(processData.ppid)
+          if (parentProcess) {
+            const { estimatedVendor, estimatedProduct } = this.getVendorFromCommand(parentProcess.commandTokens) || {}
+
+            if (estimatedProduct || estimatedVendor) {
+              mcpServerDetection = {
+                ...mcpServerDetection,
+                parentCommandLine: parentProcess.commandTokens.join(' '),
+                estimatedVendor,
+                estimatedProduct
+              }
+
+              return mcpServerDetection
+            }
           }
         }
+      }
+
+      if (mcpServerDetection) {
+        return mcpServerDetection
       }
 
       return false
