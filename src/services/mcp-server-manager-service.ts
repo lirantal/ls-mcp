@@ -170,6 +170,13 @@ export class MCPServerManagerService {
       return this.matchGenericArgsToArgs(commandTokens)
     }
 
+    // Python Generic commands matching
+    const commandConfigPythonBase: string = this.getBaseCommand(this.command)
+    const commandAliasesPython = ['python3', 'python', 'python3.10', 'python3.11', 'python3.12', 'cpython3', 'cpython', 'python3', 'python2']
+    if (commandAliasesPython.includes(commandConfigPythonBase) && commandAliasesPython.includes(baseCommand)) {
+      return this.matchGenericArgsToArgs(commandTokens)
+    }
+
     return false
   }
 
