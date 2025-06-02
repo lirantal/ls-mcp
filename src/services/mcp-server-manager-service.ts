@@ -408,30 +408,30 @@ export class MCPServerManagerService {
     // Check if it's the expected npm exec pattern
     if (commandTokens[1] !== 'exec') return false
 
-    // Find the -y flag in this.args and extract args after it
-    let argsAfterY: string[] = []
+    let argsToMatch: string[] = []
     const yIndex = this.args.indexOf('-y')
 
-    if (yIndex === -1 || yIndex + 1 >= this.args.length) {
-      // If no -y flag found or nothing after it, can't match
-      return false
+    if (yIndex !== -1 && yIndex + 1 < this.args.length) {
+      // Case 1: -y flag is present, extract args after it
+      argsToMatch = this.args.slice(yIndex + 1)
+    } else {
+      // Case 2: No -y flag, match all args directly
+      argsToMatch = this.args
     }
 
-    argsAfterY = this.args.slice(yIndex + 1)
-
-    // Match the args after "npm exec" with args after "-y" in config
+    // Match the args after "npm exec" with the extracted args from config
     // commandTokens: ["npm", "exec", package_name, ...additional_args]
-    // argsAfterY: [package_name, ...additional_args]
+    // argsToMatch: [package_name, ...additional_args]
 
-    if (commandTokens.length - 2 !== argsAfterY.length) {
+    if (commandTokens.length - 2 !== argsToMatch.length) {
       // Length mismatch between process args and config args
       return false
     }
 
     // Compare each argument starting from position 2 in commandTokens
-    for (let i = 0; i < argsAfterY.length; i++) {
+    for (let i = 0; i < argsToMatch.length; i++) {
       const commandToken = commandTokens[i + 2] // Start from index 2 (after "npm exec")
-      const expectedArg = argsAfterY[i]
+      const expectedArg = argsToMatch[i]
 
       if (commandToken !== expectedArg) {
         return false
