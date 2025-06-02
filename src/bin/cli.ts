@@ -45,8 +45,8 @@ async function init () {
         const mcpGroupData = [
           { key: 'PROVIDER', value: group.friendlyName },
           { key: 'FILE', value: filePath },
-          { key: 'PARSABLE', value: filePathValid },
           { key: 'TYPE', value: filePathDataType },
+          { key: 'PARSABLE', value: filePathValid },
         ]
 
         const groupMetadata = {
