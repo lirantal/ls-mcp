@@ -166,7 +166,42 @@ export class MCPServerManagerService {
       return this.matchUvxProcess(commandTokens)
     }
 
+    if (this.command === 'uv' && baseCommand === 'uv') {
+      return this.matchGenericArgsToArgs(commandTokens)
+    }
+
     return false
+  }
+
+  private matchGenericArgsToArgs (commandTokens: string[]): boolean {
+    if (this.args.length === 0) {
+      // If no args configured, we just check if the command matches
+      return commandTokens[0] === this.command
+    }
+
+    if (commandTokens.length < 2) {
+      // If there are no command tokens or only the command itself, we cannot match
+      return false
+    }
+
+    // Remove the command from the command tokens
+    const commandWithoutArgs = commandTokens.slice(1)
+
+    for (let i = 0; i < this.args.length; i++) {
+      // If we reach the end of command tokens, we cannot match
+      if (i >= commandWithoutArgs.length) return false
+
+      const arg = this.args[i]
+      const token = commandWithoutArgs[i]
+
+      // Check if the argument matches the command token
+      if (arg !== token && !token.includes(arg)) {
+        return false
+      }
+    }
+
+    // If we reached here, we matched all arguments
+    return true
   }
 
   // @TODO refactor this to use path.basename or similar
@@ -214,6 +249,14 @@ export class MCPServerManagerService {
       }
     }
   }
+  ```
+
+  example 4:
+  ```
+      "time": {
+      "command": "uvx",
+      "args": ["mcp-server-time", "--local-timezone=America/New_York"]
+    }
   ```
   */
   private getUvxMcpServerNameFromArgs (): string | undefined {
