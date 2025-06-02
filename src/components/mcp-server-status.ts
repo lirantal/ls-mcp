@@ -6,7 +6,7 @@ export default function render (text: string) {
   if (formattedText === 'running') {
     data = styleText(['green'], '●')
   } else {
-    data = styleText(['red'], '○')
+    data = styleText(['red'], '●')
   }
 
   return data

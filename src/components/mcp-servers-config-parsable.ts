@@ -4,9 +4,9 @@ export default function render (text: string) {
   const formattedText = text.toUpperCase().replace(/_/g, ' ')
   let data = formattedText
   if (formattedText === 'VALID') {
-    data = styleText(['blue'], '✓')
+    data = styleText(['green'], '●')
   } else {
-    data = styleText(['red'], '✗')
+    data = styleText(['red'], '●')
   }
 
   return data
