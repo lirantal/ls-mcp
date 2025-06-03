@@ -52,8 +52,8 @@ export class MCPFiles {
       name: 'cursor',
       friendlyName: 'Cursor',
       paths: [
-        { filePath: '.cursor/mcp.json', type: 'local' },
         { filePath: '~/.cursor/mcp.json', type: 'global' },
+        { filePath: '.cursor/mcp.json', type: 'local' },
       ]
     }
   }
