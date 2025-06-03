@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 // import { debuglog } from 'node:util'
+import path from 'path'
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
 
@@ -32,7 +33,7 @@ async function init () {
   for (const groupName of Object.keys(mcpFilesList)) {
     const group = mcpFilesList[groupName]
 
-    if (group.paths.length >= 0) {
+    if (group.paths.length > 0) {
       // handle file path list of MCP Servers
       for (const filePathData of group.paths) {
         pathIndex++
@@ -60,9 +61,11 @@ async function init () {
         RenderService.printMcpGroup(pathIndex, mcpGroupData, groupMetadata)
         RenderService.printMcpServers(mcpServers)
       }
-    } else {
-      console.log('No files found in this group.')
     }
+  }
+
+  if (pathIndex === 0) {
+    console.log('No MCP servers found in configuration files.')
   }
 }
 
