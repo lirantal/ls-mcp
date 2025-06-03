@@ -28,14 +28,15 @@ async function init () {
     return
   }
 
-  let groupIndex = 0
+  let pathIndex = 0
   for (const groupName of Object.keys(mcpFilesList)) {
-    groupIndex++
     const group = mcpFilesList[groupName]
 
     if (group.paths.length >= 0) {
       // handle file path list of MCP Servers
       for (const filePathData of group.paths) {
+        pathIndex++
+
         const filePath = filePathData.filePath.replace('~', process.env.HOME || '')
         const filePathValid = filePathData.parsable ? 'VALID' : 'INVALID'
         const filePathDataType = filePathData.type.toUpperCase()
@@ -56,7 +57,7 @@ async function init () {
           mcpServersRunning: totalMCPServersRunning,
         }
 
-        RenderService.printMcpGroup(groupIndex, mcpGroupData, groupMetadata)
+        RenderService.printMcpGroup(pathIndex, mcpGroupData, groupMetadata)
         RenderService.printMcpServers(mcpServers)
       }
     } else {
