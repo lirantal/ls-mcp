@@ -28,6 +28,7 @@ export default [
       'space-before-function-paren': 'off',
       'object-curly-spacing': 'off',
       'no-control-regex': 'off',
+      'n/hashbang': 'off',
     },
     languageOptions: {
       ecmaVersion: 2024,

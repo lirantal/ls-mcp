@@ -4,7 +4,9 @@
   "description": "list and detect MCP servers and configurations",
   "types": "dist/main.d.ts",
   "type": "module",
-  "bin": "./dist/bin/cli.cjs",
+  "bin": {
+    "ls-mcp": "./dist/bin/cli.cjs"
+  },
   "exports": {
     ".": {
       "import": {
