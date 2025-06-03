@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.3.0
+
+### Minor Changes
+
+- 3620547: General availability introducing mcp support and fixes for public adoption
+
 ## 1.2.0
 
 ### Minor Changes
