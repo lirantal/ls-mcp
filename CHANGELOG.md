@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.3.1
+
+### Patch Changes
+
+- aae6721: Windows support WIP
+
 ## 1.3.0
 
 ### Minor Changes
