@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 // import { debuglog } from 'node:util'
-import path from 'path'
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
 
