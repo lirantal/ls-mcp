@@ -59,8 +59,8 @@ export class MCPServerManagerService {
       let psOutput: string
 
       if (platform() === 'win32') {
-        // Windows: Use wmic to get process info
-        psOutput = execSync('wmic process get ProcessId,ParentProcessId,CommandLine /format:csv', {
+        // Windows: Use PowerShell Get-CimInstance to get process info
+        psOutput = execSync('powershell -Command "Get-CimInstance -ClassName Win32_Process | Select-Object ProcessId,Name,CommandLine,ParentProcessId | ConvertTo-Csv -NoTypeInformation"', {
           encoding: 'utf8',
           timeout: 5000
         })
@@ -83,12 +83,16 @@ export class MCPServerManagerService {
         let commandLine: string
 
         if (platform() === 'win32') {
-          // Parse Windows CSV format: Node,CommandLine,ParentProcessId,ProcessId
-          const parts = processLine.split(',')
+          // Parse Windows CSV format: ProcessId,Name,CommandLine,ParentProcessId
+          // Skip header line
+          if (processLine.startsWith('"ProcessId"') || processLine.startsWith('ProcessId')) continue
+
+          const parts = this.parseCSVLine(processLine)
           if (parts.length < 4) continue
-          commandLine = parts[1] || ''
-          ppid = parts[2] || ''
-          pid = parts[3] || ''
+          pid = parts[0] || ''
+          // Skip Name (parts[1])
+          commandLine = parts[2] || ''
+          ppid = parts[3] || ''
         } else {
           // Parse Unix ps output: PID PPID COMMAND
           const match = processLine.trim().match(/^\s*(\d+)\s+(\d+)\s+(.+)$/)
@@ -365,6 +369,35 @@ export class MCPServerManagerService {
       }
     }
     return false
+  }
+
+  private parseCSVLine (line: string): string[] {
+    const result: string[] = []
+    let current = ''
+    let inQuotes = false
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]
+
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          // Escaped quote
+          current += '"'
+          i++ // Skip next quote
+        } else {
+          // Toggle quote state
+          inQuotes = !inQuotes
+        }
+      } else if (char === ',' && !inQuotes) {
+        result.push(current)
+        current = ''
+      } else {
+        current += char
+      }
+    }
+
+    result.push(current)
+    return result
   }
 
   private parseCommandLine (commandLine: string): string[] {
