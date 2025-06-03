@@ -35,7 +35,7 @@
     "bin"
   ],
   "scripts": {
-    "start": "node --import tsx src/bin/cli.ts",
+    "start": "npm run build && node --import tsx src/bin/cli.ts",
     "build": "tsc && tsup",
     "lint": "eslint . && npm run lint:lockfile",
     "lint:fix": "eslint . --fix",
