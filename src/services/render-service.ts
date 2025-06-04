@@ -180,9 +180,6 @@ export class RenderService {
       const leftPadding = index === 0 ? leftPaddingGroupLead : leftPaddingGroupData
       console.log(leftPadding + dataRow)
     }
-
-    // Print bottom separator
-    // console.log('')
   }
 
   // draws progress bar components like this
