@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 // import { debuglog } from 'node:util'
+import { styleText } from 'node:util'
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
 
@@ -13,19 +14,19 @@ interface MCPServerInfo {
   status?: 'running' | 'stopped'
 }
 
-// Start the CLI with a new line for better readability
-console.log()
-
 // @TODO add debug logging
 // const debug = debuglog('ls-mcp')
 
 async function init () {
+  // Start the CLI with a new line for better readability
+  console.log()
+  console.log('[+] Detecting MCP Server configurations...')
+
   const mcpFilesManager = new MCPFiles()
   const mcpFilesList = await mcpFilesManager.findFiles()
 
   if (Object.keys(mcpFilesList).length === 0) {
-    console.log('No MCP files found.')
-    return
+    exitWithError('No configuration for MCP Server applications found.')
   }
 
   let pathIndex = 0
@@ -64,10 +65,15 @@ async function init () {
   }
 
   if (pathIndex === 0) {
-    console.log('No MCP servers found in configuration files.')
+    exitWithError('No MCP servers found in known configuration files.')
   }
 }
 
 init().then(() => {
   console.log('\n')
 })
+
+function exitWithError (message: string) {
+  console.error(`${styleText(['red'], '●')} ${message}\n`)
+  process.exit(1)
+}
