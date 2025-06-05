@@ -1,4 +1,5 @@
 import fs from 'node:fs/promises'
+import { platform } from 'node:os'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
 
@@ -39,22 +40,40 @@ interface MCPFileGroupsResult {
 type MCPFilePathGroupsRecord = Record<string, MCPFileGroups>
 type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
 
+const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
+  claude: [],
+  cursor: []
+}
+
+if (platform() === 'win32') {
+  osSpecificPaths['claude'] = [
+    { filePath: `${process.env.APPDATA}\\Claude\\claude_desktop_config.json`, type: 'global' }
+  ]
+  osSpecificPaths['cursor'] = [
+    { filePath: `${process.env.HOME}\\.cursor\\mcp.json`, type: 'global' },
+    { filePath: '.cursor\\mcp.json', type: 'local' }
+  ]
+} else {
+  osSpecificPaths['claude'] = [
+    { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
+  ]
+  osSpecificPaths['cursor'] = [
+    { filePath: '~/.cursor/mcp.json', type: 'global' },
+    { filePath: '.cursor/mcp.json', type: 'local' }
+  ]
+}
+
 export class MCPFiles {
   private mcpFilePathGroups: MCPFilePathGroupsRecord = {
     claude: {
       name: 'claude-desktop',
       friendlyName: 'Claude Desktop',
-      paths: [
-        { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' },
-      ]
+      paths: osSpecificPaths['claude']
     },
     cursor: {
       name: 'cursor',
       friendlyName: 'Cursor',
-      paths: [
-        { filePath: '~/.cursor/mcp.json', type: 'global' },
-        { filePath: '.cursor/mcp.json', type: 'local' },
-      ]
+      paths: osSpecificPaths['cursor']
     }
   }
 
