@@ -112,8 +112,34 @@ export class MCPServerManagerService {
 
       // Then iterate the map to check for matches
       let mcpServerDetection: MatchedProcess | undefined
+
       for (const [pid, processData] of processMap) {
-        if (this.isCommandMatch(processData.commandTokens, pid, processData.ppid)) {
+        const commandMatchLinux = this.isCommandMatch(processData.commandTokens, pid, processData.ppid)
+        let commandMatchWin32 = false
+        if (platform() === 'win32') {
+          // for Windows, we need to change commandTokens to also match another pattern
+          // where the command starts with `cmd` then follows potentially several command-line
+          // flags like /c /d and then the actual command.
+          // This is because Claude Desktop on Windows automatically starts MCP Servers like that
+          // even if the command specified in the MCP config is just `uvx` or `npx`.
+
+          let commandTokensOnWin32 = processData.commandTokens
+          if (commandTokensOnWin32.length > 0 && commandTokensOnWin32[0].toLowerCase().startsWith('cmd')) {
+            // If the first token is 'cmd', we need to skip it and check the next tokens
+            commandTokensOnWin32 = commandTokensOnWin32.slice(1)
+
+            // Skip any additional flags like /c, /d, etc.
+            while (commandTokensOnWin32.length > 0 && commandTokensOnWin32[0].startsWith('/')) {
+              commandTokensOnWin32 = commandTokensOnWin32.slice(1)
+            }
+          }
+
+          commandMatchWin32 = this.isCommandMatch(commandTokensOnWin32, pid, processData.ppid)
+        }
+
+        const commandMatch = commandMatchLinux || commandMatchWin32
+
+        if (commandMatch) {
           mcpServerDetection = {
             pid,
             commandLine: processData.commandTokens.join(' '),
