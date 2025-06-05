@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { execSync } from 'node:child_process'
 import { platform } from 'node:os'
 
@@ -174,13 +175,15 @@ export class MCPServerManagerService {
     // e.g. "/usr/homebrew/bin/uv" extracted to "uv"
     const baseCommand = this.getBaseCommand(commandTokens[0])
 
+    const commandInConfig: string = this.getBaseCommand(this.command)
+
     // Map configured command to actual process command for uvx case
-    if (this.command === 'uvx' && baseCommand === 'uv') {
+    if (commandInConfig === 'uvx' && baseCommand === 'uv') {
       return this.matchUvxProcess(commandTokens)
     }
 
     // Map configured command to actual process command for npx case
-    if (this.command === 'npx' && baseCommand === 'npm') {
+    if (commandInConfig === 'npx' && baseCommand === 'npm') {
       return this.matchNpxProcess(commandTokens)
     }
 
@@ -196,7 +199,7 @@ export class MCPServerManagerService {
         ]
       },
     */
-    if (this.command === 'uv' && baseCommand === 'uv') {
+    if (commandInConfig === 'uv' && baseCommand === 'uv') {
       return this.matchGenericArgsToArgs(commandTokens)
     }
 
@@ -245,8 +248,8 @@ export class MCPServerManagerService {
       // If we reach the end of command tokens, we cannot match
       if (i >= commandWithoutArgs.length) return false
 
-      const arg = this.args[i]
-      const token = commandWithoutArgs[i]
+      const arg = this.args[i].toLowerCase()
+      const token = commandWithoutArgs[i].toLowerCase()
 
       // Check if the argument matches the command token
       if (arg !== token && !token.includes(arg)) {
@@ -258,12 +261,17 @@ export class MCPServerManagerService {
     return true
   }
 
-  // @TODO refactor this to use path.basename or similar
-  // to extract the base command from the full command path
   private getBaseCommand (fullCommandPath: string): string {
     // Extract base command name from full path
-    const parts = fullCommandPath.split(/[/\\]/)
-    return parts[parts.length - 1]
+    let baseCommand = path.basename(fullCommandPath)
+    // Detect if we're on Windows and if so we omit the .exe extension
+    if (platform() === 'win32') {
+      baseCommand = path.basename(fullCommandPath, '.exe')
+    }
+
+    // In any case, we want to return the base command as lowercase
+    baseCommand = baseCommand.toLowerCase()
+    return baseCommand
   }
 
   /*
@@ -362,8 +370,10 @@ export class MCPServerManagerService {
   private findMcpServerNameInProcessArguments (commandTokens: string[], mcpServerName: string): boolean {
     // Check if the command tokens contain the MCP server name
     for (let i = 0; i < commandTokens.length; i++) {
-      const token = commandTokens[i]
-      if (mcpServerName === token || token.includes(mcpServerName)) {
+      const token = commandTokens[i].toLowerCase()
+      const normalizedMcpServerName = mcpServerName.toLowerCase()
+
+      if (normalizedMcpServerName === token || token.includes(normalizedMcpServerName)) {
         // If we find the MCP server name in the command tokens, we consider it a match
         return true
       }
@@ -480,8 +490,9 @@ export class MCPServerManagerService {
 
     // Compare each argument starting from position 2 in commandTokens
     for (let i = 0; i < argsToMatch.length; i++) {
-      const commandToken = commandTokens[i + 2] // Start from index 2 (after "npm exec")
-      const expectedArg = argsToMatch[i]
+      // Start from index 2 (after "npm exec")
+      const commandToken = commandTokens[i + 2].toLowerCase()
+      const expectedArg = argsToMatch[i].toLowerCase()
 
       if (commandToken !== expectedArg) {
         return false
