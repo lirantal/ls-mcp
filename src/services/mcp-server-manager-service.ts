@@ -90,17 +90,17 @@ export class MCPServerManagerService {
 
           const parts = this.parseCSVLine(processLine)
           if (parts.length < 4) continue
-          pid = parts[0] || ''
+          pid = parts[0].trim() || ''
           // Skip Name (parts[1])
-          commandLine = parts[2] || ''
-          ppid = parts[3] || ''
+          commandLine = parts[2].trim() || ''
+          ppid = parts[3].trim() || ''
         } else {
           // Parse Unix ps output: PID PPID COMMAND
           const match = processLine.trim().match(/^\s*(\d+)\s+(\d+)\s+(.+)$/)
           if (!match) continue
-          pid = match[1]
-          ppid = match[2]
-          commandLine = match[3]
+          pid = match[1].trim() || ''
+          ppid = match[2].trim() || ''
+          commandLine = match[3].trim() || ''
         }
 
         // Parse command line and store in map
