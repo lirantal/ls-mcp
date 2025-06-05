@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.4.0
+
+### Minor Changes
+
+- ec83a1d: Windows support
+
 ## 1.3.1
 
 ### Patch Changes
