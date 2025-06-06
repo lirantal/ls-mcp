@@ -3,6 +3,7 @@ import TransportComponent from '../components/transport.js'
 import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
 import MCPServerNameComponent from '../components/mcp-server-name.js'
+import MCPServerSourceComponent from '../components/mcp-server-source.js'
 import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 
@@ -27,9 +28,9 @@ export class RenderService {
   static printMcpServers (data: any[]) {
     if (data.length === 0) return
 
-    const headers = ['STATUS', 'NAME', 'TRANSPORT']
-    const keys = ['status', 'name', 'transport']
-    const centerColumns = [0, 2] // STATUS and TRANSPORT column indices
+    const headers = ['STATUS', 'NAME', 'SOURCE', 'TRANSPORT']
+    const keys = ['status', 'name', 'source', 'transport']
+    const centerColumns = [0, 2, 3] // STATUS and TRANSPORT column indices
     const leftPadding = '      ' // 6 characters
 
     // Calculate column widths accounting for styled text
@@ -42,9 +43,15 @@ export class RenderService {
         if (keys[index] === 'transport') {
           text = TransportComponent(text)
         }
+
         if (keys[index] === 'status') {
           text = MCPServerStatusComponent(text)
         }
+
+        if (keys[index] === 'source') {
+          text = MCPServerSourceComponent(text)
+        }
+
         if (keys[index] === 'name') {
           text = MCPServerNameComponent(text)
         }
@@ -99,9 +106,15 @@ export class RenderService {
         if (key === 'transport') {
           text = TransportComponent(text)
         }
+
         if (key === 'status') {
           text = MCPServerStatusComponent(text)
         }
+
+        if (keys[index] === 'source') {
+          text = MCPServerSourceComponent(text)
+        }
+
         if (key === 'name') {
           text = MCPServerNameComponent(text)
         }
