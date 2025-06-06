@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.5.1
+
+### Patch Changes
+
+- 7445c4b: Add detection for GitHub Copilot in InteliJ
+
 ## 1.5.0
 
 ### Minor Changes
