@@ -26,11 +26,27 @@ export class MCPConfigLinterService {
 
   async getMCPServers (): Promise<Record<string, object>> {
     const fileContentRaw = await this.getFileContent()
+
+    // @TODO parse this file that may have comments inside it
+    // can use comment-json npm package or similar
     const fileContentsData = JSON.parse(fileContentRaw)
 
-    const mcpServers = fileContentsData?.mcpServers
+    // VS Code uses `servers`
+    if (fileContentsData?.servers) {
+      return fileContentsData.servers
+    }
 
-    return mcpServers
+    // VS Code global settings.json file uses `mcp` -> `servers`
+    if (fileContentsData?.mcp?.servers) {
+      return fileContentsData.mcp.servers
+    }
+
+    // Claude and Cursor use the `mcpServers` key
+    if (fileContentsData?.mcpServers) {
+      return fileContentsData.mcpServers
+    }
+
+    return {}
   }
 
   async getFileContent (): Promise<string> {

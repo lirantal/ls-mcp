@@ -2,6 +2,7 @@ import fs from 'node:fs/promises'
 import { platform } from 'node:os'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
+import { resolve } from 'node:path'
 
 interface MCPServerInfo {
   name: string
@@ -42,7 +43,11 @@ type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
 
 const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
   claude: [],
-  cursor: []
+  cursor: [],
+  vscode: [],
+  cline: [],
+  windsurf: [],
+  roo: []
 }
 
 if (platform() === 'win32') {
@@ -53,6 +58,21 @@ if (platform() === 'win32') {
     { filePath: `${process.env.HOME}\\.cursor\\mcp.json`, type: 'global' },
     { filePath: '.cursor\\mcp.json', type: 'local' }
   ]
+  osSpecificPaths['vscode'] = [
+    { filePath: '.vscode\\mcp.json', type: 'local' },
+    { filePath: `${process.env.APPDATA}\\Code\\User\\settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\settings.json`, type: 'global' },
+  ]
+  osSpecificPaths['cline'] = [
+    { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json`, type: 'global' }
+  ]
+  osSpecificPaths['windsurf'] = [
+    { filePath: '.codeium\\windsurf\\mcp_config.json', type: 'local' },
+  ]
+  osSpecificPaths['roo'] = [
+    { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },]
 } else {
   osSpecificPaths['claude'] = [
     { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
@@ -60,6 +80,22 @@ if (platform() === 'win32') {
   osSpecificPaths['cursor'] = [
     { filePath: '~/.cursor/mcp.json', type: 'global' },
     { filePath: '.cursor/mcp.json', type: 'local' }
+  ]
+  osSpecificPaths['vscode'] = [
+    { filePath: '.vscode/mcp.json', type: 'local' },
+    { filePath: '~/Library/Application Support/Code/User/settings.json', type: 'global' },
+    { filePath: '~/Library/Application Support/Code - Insiders/User/settings.json', type: 'global' },
+  ]
+  osSpecificPaths['cline'] = [
+    { filePath: '~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json', type: 'global' },
+    { filePath: '~/Library/Application Support/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json', type: 'global' }
+  ]
+  osSpecificPaths['windsurf'] = [
+    { filePath: '.codeium/windsurf/mcp_config.json', type: 'local' },
+  ]
+  osSpecificPaths['roo'] = [
+    { filePath: '~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json', type: 'global' },
+    { filePath: '~/Library/Application Support/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json', type: 'global' },
   ]
 }
 
@@ -74,6 +110,26 @@ export class MCPFiles {
       name: 'cursor',
       friendlyName: 'Cursor',
       paths: osSpecificPaths['cursor']
+    },
+    vscode: {
+      name: 'vscode',
+      friendlyName: 'VS Code',
+      paths: osSpecificPaths['vscode']
+    },
+    cline: {
+      name: 'cline',
+      friendlyName: 'Cline',
+      paths: osSpecificPaths['cline']
+    },
+    windsurf: {
+      name: 'windsurf',
+      friendlyName: 'Windsurf',
+      paths: osSpecificPaths['windsurf']
+    },
+    roo: {
+      name: 'roo',
+      friendlyName: 'Roo',
+      paths: osSpecificPaths['roo']
     }
   }
 
@@ -102,6 +158,7 @@ export class MCPFiles {
           const parsable = await MCPConfigLinter.isValidSyntax()
           filePathData.parsable = parsable
 
+          // @TODO if file isn't parsable we should skip the following logic here
           const mcpServersData: MCPServerInfo[] = []
           const mcpServersFromConfig = await MCPConfigLinter.getMCPServers()
           // let's iterate over the mcpServer Record and access the server objects
