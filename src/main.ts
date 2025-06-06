@@ -2,7 +2,6 @@ import fs from 'node:fs/promises'
 import { platform } from 'node:os'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
-import { resolve } from 'node:path'
 
 interface MCPServerInfo {
   name: string
