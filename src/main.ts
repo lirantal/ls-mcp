@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import { platform } from 'node:os'
+import path from 'node:path'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
 
@@ -93,8 +94,16 @@ export class MCPFiles {
         stats: {}
       }
 
+      const uniqueFilePaths = new Set<string>()
+
       for (const filePathData of clientsGroup.paths) {
         const resolvedPath: string = filePathData.filePath.replace('~', process.env.HOME || '')
+        const absolutePath: string = path.resolve(resolvedPath)
+        if (uniqueFilePaths.has(absolutePath)) {
+          continue
+        }
+        uniqueFilePaths.add(absolutePath)
+
         try {
           await fs.access(resolvedPath)
 
