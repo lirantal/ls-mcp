@@ -72,7 +72,11 @@ if (platform() === 'win32') {
   ]
   osSpecificPaths['roo'] = [
     { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },]
+    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },
+  ]
+  osSpecificPaths['intellij-github-copilot'] = [
+    { filePath: `${process.env.LOCALAPPDATA}\\github-copilot\\intellij\\mcp.json`, type: 'global' },
+  ]
 } else {
   osSpecificPaths['claude'] = [
     { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
@@ -96,6 +100,9 @@ if (platform() === 'win32') {
   osSpecificPaths['roo'] = [
     { filePath: '~/Library/Application Support/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json', type: 'global' },
     { filePath: '~/Library/Application Support/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json', type: 'global' },
+  ]
+  osSpecificPaths['intellij-github-copilot'] = [
+    { filePath: '~/.config/github-copilot/intellij/mcp.json', type: 'global' },
   ]
 }
 
@@ -130,6 +137,11 @@ export class MCPFiles {
       name: 'roo',
       friendlyName: 'Roo',
       paths: osSpecificPaths['roo']
+    },
+    'intellij-github-copilot': {
+      name: 'intellij-github-copilot',
+      friendlyName: 'IntelliJ GitHub Copilot',
+      paths: osSpecificPaths['intellij-github-copilot']
     }
   }
 
