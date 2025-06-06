@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.5.0
+
+### Minor Changes
+
+- e7faa78: Expanded MCP clients detection for Windsurf, Cline, Roo, VS Code and bug fix to prevent duplicate file detection
+
 ## 1.4.0
 
 ### Minor Changes
