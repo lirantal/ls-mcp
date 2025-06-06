@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.6.0
+
+### Minor Changes
+
+- a8fed5a: Print server locality (local vs remote)
+
 ## 1.5.1
 
 ### Patch Changes
