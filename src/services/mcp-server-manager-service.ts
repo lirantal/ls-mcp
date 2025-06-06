@@ -7,6 +7,7 @@ interface MCPServerConfig {
   command: string
   args?: string[]
   transport?: 'stdio' | 'sse'
+  url?: string
   env?: Record<string, string>
 }
 
@@ -24,6 +25,7 @@ export class MCPServerManagerService {
   private command: string
   private args: string[]
   private transport?: 'stdio' | 'sse'
+  private source?: 'local' | 'remote'
   private env?: Record<string, string>
   private running: boolean = false
 
@@ -32,6 +34,11 @@ export class MCPServerManagerService {
     this.command = serverConfig.command
     this.args = serverConfig.args || []
     this.transport = serverConfig.transport || 'stdio'
+    if (serverConfig.url) {
+      this.source = 'remote'
+    } else {
+      this.source = 'local'
+    }
     this.env = serverConfig.env || {}
   }
 
@@ -47,8 +54,12 @@ export class MCPServerManagerService {
     return this.args
   }
 
-  getTransport (): 'stdio' | 'sse' | undefined {
+  getTransport (): 'stdio' | 'sse' | 'http' | undefined {
     return this.transport
+  }
+
+  getSource (): 'local' | 'remote' | undefined {
+    return this.source
   }
 
   getEnv (): Record<string, string> | undefined {

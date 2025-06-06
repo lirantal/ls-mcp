@@ -8,7 +8,8 @@ interface MCPServerInfo {
   name: string
   command: string
   args?: string[]
-  transport?: 'stdio' | 'sse',
+  transport?: 'stdio' | 'sse' | 'http',
+  source?: 'local' | 'remote'
   env?: Record<string, string>
   status?: 'running' | 'stopped'
 }
@@ -188,6 +189,7 @@ export class MCPFiles {
               name: serverName,
               command: serverConfigRaw.command || '',
               args: serverConfigRaw.args,
+              url: serverConfigRaw.url,
               transport: serverConfigRaw.transport,
               env: serverConfigRaw.env
             }
@@ -205,6 +207,7 @@ export class MCPFiles {
               name: MCPServerManager.getName(),
               command: MCPServerManager.getCmd(),
               args: MCPServerManager.getArgs(),
+              source: MCPServerManager.getSource(),
               transport: MCPServerManager.getTransport(),
               env: MCPServerManager.getEnv(),
               status: mcpServerProcess ? 'running' : 'stopped'
