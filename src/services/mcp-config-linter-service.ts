@@ -1,19 +1,50 @@
 import fs from 'node:fs/promises'
+import { parse } from 'jsonc-parser'
 
 export class MCPConfigLinterService {
   private filePath: string
   private fileContents: string | null = null
+  private parsed: boolean = false
+  private valid: boolean = false
+  private fileContentsData: any | null = null
 
   constructor (filePath: string) {
     this.filePath = filePath
   }
 
-  async isValidSyntax (): Promise<boolean> {
+  async parseFile (): Promise<void> {
+    if (this.parsed) {
+      return
+    }
+    this.parsed = true
+
+    const fileContent = await this.getFileContent()
+
     // @TODO this should also support YAML files and other formats
     try {
-      const fileContent = await this.getFileContent()
-      JSON.parse(fileContent)
-      return true
+      this.fileContentsData = JSON.parse(fileContent)
+      if (typeof this.fileContentsData === 'object') {
+        this.valid = true
+        return
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    try {
+      this.fileContentsData = parse(fileContent)
+      if (typeof this.fileContentsData === 'object') {
+        this.valid = true
+      }
+    } catch (error) {
+      // ignore
+    }
+  }
+
+  async isValidSyntax (): Promise<boolean> {
+    try {
+      await this.parseFile()
+      return this.valid
     } catch (error) {
       return false
     }
@@ -25,25 +56,21 @@ export class MCPConfigLinterService {
   }
 
   async getMCPServers (): Promise<Record<string, object>> {
-    const fileContentRaw = await this.getFileContent()
-
-    // @TODO parse this file that may have comments inside it
-    // can use comment-json npm package or similar
-    const fileContentsData = JSON.parse(fileContentRaw)
+    await this.parseFile()
 
     // VS Code uses `servers`
-    if (fileContentsData?.servers) {
-      return fileContentsData.servers
+    if (this.fileContentsData?.servers) {
+      return this.fileContentsData.servers
     }
 
     // VS Code global settings.json file uses `mcp` -> `servers`
-    if (fileContentsData?.mcp?.servers) {
-      return fileContentsData.mcp.servers
+    if (this.fileContentsData?.mcp?.servers) {
+      return this.fileContentsData.mcp.servers
     }
 
     // Claude and Cursor use the `mcpServers` key
-    if (fileContentsData?.mcpServers) {
-      return fileContentsData.mcpServers
+    if (this.fileContentsData?.mcpServers) {
+      return this.fileContentsData.mcpServers
     }
 
     return {}

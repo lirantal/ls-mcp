@@ -12,6 +12,7 @@ describe('CLI program', () => {
     const mockedMCPFileFixtures = [
       '__tests__/__fixtures__/mcp.json',
       '__tests__/__fixtures__/subdir/mcp2.json',
+      '__tests__/__fixtures__/intellij-empty-with-comment.json',
     ]
 
     const mcpFilesManager = new MCPFiles(mockedMCPFileFixtures)
