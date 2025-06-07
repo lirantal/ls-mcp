@@ -18,6 +18,10 @@
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Responsible Disclosure Policy" /></a>
 </p>
 
+<div align="center">
+  <img src="https://github.com/lirantal/ls-mcp/blob/main/.github/ls-mcp.png?raw=true" alt="ls-mcp logo" width="300px"/>
+</div>
+
 ## Usage: CLI
 
 ```bash
