@@ -19,7 +19,7 @@
 </p>
 
 <div align="center">
-  <img src="https://github.com/lirantal/ls-mcp/blob/main/.github/ls-mcp.png?raw=true" alt="ls-mcp logo"/>
+  <img src="https://github.com/lirantal/ls-mcp/blob/main/.github/ls-mcp-logo.png?raw=true" alt="ls-mcp logo"/>
 </div>
 
 ## Usage: CLI
