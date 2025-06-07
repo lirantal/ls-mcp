@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.6.1
+
+### Patch Changes
+
+- 8f4536c: README update and JSON parsing support for VS Code settings file
+
 ## 1.6.0
 
 ### Minor Changes
