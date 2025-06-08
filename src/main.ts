@@ -9,6 +9,7 @@ interface MCPServerInfo {
   command: string
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http',
+  type?: 'sse' | 'http' | 'stdio'
   source?: 'local' | 'remote'
   env?: Record<string, string>
   status?: 'running' | 'stopped'
@@ -191,6 +192,7 @@ export class MCPFiles {
               args: serverConfigRaw.args,
               url: serverConfigRaw.url,
               transport: serverConfigRaw.transport,
+              type: serverConfigRaw.type,
               env: serverConfigRaw.env
             }
             const MCPServerManager = new MCPServerManagerService(serverConfig)
