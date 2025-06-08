@@ -28,8 +28,8 @@ export class RenderService {
   static printMcpServers (data: any[]) {
     if (data.length === 0) return
 
-    const headers = ['STATUS', 'NAME', 'TRANSPORT']
-    const keys = ['status', 'name', 'transport']
+    const headers = ['STATUS', 'NAME', 'SOURCE', 'TRANSPORT']
+    const keys = ['status', 'name', 'source', 'transport']
     const centerColumns = [0, 2, 3] // STATUS and TRANSPORT column indices
     const leftPadding = '      ' // 6 characters
 

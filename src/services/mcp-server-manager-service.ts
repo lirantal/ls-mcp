@@ -26,7 +26,7 @@ export class MCPServerManagerService {
   private command: string
   private args: string[]
   private transport?: 'stdio' | 'sse' | 'http'
-  private source?: 'local' | 'remote'
+  private source?: string
   private env?: Record<string, string>
   private running: boolean = false
 
@@ -46,9 +46,9 @@ export class MCPServerManagerService {
     }
 
     if (serverConfig.url) {
-      this.transport = 'sse'
+      this.source = serverConfig.url
     } else {
-      this.transport = 'stdio'
+      this.source = this.getBaseCommand(serverConfig.command)
     }
     this.env = serverConfig.env || {}
   }
@@ -69,7 +69,7 @@ export class MCPServerManagerService {
     return this.transport
   }
 
-  getSource (): 'local' | 'remote' | undefined {
+  getSource (): string | undefined {
     return this.source
   }
 

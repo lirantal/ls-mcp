@@ -11,7 +11,7 @@ interface MCPServerInfo {
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http'
   type?: 'sse' | 'http' | 'stdio'
-  source?: 'local' | 'remote'
+  source?: string
   env?: Record<string, string>
   status?: 'running' | 'stopped'
 }
