@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.7.0
+
+### Minor Changes
+
+- 04c616b: Show transport for non-stdio and show command or url source
+
 ## 1.6.1
 
 ### Patch Changes
