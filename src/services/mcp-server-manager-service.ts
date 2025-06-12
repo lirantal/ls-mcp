@@ -220,6 +220,13 @@ export class MCPServerManagerService {
         estimatedProduct: 'cursor'
       }
     }
+
+    if (commandString.includes('visual studio code') || commandString.includes('vscode')) {
+      return {
+        estimatedVendor: 'vscode',
+        estimatedProduct: 'vscode'
+      }
+    }
   }
 
   private isCommandMatch (commandTokens: string[], pid: string, ppid: string): boolean {
