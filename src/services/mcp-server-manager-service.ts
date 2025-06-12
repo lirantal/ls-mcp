@@ -213,6 +213,13 @@ export class MCPServerManagerService {
         estimatedProduct: 'claude-desktop'
       }
     }
+
+    if (commandString.includes('cursor')) {
+      return {
+        estimatedVendor: 'cursor',
+        estimatedProduct: 'cursor'
+      }
+    }
   }
 
   private isCommandMatch (commandTokens: string[], pid: string, ppid: string): boolean {
