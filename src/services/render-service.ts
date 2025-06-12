@@ -35,7 +35,7 @@ export class RenderService {
 
     // Calculate column widths accounting for styled text
     const columnWidths = headers.map((header, index) => {
-      const headerWidth = this.getVisibleLength(ColumnNameComponent(header))
+      const headerWidth = RenderService.getVisibleLength(ColumnNameComponent(header))
       const dataWidth = Math.max(...data.map(row => {
         let text = String(row[keys[index]])
 
@@ -56,14 +56,14 @@ export class RenderService {
           text = MCPServerNameComponent(text)
         }
 
-        return this.getVisibleLength(text)
+        return RenderService.getVisibleLength(text)
       }))
       return Math.max(headerWidth, dataWidth)
     })
 
     // Helper function to center text in a given width
     const centerText = (text: string, width: number): string => {
-      const visibleLength = this.getVisibleLength(text)
+      const visibleLength = RenderService.getVisibleLength(text)
       const padding = width - visibleLength
       const leftPad = Math.floor(padding / 2)
       const rightPad = padding - leftPad
@@ -72,7 +72,7 @@ export class RenderService {
 
     // Helper function to pad text to the right
     const padRight = (text: string, width: number): string => {
-      const visibleLength = this.getVisibleLength(text)
+      const visibleLength = RenderService.getVisibleLength(text)
       const padding = Math.max(0, width - visibleLength)
       return text + ' '.repeat(padding)
     }
@@ -158,7 +158,7 @@ export class RenderService {
     if (Object.keys(groupMetadata).length > 0) {
       const runningCount = groupMetadata.mcpServersRunning || 0
       const totalCount = groupMetadata.mcpServersTotal || 0
-      const metadataRow = this.renderProgressBar(runningCount, totalCount, 'Running')
+      const metadataRow = RenderService.renderProgressBar(runningCount, totalCount, 'Running')
       data.push({ key: 'MCP SERVERS', value: metadataRow })
     }
 
@@ -166,7 +166,7 @@ export class RenderService {
     const columnWidths = headers.map((header, index) => {
       const dataWidth = Math.max(...data.map(row => {
         const columnText = ColumnNameComponent(row[keys[index]])
-        const columnTextLength = this.getVisibleLength(columnText)
+        const columnTextLength = RenderService.getVisibleLength(columnText)
         return columnTextLength
       }))
       return Math.max(header.length, dataWidth)
