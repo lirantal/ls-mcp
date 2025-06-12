@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.8.0
+
+### Minor Changes
+
+- 419bdf1: Improve detection for Cursor and VS Code as parent applications of the MCP Servers
+
 ## 1.7.0
 
 ### Minor Changes
