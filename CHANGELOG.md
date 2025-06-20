@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.8.1
+
+### Patch Changes
+
+- eea5580: feat: support for Claude Code MCP server relative in directory
+
 ## 1.8.0
 
 ### Minor Changes
