@@ -45,16 +45,21 @@ type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
 
 const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
   claude: [],
+  claude_code: [],
   cursor: [],
   vscode: [],
   cline: [],
   windsurf: [],
-  roo: []
+  roo: [],
+  'intellij-github-copilot': []
 }
 
 if (platform() === 'win32') {
   osSpecificPaths['claude'] = [
     { filePath: `${process.env.APPDATA}\\Claude\\claude_desktop_config.json`, type: 'global' }
+  ]
+  osSpecificPaths['claude_code'] = [
+    { filePath: '.mcp.json', type: 'local' }
   ]
   osSpecificPaths['cursor'] = [
     { filePath: `${process.env.HOME}\\.cursor\\mcp.json`, type: 'global' },
@@ -82,6 +87,9 @@ if (platform() === 'win32') {
 } else {
   osSpecificPaths['claude'] = [
     { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
+  ]
+  osSpecificPaths['claude_code'] = [
+    { filePath: '.mcp.json', type: 'local' }
   ]
   osSpecificPaths['cursor'] = [
     { filePath: '~/.cursor/mcp.json', type: 'global' },
@@ -114,6 +122,11 @@ export class MCPFiles {
       name: 'claude-desktop',
       friendlyName: 'Claude Desktop',
       paths: osSpecificPaths['claude']
+    },
+    claude_code: {
+      name: 'claude-code',
+      friendlyName: 'Claude Code',
+      paths: osSpecificPaths['claude_code']
     },
     cursor: {
       name: 'cursor',
