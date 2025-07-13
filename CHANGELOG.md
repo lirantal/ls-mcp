@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.8.2
+
+### Patch Changes
+
+- 1bb0b15: feat: support MCP Servers in Zed IDe
+
 ## 1.8.1
 
 ### Patch Changes
