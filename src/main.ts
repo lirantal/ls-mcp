@@ -84,6 +84,10 @@ if (platform() === 'win32') {
   osSpecificPaths['intellij-github-copilot'] = [
     { filePath: `${process.env.LOCALAPPDATA}\\github-copilot\\intellij\\mcp.json`, type: 'global' },
   ]
+  osSpecificPaths['zed'] = [
+    { filePath: `${process.env.LOCALAPPDATA}\\zed\\settings.json`, type: 'global' },
+    { filePath: '.zed\\settings.json', type: 'local' }
+  ]
 } else {
   osSpecificPaths['claude'] = [
     { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
@@ -113,6 +117,10 @@ if (platform() === 'win32') {
   ]
   osSpecificPaths['intellij-github-copilot'] = [
     { filePath: '~/.config/github-copilot/intellij/mcp.json', type: 'global' },
+  ]
+  osSpecificPaths['zed'] = [
+    { filePath: '~/.config/zed/settings.json', type: 'global' },
+    { filePath: '.zed/settings.json', type: 'local' }
   ]
 }
 
@@ -157,6 +165,11 @@ export class MCPFiles {
       name: 'intellij-github-copilot',
       friendlyName: 'IntelliJ GitHub Copilot',
       paths: osSpecificPaths['intellij-github-copilot']
+    },
+    zed: {
+      name: 'zed',
+      friendlyName: 'Zed',
+      paths: osSpecificPaths['zed']
     }
   }
 
