@@ -73,6 +73,11 @@ export class MCPConfigLinterService {
       return this.fileContentsData.mcpServers
     }
 
+    // Zed uses `context_servers` key
+    if (this.fileContentsData?.context_servers) {
+      return this.fileContentsData.context_servers
+    }
+
     return {}
   }
 
