@@ -51,7 +51,8 @@ const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
   cline: [],
   windsurf: [],
   roo: [],
-  'intellij-github-copilot': []
+  'intellij-github-copilot': [],
+  junie: []
 }
 
 if (platform() === 'win32') {
@@ -83,6 +84,10 @@ if (platform() === 'win32') {
   ]
   osSpecificPaths['intellij-github-copilot'] = [
     { filePath: `${process.env.LOCALAPPDATA}\\github-copilot\\intellij\\mcp.json`, type: 'global' },
+  ]
+  osSpecificPaths['junie'] = [
+    { filePath: `${process.env.HOME}\\.junie\\mcp\\mcp.json`, type: 'global' },
+    { filePath: '.junie\\mcp\\mcp.json', type: 'local' },
   ]
   osSpecificPaths['zed'] = [
     { filePath: `${process.env.LOCALAPPDATA}\\zed\\settings.json`, type: 'global' },
@@ -118,6 +123,11 @@ if (platform() === 'win32') {
   osSpecificPaths['intellij-github-copilot'] = [
     { filePath: '~/.config/github-copilot/intellij/mcp.json', type: 'global' },
   ]
+  osSpecificPaths['junie'] = [
+    { filePath: '~/.junie/mcp/mcp.json', type: 'global' },
+    { filePath: '.junie/mcp/mcp.json', type: 'local' }
+  ]
+
   osSpecificPaths['zed'] = [
     { filePath: '~/.config/zed/settings.json', type: 'global' },
     { filePath: '.zed/settings.json', type: 'local' }
@@ -165,6 +175,11 @@ export class MCPFiles {
       name: 'intellij-github-copilot',
       friendlyName: 'IntelliJ GitHub Copilot',
       paths: osSpecificPaths['intellij-github-copilot']
+    },
+    junie: {
+      name: 'junie',
+      friendlyName: 'IntelliJ Junie',
+      paths: osSpecificPaths['junie']
     },
     zed: {
       name: 'zed',
