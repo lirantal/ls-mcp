@@ -47,8 +47,11 @@ export class MCPServerManagerService {
 
     if (serverConfig.url) {
       this.source = serverConfig.url
+      this.transport = 'http'  // URLs always use http transport
     } else {
-      this.source = this.getBaseCommand(serverConfig.command)
+      // Build the full command with arguments
+      const fullCommand = [serverConfig.command, ...(serverConfig.args || [])].join(' ')
+      this.source = fullCommand
     }
     this.env = serverConfig.env || {}
   }
