@@ -70,6 +70,8 @@ if (platform() === 'win32') {
     { filePath: '.vscode\\mcp.json', type: 'local' },
     { filePath: `${process.env.APPDATA}\\Code\\User\\settings.json`, type: 'global' },
     { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}\\Code\\User\\mcp.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\mcp.json`, type: 'global' }
   ]
   osSpecificPaths['cline'] = [
     { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json`, type: 'global' },
@@ -106,7 +108,9 @@ if (platform() === 'win32') {
   osSpecificPaths['vscode'] = [
     { filePath: '.vscode/mcp.json', type: 'local' },
     { filePath: '~/Library/Application Support/Code/User/settings.json', type: 'global' },
+    { filePath: '~/Library/Application Support/Code/User/mcp.json', type: 'global' },
     { filePath: '~/Library/Application Support/Code - Insiders/User/settings.json', type: 'global' },
+    { filePath: '~/Library/Application Support/Code - Insiders/User/mcp.json', type: 'global' }
   ]
   osSpecificPaths['cline'] = [
     { filePath: '~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json', type: 'global' },
