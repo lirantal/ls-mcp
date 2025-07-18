@@ -126,6 +126,7 @@ const linter = new MCPConfigLinterService(configPath)
 ```
 
 ### 2. Temporary File Testing
+
 Creates temporary files for testing edge cases:
 
 ```typescript
