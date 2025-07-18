@@ -84,6 +84,7 @@ The tests use Node.js's built-in test runner (`node:test`) with the following fe
 ### Unit Tests
 
 Test individual functions and classes in isolation:
+
 - Configuration parsing
 - Server management
 - Rendering services
@@ -91,6 +92,7 @@ Test individual functions and classes in isolation:
 ### Integration Tests
 
 Test how components work together:
+
 - CLI with real file system
 - Service interactions
 - End-to-end workflows
@@ -98,6 +100,7 @@ Test how components work together:
 ### CLI Tests
 
 Test the command-line interface behavior:
+
 - Exit codes
 - Output formatting
 - Error handling
@@ -106,6 +109,7 @@ Test the command-line interface behavior:
 ### Performance Tests
 
 Ensure the tool performs well:
+
 - Startup time benchmarks
 - Memory usage monitoring
 - Large configuration handling
