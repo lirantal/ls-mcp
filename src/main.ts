@@ -63,7 +63,7 @@ if (platform() === 'win32') {
     { filePath: '.mcp.json', type: 'local' }
   ]
   osSpecificPaths['cursor'] = [
-    { filePath: `${process.env.HOME}\\.cursor\\mcp.json`, type: 'global' },
+    { filePath: '~\\.cursor\\mcp.json', type: 'global' },
     { filePath: '.cursor\\mcp.json', type: 'local' }
   ]
   osSpecificPaths['vscode'] = [
@@ -86,8 +86,7 @@ if (platform() === 'win32') {
     { filePath: `${process.env.LOCALAPPDATA}\\github-copilot\\intellij\\mcp.json`, type: 'global' },
   ]
   osSpecificPaths['junie'] = [
-    { filePath: `${process.env.HOME}\\.junie\\mcp\\mcp.json`, type: 'global' },
-    { filePath: '.junie\\mcp\\mcp.json', type: 'local' },
+    { filePath: '~\\.junie\\mcp\\mcp.json', type: 'global' },
   ]
   osSpecificPaths['zed'] = [
     { filePath: `${process.env.LOCALAPPDATA}\\zed\\settings.json`, type: 'global' },
