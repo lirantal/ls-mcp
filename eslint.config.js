@@ -29,6 +29,7 @@ export default [
       'object-curly-spacing': 'off',
       'no-control-regex': 'off',
       'n/hashbang': 'off',
+      'n/no-unsupported-features/node-builtins': 'warn'
     },
     languageOptions: {
       ecmaVersion: 2024,
