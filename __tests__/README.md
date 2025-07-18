@@ -7,6 +7,7 @@ This directory contains comprehensive tests for the `ls-mcp` command-line tool.
 The test suite provides **80.91% statement coverage** and covers the following areas:
 
 ### Core Functionality Tests (`app.test.ts`)
+
 - **MCPFiles Class**: Tests the main class responsible for finding and parsing MCP configuration files
 - **CLI Integration**: Tests the command-line interface behavior
 - **Configuration File Parsing**: Tests parsing of different MCP configuration formats (Claude Desktop, IntelliJ, etc.)
@@ -14,18 +15,21 @@ The test suite provides **80.91% statement coverage** and covers the following a
 ### Service Tests
 
 #### MCPConfigLinterService (`mcp-config-linter-service.test.ts`)
+
 - JSON syntax validation (including JSONC with comments)
 - MCP server configuration parsing
 - Error handling for invalid/missing files
 - Server counting functionality
 
 #### MCPServerManagerService (`mcp-server-manager-service.test.ts`)
+
 - Server configuration initialization
 - Transport type handling (stdio, sse, http)
 - Source command formatting
 - Process detection capabilities
 
 #### RenderService (`render-service.test.ts`)
+
 - Output formatting for MCP groups
 - Server status display
 - Console output testing with mocks
@@ -33,6 +37,7 @@ The test suite provides **80.91% statement coverage** and covers the following a
 ### Error Handling and Edge Cases
 
 #### Edge Cases (`edge-cases.test.ts`)
+
 - Empty configurations
 - Large JSON files (100+ servers)
 - Corrupted/invalid files
@@ -77,18 +82,21 @@ The tests use Node.js's built-in test runner (`node:test`) with the following fe
 ## Test Categories
 
 ### Unit Tests
+
 Test individual functions and classes in isolation:
 - Configuration parsing
 - Server management
 - Rendering services
 
-### Integration Tests  
+### Integration Tests
+
 Test how components work together:
 - CLI with real file system
 - Service interactions
 - End-to-end workflows
 
 ### CLI Tests
+
 Test the command-line interface behavior:
 - Exit codes
 - Output formatting
@@ -96,6 +104,7 @@ Test the command-line interface behavior:
 - Process management
 
 ### Performance Tests
+
 Ensure the tool performs well:
 - Startup time benchmarks
 - Memory usage monitoring
@@ -104,6 +113,7 @@ Ensure the tool performs well:
 ## Key Testing Patterns
 
 ### 1. Fixture-Based Testing
+
 Uses real configuration files to test parsing behavior:
 
 ```typescript
@@ -121,6 +131,7 @@ await fs.writeFile(invalidJsonPath, 'invalid content')
 ```
 
 ### 3. Process Spawning for CLI Tests
+
 Tests the actual CLI executable:
 
 ```typescript
@@ -130,6 +141,7 @@ const { stdout } = await execFileAsync('node', [cliPath], {
 ```
 
 ### 4. Mock-Based Testing
+
 Uses Node.js test runner mocks for isolation:
 
 ```typescript
