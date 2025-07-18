@@ -51,8 +51,12 @@ export class MCPConfigLinterService {
   }
 
   async countMCPServers (): Promise<number> {
-    const mcpServers = await this.getMCPServers()
-    return Object.keys(mcpServers).length
+    try {
+      const mcpServers = await this.getMCPServers()
+      return Object.keys(mcpServers).length
+    } catch (error) {
+      return 0
+    }
   }
 
   async getMCPServers (): Promise<Record<string, object>> {

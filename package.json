@@ -96,5 +96,22 @@
     "**/*.{js,json}": [
       "npm run lint:fix"
     ]
+  },
+  "c8": {
+    "exclude": [
+      "dist/**",
+      "coverage/**",
+      "__tests__/**",
+      "**/*.test.ts",
+      "**/*.test.js"
+    ],
+    "include": [
+      "src/**"
+    ],
+    "reporter": [
+      "text",
+      "lcov",
+      "html"
+    ]
   }
 }
