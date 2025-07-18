@@ -173,7 +173,7 @@ When adding new features, ensure to add tests for:
 ## Coverage Goals
 
 - **Statements**: > 80% (currently 80.91%)
-- **Branches**: > 70% (currently 73.61%) 
+- **Branches**: > 70% (currently 73.61%)
 - **Functions**: > 90% (currently 90.9%)
 - **Lines**: > 80% (currently 80.91%)
 
