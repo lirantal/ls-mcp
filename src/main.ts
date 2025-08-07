@@ -3,151 +3,15 @@ import { platform } from 'node:os'
 import path from 'node:path'
 import { MCPConfigLinterService } from './services/mcp-config-linter-service.ts'
 import { MCPServerManagerService } from './services/mcp-server-manager-service.ts'
+import { getWindowsPaths, getDarwinPaths } from './utils/os-paths.ts'
+import { type MCPServerInfo, type MCPFilePath, type MCPFilePathGroupsRecord, type MCPFileGroupsResultRecord } from './types.ts'
 
-interface MCPServerInfo {
-  name: string
-  command: string
-  args?: string[]
-  transport?: 'stdio' | 'sse' | 'http',
-  type?: 'sse' | 'http' | 'stdio'
-  source?: string
-  env?: Record<string, string>
-  status?: 'running' | 'stopped'
-}
-
-interface MCPFilePath {
-  filePath: string
-  type: 'local' | 'global'
-  parsable?: boolean
-  servers?: MCPServerInfo[]
-}
-
-interface MCPFileGroups {
-  name: string
-  friendlyName: string
-  paths: MCPFilePath[]
-  stats?: {
-    serversCount?: number
-  }
-}
-
-interface MCPFileGroupsResult {
-  name: string
-  friendlyName: string
-  paths: MCPFilePath[]
-  stats: {
-    serversCount?: number
-  }
-}
-
-type MCPFilePathGroupsRecord = Record<string, MCPFileGroups>
-type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
-
-const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
-  claude: [],
-  claude_code: [],
-  cursor: [],
-  vscode: [],
-  cline: [],
-  windsurf: [],
-  roo: [],
-  'intellij-github-copilot': [],
-  junie: [],
-  gemini: []
-}
-
-const appData = process.env.APPDATA || ''
-const localAppData = process.env.LOCALAPPDATA || ''
-const homeDir = process.env.HOME || ''
+let osSpecificPaths: { [key: string]: MCPFilePath[] } = {}
 
 if (platform() === 'win32') {
-  osSpecificPaths['claude'] = [
-    { filePath: path.join(appData, 'Claude', 'claude_desktop_config.json'), type: 'global' }
-  ]
-  osSpecificPaths['claude_code'] = [
-    { filePath: '.mcp.json', type: 'local' }
-  ]
-  osSpecificPaths['cursor'] = [
-    { filePath: path.join(homeDir, '.cursor', 'mcp.json'), type: 'global' },
-    { filePath: path.join('.cursor', 'mcp.json'), type: 'local' }
-  ]
-  osSpecificPaths['vscode'] = [
-    { filePath: path.join('.vscode', 'mcp.json'), type: 'local' },
-    { filePath: path.join(appData, 'Code', 'User', 'settings.json'), type: 'global' },
-    { filePath: path.join(appData, 'Code - Insiders', 'User', 'settings.json'), type: 'global' },
-    { filePath: path.join(appData, 'Code', 'User', 'mcp.json'), type: 'global' },
-    { filePath: path.join(appData, 'Code - Insiders', 'User', 'mcp.json'), type: 'global' }
-  ]
-  osSpecificPaths['cline'] = [
-    { filePath: path.join(appData, 'Code', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-    { filePath: path.join(appData, 'Code - Insiders', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' }
-  ]
-  osSpecificPaths['windsurf'] = [
-    { filePath: path.join('.codeium', 'windsurf', 'mcp_config.json'), type: 'local' },
-  ]
-  osSpecificPaths['roo'] = [
-    { filePath: path.join(appData, 'Code', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-    { filePath: path.join(appData, 'Code - Insiders', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-  ]
-  osSpecificPaths['intellij-github-copilot'] = [
-    { filePath: path.join(localAppData, 'github-copilot', 'intellij', 'mcp.json'), type: 'global' },
-  ]
-  osSpecificPaths['junie'] = [
-    { filePath: path.join(homeDir, '.junie', 'mcp', 'mcp.json'), type: 'global' },
-  ]
-  osSpecificPaths['zed'] = [
-    { filePath: path.join(localAppData, 'zed', 'settings.json'), type: 'global' },
-    { filePath: path.join('.zed', 'settings.json'), type: 'local' }
-  ]
-  osSpecificPaths['gemini'] = [
-    { filePath: path.join(homeDir, '.gemini', 'settings.json'), type: 'global' },
-    { filePath: path.join('.gemini', 'settings.json'), type: 'local' }
-  ]
+  osSpecificPaths = getWindowsPaths()
 } else {
-  osSpecificPaths['claude'] = [
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'), type: 'global' }
-  ]
-  osSpecificPaths['claude_code'] = [
-    { filePath: '.mcp.json', type: 'local' }
-  ]
-  osSpecificPaths['cursor'] = [
-    { filePath: path.join(homeDir, '.cursor', 'mcp.json'), type: 'global' },
-    { filePath: path.join('.cursor', 'mcp.json'), type: 'local' }
-  ]
-  osSpecificPaths['vscode'] = [
-    { filePath: path.join('.vscode', 'mcp.json'), type: 'local' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code', 'User', 'settings.json'), type: 'global' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code', 'User', 'mcp.json'), type: 'global' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code - Insiders', 'User', 'settings.json'), type: 'global' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code - Insiders', 'User', 'mcp.json'), type: 'global' }
-  ]
-  osSpecificPaths['cline'] = [
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code - Insiders', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' }
-  ]
-  osSpecificPaths['windsurf'] = [
-    { filePath: path.join('.codeium', 'windsurf', 'mcp_config.json'), type: 'local' },
-  ]
-  osSpecificPaths['roo'] = [
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-    { filePath: path.join(homeDir, 'Library', 'Application Support', 'Code - Insiders', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' },
-  ]
-  osSpecificPaths['intellij-github-copilot'] = [
-    { filePath: path.join(homeDir, '.config', 'github-copilot', 'intellij', 'mcp.json'), type: 'global' },
-  ]
-  osSpecificPaths['junie'] = [
-    { filePath: path.join(homeDir, '.junie', 'mcp', 'mcp.json'), type: 'global' },
-    { filePath: path.join('.junie', 'mcp', 'mcp.json'), type: 'local' }
-  ]
-
-  osSpecificPaths['zed'] = [
-    { filePath: path.join(homeDir, '.config', 'zed', 'settings.json'), type: 'global' },
-    { filePath: path.join('.zed', 'settings.json'), type: 'local' }
-  ]
-  osSpecificPaths['gemini'] = [
-    { filePath: path.join(homeDir, '.gemini', 'settings.json'), type: 'global' },
-    { filePath: path.join('.gemini', 'settings.json'), type: 'local' }
-  ]
+  osSpecificPaths = getDarwinPaths()
 }
 
 export class MCPFiles {
@@ -228,7 +92,7 @@ export class MCPFiles {
       const uniqueFilePaths = new Set<string>()
 
       for (const filePathData of clientsGroup.paths) {
-        const resolvedPath: string = filePathData.filePath.replace('~', homeDir)
+        const resolvedPath: string = filePathData.filePath.replace('~', process.env.HOME || '')
         const absolutePath: string = path.resolve(resolvedPath)
         if (uniqueFilePaths.has(absolutePath)) {
           continue
