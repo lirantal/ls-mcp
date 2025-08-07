@@ -3,9 +3,9 @@ import neostandard, { resolveIgnoresFromGitignore, plugins } from 'neostandard'
 
 export default [
   ...neostandard({
-    ignores: resolveIgnoresFromGitignore(),
+    ignores: ['__tests__/**/*.ts', ...resolveIgnoresFromGitignore()],
     ts: true,   // Enable TypeScript support,
-    filesTs: ['src/**/*.ts', '__tests__/**/*.ts']
+    filesTs: ['src/**/*.ts']
   }),
   plugins.n.configs['flat/recommended-script'],
   pluginSecurity.configs.recommended,
