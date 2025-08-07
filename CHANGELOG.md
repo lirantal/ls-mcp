@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.9.0
+
+### Minor Changes
+
+- 9d90487: feat: intellij support, mcp server defs, deps update and env variables update
+
 ## 1.8.2
 
 ### Patch Changes
