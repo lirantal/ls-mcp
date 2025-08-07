@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.9.1
+
+### Patch Changes
+
+- 1c07a39: feat: path lookup refactors
+
 ## 1.9.0
 
 ### Minor Changes
