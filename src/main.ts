@@ -52,7 +52,8 @@ const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
   windsurf: [],
   roo: [],
   'intellij-github-copilot': [],
-  junie: []
+  junie: [],
+  gemini: []
 }
 
 if (platform() === 'win32') {
@@ -94,6 +95,10 @@ if (platform() === 'win32') {
     { filePath: `${process.env.LOCALAPPDATA}\\zed\\settings.json`, type: 'global' },
     { filePath: '.zed\\settings.json', type: 'local' }
   ]
+  osSpecificPaths['gemini'] = [
+    { filePath: '~\.gemini\settings.json', type: 'global' },
+    { filePath: '.gemini\settings.json', type: 'local' }
+  ]
 } else {
   osSpecificPaths['claude'] = [
     { filePath: '~/Library/Application Support/Claude/claude_desktop_config.json', type: 'global' }
@@ -134,6 +139,10 @@ if (platform() === 'win32') {
   osSpecificPaths['zed'] = [
     { filePath: '~/.config/zed/settings.json', type: 'global' },
     { filePath: '.zed/settings.json', type: 'local' }
+  ]
+  osSpecificPaths['gemini'] = [
+    { filePath: '~/.gemini/settings.json', type: 'global' },
+    { filePath: '.gemini/settings.json', type: 'local' }
   ]
 }
 
@@ -188,6 +197,11 @@ export class MCPFiles {
       name: 'zed',
       friendlyName: 'Zed',
       paths: osSpecificPaths['zed']
+    },
+    gemini: {
+      name: 'gemini-cli',
+      friendlyName: 'Gemini CLI',
+      paths: osSpecificPaths.gemini
     }
   }
 
