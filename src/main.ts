@@ -58,46 +58,46 @@ const osSpecificPaths: { [key: string]: MCPFilePath[] } = {
 
 if (platform() === 'win32') {
   osSpecificPaths['claude'] = [
-    { filePath: `${process.env.APPDATA}\\Claude\\claude_desktop_config.json`, type: 'global' }
+    { filePath: `${process.env.APPDATA}/Claude/claude_desktop_config.json`, type: 'global' }
   ]
   osSpecificPaths['claude_code'] = [
     { filePath: '.mcp.json', type: 'local' }
   ]
   osSpecificPaths['cursor'] = [
-    { filePath: '~\\.cursor\\mcp.json', type: 'global' },
-    { filePath: '.cursor\\mcp.json', type: 'local' }
+    { filePath: '~/.cursor/mcp.json', type: 'global' },
+    { filePath: '.cursor/mcp.json', type: 'local' }
   ]
   osSpecificPaths['vscode'] = [
-    { filePath: '.vscode\\mcp.json', type: 'local' },
-    { filePath: `${process.env.APPDATA}\\Code\\User\\settings.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\settings.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code\\User\\mcp.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\mcp.json`, type: 'global' }
+    { filePath: '.vscode/mcp.json', type: 'local' },
+    { filePath: `${process.env.APPDATA}/Code/User/settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code - Insiders/User/settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code/User/mcp.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code - Insiders/User/mcp.json`, type: 'global' }
   ]
   osSpecificPaths['cline'] = [
-    { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\saoudrizwan.claude-dev\\settings\\cline_mcp_settings.json`, type: 'global' }
+    { filePath: `${process.env.APPDATA}/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code - Insiders/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`, type: 'global' }
   ]
   osSpecificPaths['windsurf'] = [
-    { filePath: '.codeium\\windsurf\\mcp_config.json', type: 'local' },
+    { filePath: '.codeium/windsurf/mcp_config.json', type: 'local' },
   ]
   osSpecificPaths['roo'] = [
-    { filePath: `${process.env.APPDATA}\\Code\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },
-    { filePath: `${process.env.APPDATA}\\Code - Insiders\\User\\globalStorage\\rooveterinaryinc.roo-cline\\settings\\cline_mcp_settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`, type: 'global' },
+    { filePath: `${process.env.APPDATA}/Code - Insiders/User/globalStorage/rooveterinaryinc.roo-cline/settings/cline_mcp_settings.json`, type: 'global' },
   ]
   osSpecificPaths['intellij-github-copilot'] = [
-    { filePath: `${process.env.LOCALAPPDATA}\\github-copilot\\intellij\\mcp.json`, type: 'global' },
+    { filePath: `${process.env.LOCALAPPDATA}/github-copilot/intellij/mcp.json`, type: 'global' },
   ]
   osSpecificPaths['junie'] = [
-    { filePath: '~\\.junie\\mcp\\mcp.json', type: 'global' },
+    { filePath: '~/.junie/mcp/mcp.json', type: 'global' },
   ]
   osSpecificPaths['zed'] = [
-    { filePath: `${process.env.LOCALAPPDATA}\\zed\\settings.json`, type: 'global' },
-    { filePath: '.zed\\settings.json', type: 'local' }
+    { filePath: `${process.env.LOCALAPPDATA}/zed/settings.json`, type: 'global' },
+    { filePath: '.zed/settings.json', type: 'local' }
   ]
   osSpecificPaths['gemini'] = [
-    { filePath: '~\.gemini\settings.json', type: 'global' },
-    { filePath: '.gemini\settings.json', type: 'local' }
+    { filePath: '~/.gemini/settings.json', type: 'global' },
+    { filePath: '.gemini/settings.json', type: 'local' }
   ]
 } else {
   osSpecificPaths['claude'] = [
