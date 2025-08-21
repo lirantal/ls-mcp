@@ -9,7 +9,7 @@ export default function CredentialWarningComponent (credentials: CredentialAnaly
   const { riskLevel, credentialVars } = credentials
 
   // Color coding based on risk level
-  let riskColor: 'red' | 'yellow' | 'blue' | 'white'
+  let riskColor: 'red' | 'blue'
   let riskIcon: string
 
   switch (riskLevel) {
@@ -17,17 +17,13 @@ export default function CredentialWarningComponent (credentials: CredentialAnaly
       riskColor = 'red'
       riskIcon = '🔴'
       break
-    case 'medium':
-      riskColor = 'yellow'
-      riskIcon = '🟡'
-      break
     case 'low':
       riskColor = 'blue'
       riskIcon = '🔵'
       break
     default:
-      riskColor = 'white'
-      riskIcon = '⚪'
+      riskColor = 'blue'
+      riskIcon = '🔵'
   }
 
   const riskText = styleText([riskColor], `${riskIcon} ${riskLevel.toUpperCase()} RISK`)

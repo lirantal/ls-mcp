@@ -38,6 +38,12 @@ describe('Credential Detection Integration', () => {
     const credentialNames = openaiServer.credentials?.credentialVars.map(cv => cv.name) || []
     assert.ok(credentialNames.includes('OPENAI_API_KEY'))
     assert.ok(credentialNames.includes('OPENAI_ORG_ID'))
+    
+    // Check that OPENAI_API_KEY is high risk and OPENAI_ORG_ID is low risk
+    const apiKeyVar = openaiServer.credentials?.credentialVars.find(cv => cv.name === 'OPENAI_API_KEY')
+    const orgIdVar = openaiServer.credentials?.credentialVars.find(cv => cv.name === 'OPENAI_ORG_ID')
+    assert.strictEqual(apiKeyVar?.riskLevel, 'high')
+    assert.strictEqual(orgIdVar?.riskLevel, 'low')
   })
 
   it('should handle MCP servers without environment variables', async () => {

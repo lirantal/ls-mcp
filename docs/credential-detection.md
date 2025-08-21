@@ -12,19 +12,26 @@ The feature detects environment variables in MCP server configurations that migh
 
 ### 1. Credential Detection Service (`src/services/credential-detection-service.ts`)
 
-- **Pattern Matching**: Uses regex patterns to identify potential credential environment variables
-- **Risk Assessment**: Categorizes credentials into low, medium, and high risk levels
+- **Pattern Matching**: Uses regex patterns organized by risk level to identify potential credential environment variables
+- **Risk Assessment**: Categorizes credentials into high and low risk levels for simplicity
 - **Value Masking**: Masks sensitive values for display (shows first and last character with asterisks)
 - **Comprehensive Coverage**: Detects API keys, tokens, passwords, organization IDs, and service-specific patterns
 
-#### Supported Credential Patterns
+#### Pattern Organization
 
-- **API Keys**: `API_KEY`, `api_key`, `API-KEY`, `OPENAI_API_KEY`, `FIRECRAWL_API_KEY`
-- **Tokens**: `API_TOKEN`, `ACCESS_TOKEN`, `AUTH_TOKEN`, `GITHUB_TOKEN`
-- **Passwords**: `PASSWORD`, `DB_PASSWORD`, `REDIS_PASSWORD`
-- **Organization IDs**: `ORG_ID`, `OPENAI_ORG_ID`
-- **Cloud Services**: AWS, Azure, GCP credentials
-- **Database**: PostgreSQL, MySQL, Redis credentials
+The credential patterns are organized by risk level for easier maintenance:
+
+**High Risk Patterns** (API keys, tokens, passwords, secrets):
+- `API_KEY`, `api_key`, `API-KEY`, `OPENAI_API_KEY`, `FIRECRAWL_API_KEY`
+- `API_TOKEN`, `ACCESS_TOKEN`, `AUTH_TOKEN`, `GITHUB_TOKEN`
+- `PASSWORD`, `DB_PASSWORD`, `REDIS_PASSWORD`
+- `CREDENTIAL`, `CREDS`
+- Database passwords: `POSTGRES_PASSWORD`, `MYSQL_PASSWORD`
+- Cloud services: AWS, Azure, GCP credentials
+
+**Low Risk Patterns** (Organization IDs, account identifiers):
+- `ORG_ID`, `ORGANIZATION_ID`, `ACCOUNT_ID`, `USER_ID`
+- `OPENAI_ORG_ID`
 
 ### 2. Type System Updates (`src/types/mcp-config-service.types.ts`)
 
@@ -47,9 +54,8 @@ The feature detects environment variables in MCP server configurations that migh
 ### 5. Credential Warning Component (`src/components/credential-warning.ts`)
 
 - **Risk Level Indicators**: 
-  - 🔴 HIGH RISK (red)
-  - 🟡 MEDIUM RISK (yellow) 
-  - 🔵 LOW RISK (blue)
+  - 🔴 HIGH RISK (red) - API keys, tokens, passwords, secrets
+  - 🔵 LOW RISK (blue) - Organization IDs, account identifiers
 - **Summary Display**: Shows count of credential variables and their names
 - **Value Masking**: Displays masked values for security
 
@@ -82,9 +88,28 @@ STATUS  NAME           SOURCE  TRANSPORT  CREDENTIALS
 ## Security Features
 
 1. **Value Masking**: Sensitive values are masked to prevent exposure
-2. **Risk Assessment**: Credentials are categorized by risk level
-3. **Pattern Recognition**: Uses comprehensive patterns to detect various credential types
+2. **Risk Assessment**: Credentials are categorized by risk level (high/low)
+3. **Pattern Recognition**: Uses comprehensive patterns organized by risk level
 4. **Non-intrusive**: Only displays warnings, doesn't block or modify configurations
+
+## Pattern Maintenance
+
+The new structure makes it easy to add or modify credential patterns:
+
+```typescript
+private static readonly CREDENTIAL_PATTERNS = {
+  high: [
+    // Add new high-risk patterns here
+    /new[_-]?secret[_-]?pattern/i,
+  ],
+  low: [
+    // Add new low-risk patterns here
+    /new[_-]?id[_-]?pattern/i,
+  ]
+}
+```
+
+This organization eliminates the need to modify conditional logic when adding new patterns - simply add them to the appropriate risk level array.
 
 ## Testing
 
@@ -96,9 +121,10 @@ STATUS  NAME           SOURCE  TRANSPORT  CREDENTIALS
 ## Benefits
 
 1. **Security Awareness**: Users can identify potential credential exposure in their MCP configurations
-2. **Risk Assessment**: Clear indication of credential risk levels
+2. **Risk Assessment**: Clear indication of credential risk levels (high/low)
 3. **Compliance**: Helps with security audits and compliance requirements
 4. **Developer Experience**: Non-intrusive warnings that don't break existing workflows
+5. **Maintainability**: Easy to add new credential patterns without code changes
 
 ## Future Enhancements
 
@@ -122,3 +148,5 @@ STATUS  NAME           SOURCE  TRANSPORT  CREDENTIALS
 ## Conclusion
 
 The credential detection feature has been successfully implemented and provides a comprehensive solution for identifying potential credential exposure in MCP server configurations. The feature is secure, non-intrusive, and provides clear visual indicators of credential risks while maintaining the existing functionality of the ls-mcp tool.
+
+The new pattern organization structure makes the code more maintainable and easier to extend with new credential patterns in the future.

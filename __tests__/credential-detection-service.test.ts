@@ -93,18 +93,21 @@ describe('CredentialDetectionService', () => {
     it('should assess risk levels correctly', () => {
       const env = {
         'API_KEY': 'secret', // High risk
-        'AUTH_TOKEN': 'token', // Medium risk
+        'AUTH_TOKEN': 'token', // High risk (was medium, now high)
+        'ORG_ID': 'org123', // Low risk
         'DEBUG_MODE': 'true' // Not a credential
       }
       
       const result = CredentialDetectionService.analyzeEnvironmentVariables(env)
-      assert.strictEqual(result.credentialVars.length, 2)
+      assert.strictEqual(result.credentialVars.length, 3)
       
       const apiKeyVar = result.credentialVars.find(v => v.name === 'API_KEY')
       const authTokenVar = result.credentialVars.find(v => v.name === 'AUTH_TOKEN')
+      const orgIdVar = result.credentialVars.find(v => v.name === 'ORG_ID')
       
       assert.strictEqual(apiKeyVar?.riskLevel, 'high')
-      assert.strictEqual(authTokenVar?.riskLevel, 'medium')
+      assert.strictEqual(authTokenVar?.riskLevel, 'high') // Now high instead of medium
+      assert.strictEqual(orgIdVar?.riskLevel, 'low')
       assert.strictEqual(result.riskLevel, 'high') // Overall risk should be high
     })
   })

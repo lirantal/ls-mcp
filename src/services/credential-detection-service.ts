@@ -1,65 +1,71 @@
 export class CredentialDetectionService {
   /**
-   * Common patterns for environment variable names that might contain credentials
+   * Credential patterns grouped by risk level for easier maintenance
    */
-  private static readonly CREDENTIAL_PATTERNS = [
-    // API Keys
-    /api[_-]?key/i,
-    /api[_-]?token/i,
-    /access[_-]?token/i,
-    /secret[_-]?key/i,
-    /private[_-]?key/i,
+  private static readonly CREDENTIAL_PATTERNS = {
+    high: [
+      // API Keys and Tokens
+      /api[_-]?key/i,
+      /api[_-]?token/i,
+      /access[_-]?token/i,
+      /secret[_-]?key/i,
+      /private[_-]?key/i,
 
-    // Authentication
-    /auth[_-]?token/i,
-    /bearer[_-]?token/i,
-    /jwt[_-]?token/i,
-    /oauth[_-]?token/i,
+      // Authentication Tokens
+      /auth[_-]?token/i,
+      /bearer[_-]?token/i,
+      /jwt[_-]?token/i,
+      /oauth[_-]?token/i,
 
-    // Passwords
-    /password/i,
-    /passwd/i,
-    /pwd/i,
+      // Passwords
+      /password/i,
+      /passwd/i,
+      /pwd/i,
 
-    // Credentials
-    /credential/i,
-    /creds/i,
+      // Credentials
+      /credential/i,
+      /creds/i,
 
-    // Organization and Account IDs
-    /org[_-]?id/i,
-    /organization[_-]?id/i,
-    /account[_-]?id/i,
-    /user[_-]?id/i,
+      // Specific service patterns
+      /openai[_-]?api[_-]?key/i,
+      /anthropic[_-]?api[_-]?key/i,
+      /firecrawl[_-]?api[_-]?key/i,
+      /github[_-]?token/i,
+      /gitlab[_-]?token/i,
+      /bitbucket[_-]?token/i,
 
-    // Specific service patterns
-    /openai[_-]?api[_-]?key/i,
-    /openai[_-]?org[_-]?id/i,
-    /anthropic[_-]?api[_-]?key/i,
-    /firecrawl[_-]?api[_-]?key/i,
-    /github[_-]?token/i,
-    /gitlab[_-]?token/i,
-    /bitbucket[_-]?token/i,
+      // Database passwords
+      /db[_-]?password/i,
+      /database[_-]?password/i,
+      /redis[_-]?password/i,
+      /postgres[_-]?password/i,
+      /mysql[_-]?password/i,
 
-    // Database
-    /db[_-]?password/i,
-    /database[_-]?password/i,
-    /redis[_-]?password/i,
-    /postgres[_-]?password/i,
-    /mysql[_-]?password/i,
-
-    // Cloud services
-    /aws[_-]?secret[_-]?access[_-]?key/i,
-    /aws[_-]?access[_-]?key[_-]?id/i,
-    /azure[_-]?key/i,
-    /gcp[_-]?key/i,
-    /google[_-]?api[_-]?key/i
-  ]
+      // Cloud services
+      /aws[_-]?secret[_-]?access[_-]?key/i,
+      /aws[_-]?access[_-]?key[_-]?id/i,
+      /azure[_-]?key/i,
+      /gcp[_-]?key/i,
+      /google[_-]?api[_-]?key/i,
+      /gemini[_-]?api[_-]?key/i,
+      /claude[_-]?api[_-]?key/i
+    ],
+    low: [
+      // Organization and Account IDs
+      /org[_-]?id/i,
+      /organization[_-]?id/i,
+      /account[_-]?id/i,
+      /user[_-]?id/i,
+      /openai[_-]?org[_-]?id/i
+    ]
+  }
 
   /**
    * Check if an environment variable name suggests it might contain credentials
    */
   static isPotentialCredential (envVarName: string): boolean {
-    return this.CREDENTIAL_PATTERNS.some(pattern => pattern.test(envVarName))
+    return this.CREDENTIAL_PATTERNS.high.some(pattern => pattern.test(envVarName)) ||
+           this.CREDENTIAL_PATTERNS.low.some(pattern => pattern.test(envVarName))
   }
 
   /**
@@ -81,7 +87,7 @@ export class CredentialDetectionService {
         credentialVars.push({
           name,
           value: this.maskValue(value),
-          riskLevel: this.assessRiskLevel(name, value)
+          riskLevel: this.assessRiskLevel(name)
         })
       }
     }
@@ -114,38 +120,33 @@ export class CredentialDetectionService {
   /**
    * Assess risk level for a specific credential variable
    */
-  private static assessRiskLevel (name: string, value: string): 'low' | 'medium' | 'high' {
-    // High risk: API keys, tokens, passwords
-    if (/api[_-]?key|api[_-]?token|access[_-]?token|password|secret[_-]?key/i.test(name)) {
+  private static assessRiskLevel (name: string): 'low' | 'high' {
+    // Check if it matches any high-risk patterns
+    if (this.CREDENTIAL_PATTERNS.high.some(pattern => pattern.test(name))) {
       return 'high'
     }
 
-    // Medium risk: authentication tokens, OAuth
-    if (/auth[_-]?token|oauth[_-]?token|jwt[_-]?token/i.test(name)) {
-      return 'medium'
+    // If it matches low-risk patterns, it's low risk
+    if (this.CREDENTIAL_PATTERNS.low.some(pattern => pattern.test(name))) {
+      return 'low'
     }
 
-    // Low risk: other credential-like variables
-    return 'low'
+    // Default to high risk for any other credential-like variables
+    return 'high'
   }
 
   /**
    * Calculate overall risk level based on all credential variables
    */
-  private static calculateOverallRiskLevel (credentialVars: CredentialVariable[]): 'none' | 'low' | 'medium' | 'high' {
+  private static calculateOverallRiskLevel (credentialVars: CredentialVariable[]): 'none' | 'low' | 'high' {
     if (credentialVars.length === 0) {
       return 'none'
     }
 
     const hasHighRisk = credentialVars.some(v => v.riskLevel === 'high')
-    const hasMediumRisk = credentialVars.some(v => v.riskLevel === 'medium')
 
     if (hasHighRisk) {
       return 'high'
-    }
-
-    if (hasMediumRisk) {
-      return 'medium'
     }
 
     return 'low'
@@ -155,11 +156,11 @@ export class CredentialDetectionService {
 export interface CredentialVariable {
   name: string
   value: string
-  riskLevel: 'low' | 'medium' | 'high'
+  riskLevel: 'low' | 'high'
 }
 
 export interface CredentialAnalysisResult {
   hasCredentials: boolean
   credentialVars: CredentialVariable[]
-  riskLevel: 'none' | 'low' | 'medium' | 'high'
+  riskLevel: 'none' | 'low' | 'high'
 }
