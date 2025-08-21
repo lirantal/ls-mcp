@@ -8,7 +8,6 @@ import {
   type MCPFilePath,
   type MCPServerInfo,
   type MCPAppMetadata,
-  type MCPFilePathGroupsRecord,
   type MCPFileGroupsResultRecord
 } from '../types/mcp-config-service.types.js'
 
