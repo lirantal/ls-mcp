@@ -28,6 +28,18 @@
 npx ls-mcp
 ```
 
+### Debug Mode
+
+To enable verbose debugging output, set the `NODE_DEBUG` environment variable:
+
+```bash
+# Enable debug logging for ls-mcp
+NODE_DEBUG=ls-mcp npx ls-mcp
+
+# Enable all debug logging
+NODE_DEBUG=* npx ls-mcp
+```
+
 ## Contributing
 
 Please consult [CONTRIBUTING](./.github/CONTRIBUTING.md) for guidelines on contributing to this project.

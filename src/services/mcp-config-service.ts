@@ -1,6 +1,7 @@
 import { platform } from 'node:os'
 import path from 'node:path'
 import fs from 'node:fs/promises'
+import util from 'node:util'
 import { MCPPathRegistry } from './mcp-path-registry.js'
 import { MCPConfigParser } from './mcp-config-parser.js'
 import {
@@ -14,10 +15,12 @@ import {
 export class MCPConfigService {
   private pathRegistry: MCPPathRegistry
   private currentOS: string
+  private debug: util.DebugLogger
 
   constructor () {
     this.pathRegistry = new MCPPathRegistry()
     this.currentOS = platform()
+    this.debug = util.debuglog('ls-mcp')
   }
 
   /**
@@ -74,7 +77,7 @@ export class MCPConfigService {
           allServers[appName] = await this.getMCPServersPerApp(appName)
         } catch (error) {
           // Log error but continue with other apps
-          console.debug(`Failed to get servers for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
+          this.debug(`Failed to get servers for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
           allServers[appName] = []
         }
       }
@@ -175,7 +178,7 @@ export class MCPConfigService {
             mcpFilesPathsData[groupName].paths.push(filePathData)
           } catch (error) {
             // File does not exist or is not accessible, continue to next
-            console.debug(`Skipping file ${resolvedPath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+            this.debug(`Skipping file ${resolvedPath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
           }
         }
 
@@ -208,7 +211,7 @@ export class MCPConfigService {
       const configData = await parser.parseConfigFile()
       return await this.convertToMCPServerInfo(configData.servers)
     } catch (error) {
-      console.debug(`Failed to parse config file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      this.debug(`Failed to parse config file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
       return []
     }
   }

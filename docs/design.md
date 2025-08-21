@@ -222,7 +222,7 @@ Status Data → RenderService → Formatted Output → CLI Display
 ### 3. User Communication
 - Clear, actionable error messages
 - Appropriate exit codes for different error types
-- Verbose logging for debugging
+- Verbose logging for debugging via `NODE_DEBUG=ls-mcp` environment variable
 
 ## Testing Strategy
 
@@ -274,6 +274,25 @@ Status Data → RenderService → Formatted Output → CLI Display
 - Efficient process list scanning
 - Caching of process information
 - Timeout handling for slow operations
+
+## Debugging and Logging
+
+### 1. Debug Mode
+- Uses Node.js core `util.debuglog` for conditional logging
+- Debug namespace: `ls-mcp`
+- Enabled via `NODE_DEBUG=ls-mcp` environment variable
+- Provides detailed information about file parsing, server detection, and error handling
+
+### 2. Logging Levels
+- **Normal mode**: Clean output with essential information only
+- **Debug mode**: Verbose logging including file access attempts, parsing results, and error details
+- **Error mode**: Always shows critical errors regardless of debug setting
+
+### 3. Debug Output Examples
+- File parsing failures and reasons
+- Skipped files and access issues
+- Server detection results
+- Configuration validation outcomes
 
 ## Security Considerations
 
