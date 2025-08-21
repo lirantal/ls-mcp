@@ -106,7 +106,7 @@ export class MCPConfigParser {
     for (const [serverName, serverConfig] of Object.entries(servers)) {
       if (serverConfig && typeof serverConfig === 'object') {
         const env = serverConfig.env && typeof serverConfig.env === 'object' ? serverConfig.env : undefined
-        
+
         normalized[serverName] = {
           name: serverName,
           command: serverConfig.command || '',
