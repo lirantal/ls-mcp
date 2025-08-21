@@ -1,0 +1,11 @@
+__tests__
+.git
+.github
+.changeset
+CODE_OF_CONDUCT.md
+CHANGELOG.md
+docs/**
+__template__
+__template__draft_/**
+node_modules
+dist
