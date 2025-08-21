@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "test-server": {
+      "command": "npx",
+      "args": ["-y", "test-mcp-server"],
+      "transport": "stdio"
+    },
+    "another-server": {
+      "command": "uvx",
+      "args": ["another-mcp-server"],
+      "transport": "stdio"
+    }
+  }
+}
