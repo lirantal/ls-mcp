@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-// import { debuglog } from 'node:util'
 import { styleText } from 'node:util'
 import { MCPFiles } from '../main.ts'
 import { RenderService } from '../services/render-service.ts'
@@ -15,9 +14,6 @@ interface MCPServerInfo {
   env?: Record<string, string>
   status?: 'running' | 'stopped'
 }
-
-// @TODO add debug logging
-// const debug = debuglog('ls-mcp')
 
 async function init () {
   // Start the CLI with a new line for better readability
