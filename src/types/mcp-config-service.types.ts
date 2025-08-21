@@ -12,6 +12,7 @@ export interface MCPServerConfig {
   transport?: 'stdio' | 'sse' | 'http'
   type?: 'sse' | 'http' | 'stdio'
   env?: Record<string, string>
+  credentials?: CredentialAnalysisResult
 }
 
 export interface MCPAppMetadata {
@@ -36,6 +37,7 @@ export interface MCPServerInfo {
   source?: string
   env?: Record<string, string>
   status?: 'running' | 'stopped'
+  credentials?: CredentialAnalysisResult
 }
 
 export interface MCPFileGroups {
@@ -57,5 +59,18 @@ export interface MCPFileGroupsResult {
 }
 
 export type MCPFilePathGroupsRecord = Record<string, MCPFileGroups>
-export type MCPFileGroupsResultRecord = Record<string, MCPFileGroupsResult>
+export type MCPFileGroupsResultRecord = Record<string, MCPFileGroups>
 export type MCPAppPathsRecord = Record<string, MCPFilePath[]>
+
+// Credential detection types
+export interface CredentialVariable {
+  name: string
+  value: string
+  riskLevel: 'low' | 'medium' | 'high'
+}
+
+export interface CredentialAnalysisResult {
+  hasCredentials: boolean
+  credentialVars: CredentialVariable[]
+  riskLevel: 'none' | 'low' | 'medium' | 'high'
+}

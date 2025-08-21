@@ -4,6 +4,23 @@
       "command": "uvx",
       "args": ["claude-mcp-server"],
       "transport": "stdio"
+    },
+    "firecrawl-mcp": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "transport": "stdio",
+      "env": {
+        "FIRECRAWL_API_KEY": "12345"
+      }
+    },
+    "openai-mcp": {
+      "command": "npx",
+      "args": ["-y", "openai-mcp"],
+      "transport": "stdio",
+      "env": {
+        "OPENAI_API_KEY": "sk-1234567890abcdef",
+        "OPENAI_ORG_ID": "org-1234567890"
+      }
     }
   }
 }

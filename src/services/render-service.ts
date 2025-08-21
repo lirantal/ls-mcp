@@ -6,6 +6,7 @@ import MCPServerNameComponent from '../components/mcp-server-name.js'
 import MCPServerSourceComponent from '../components/mcp-server-source.js'
 import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
+import CredentialWarningComponent from '../components/credential-warning.js'
 
 interface GroupMetadata {
   mcpServersRunning?: number
@@ -28,8 +29,8 @@ export class RenderService {
   static printMcpServers (data: any[]) {
     if (data.length === 0) return
 
-    const headers = ['STATUS', 'NAME', 'SOURCE', 'TRANSPORT']
-    const keys = ['status', 'name', 'source', 'transport']
+    const headers = ['STATUS', 'NAME', 'SOURCE', 'TRANSPORT', 'CREDENTIALS']
+    const keys = ['status', 'name', 'source', 'transport', 'credentials']
     const centerColumns = [0, 2, 3] // STATUS and TRANSPORT column indices
     const leftPadding = '      ' // 6 characters
 
@@ -54,6 +55,10 @@ export class RenderService {
 
         if (keys[index] === 'name') {
           text = MCPServerNameComponent(text)
+        }
+
+        if (keys[index] === 'credentials') {
+          text = CredentialWarningComponent(row[keys[index]])
         }
 
         return RenderService.getVisibleLength(text)
@@ -117,6 +122,10 @@ export class RenderService {
 
         if (key === 'name') {
           text = MCPServerNameComponent(text)
+        }
+
+        if (key === 'credentials') {
+          text = CredentialWarningComponent(row[key])
         }
 
         // Apply alignment

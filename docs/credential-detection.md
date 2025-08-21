@@ -1,0 +1,124 @@
+# Credential Detection Feature Implementation
+
+## Overview
+
+This document summarizes the implementation of the credential detection feature for MCP server configurations, as requested in [Issue #71](https://github.com/lirantal/ls-mcp/issues/71).
+
+## Feature Description
+
+The feature detects environment variables in MCP server configurations that might contain credentials and displays them in the CLI output with appropriate risk level indicators.
+
+## Implementation Details
+
+### 1. Credential Detection Service (`src/services/credential-detection-service.ts`)
+
+- **Pattern Matching**: Uses regex patterns to identify potential credential environment variables
+- **Risk Assessment**: Categorizes credentials into low, medium, and high risk levels
+- **Value Masking**: Masks sensitive values for display (shows first and last character with asterisks)
+- **Comprehensive Coverage**: Detects API keys, tokens, passwords, organization IDs, and service-specific patterns
+
+#### Supported Credential Patterns
+
+- **API Keys**: `API_KEY`, `api_key`, `API-KEY`, `OPENAI_API_KEY`, `FIRECRAWL_API_KEY`
+- **Tokens**: `API_TOKEN`, `ACCESS_TOKEN`, `AUTH_TOKEN`, `GITHUB_TOKEN`
+- **Passwords**: `PASSWORD`, `DB_PASSWORD`, `REDIS_PASSWORD`
+- **Organization IDs**: `ORG_ID`, `OPENAI_ORG_ID`
+- **Cloud Services**: AWS, Azure, GCP credentials
+- **Database**: PostgreSQL, MySQL, Redis credentials
+
+### 2. Type System Updates (`src/types/mcp-config-service.types.ts`)
+
+- Added `CredentialVariable` interface for individual credential variables
+- Added `CredentialAnalysisResult` interface for credential analysis results
+- Updated `MCPServerConfig` and `MCPServerInfo` interfaces to include credential information
+
+### 3. MCP Config Parser Integration (`src/services/mcp-config-parser.ts`)
+
+- Integrated credential detection during server configuration normalization
+- Automatically analyzes environment variables when parsing MCP server configs
+- Attaches credential analysis results to each server configuration
+
+### 4. Render Service Updates (`src/services/render-service.ts`)
+
+- Added new `CREDENTIALS` column to the MCP servers table
+- Integrated `CredentialWarningComponent` for displaying credential warnings
+- Maintains table formatting and alignment
+
+### 5. Credential Warning Component (`src/components/credential-warning.ts`)
+
+- **Risk Level Indicators**: 
+  - 🔴 HIGH RISK (red)
+  - 🟡 MEDIUM RISK (yellow) 
+  - 🔵 LOW RISK (blue)
+- **Summary Display**: Shows count of credential variables and their names
+- **Value Masking**: Displays masked values for security
+
+## Usage Example
+
+When an MCP server configuration includes environment variables with credentials:
+
+```json
+{
+  "mcpServers": {
+    "firecrawl-mcp": {
+      "command": "npx",
+      "args": ["-y", "firecrawl-mcp"],
+      "transport": "stdio",
+      "env": {
+        "FIRECRAWL_API_KEY": "12345"
+      }
+    }
+  }
+}
+```
+
+The CLI will display:
+
+```
+STATUS  NAME           SOURCE  TRANSPORT  CREDENTIALS
+  ●     firecrawl-mcp  npx     stdio      🔴 HIGH RISK (1 cred vars: FIRECRAWL_API_KEY=1***5)
+```
+
+## Security Features
+
+1. **Value Masking**: Sensitive values are masked to prevent exposure
+2. **Risk Assessment**: Credentials are categorized by risk level
+3. **Pattern Recognition**: Uses comprehensive patterns to detect various credential types
+4. **Non-intrusive**: Only displays warnings, doesn't block or modify configurations
+
+## Testing
+
+- **Unit Tests**: Comprehensive tests for the credential detection service
+- **Integration Tests**: End-to-end tests with MCP config parser
+- **Test Fixtures**: Updated test fixtures to include credential scenarios
+- **Coverage**: All new functionality is thoroughly tested
+
+## Benefits
+
+1. **Security Awareness**: Users can identify potential credential exposure in their MCP configurations
+2. **Risk Assessment**: Clear indication of credential risk levels
+3. **Compliance**: Helps with security audits and compliance requirements
+4. **Developer Experience**: Non-intrusive warnings that don't break existing workflows
+
+## Future Enhancements
+
+1. **Custom Patterns**: Allow users to define custom credential patterns
+2. **Configuration Options**: Configurable risk thresholds and display options
+3. **Export Reports**: Generate credential audit reports
+4. **Integration**: Hook into security scanning tools and CI/CD pipelines
+
+## Files Modified
+
+- `src/services/credential-detection-service.ts` (new)
+- `src/types/mcp-config-service.types.ts`
+- `src/services/mcp-config-parser.ts`
+- `src/services/mcp-config-service.ts`
+- `src/services/render-service.ts`
+- `src/components/credential-warning.ts` (new)
+- `__tests__/credential-detection-service.test.ts` (new)
+- `__tests__/credential-detection-integration.test.ts` (new)
+- `__tests__/__fixtures__/mcp-config-service/claude-mcpServers.json`
+
+## Conclusion
+
+The credential detection feature has been successfully implemented and provides a comprehensive solution for identifying potential credential exposure in MCP server configurations. The feature is secure, non-intrusive, and provides clear visual indicators of credential risks while maintaining the existing functionality of the ls-mcp tool.

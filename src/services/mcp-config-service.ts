@@ -170,7 +170,7 @@ export class MCPConfigService {
 
             if (parsable) {
               const configData = await parser.parseConfigFile()
-              const servers = await this.convertToMCPServerInfo(configData.servers)
+              const servers = await this.convertToMCPServerInfo(configData.servers || {})
               filePathData.servers = servers
               totalServersCount += servers.length
             }
@@ -182,7 +182,9 @@ export class MCPConfigService {
           }
         }
 
-        mcpFilesPathsData[groupName].stats.serversCount = totalServersCount
+        if (mcpFilesPathsData[groupName] && mcpFilesPathsData[groupName].stats) {
+          mcpFilesPathsData[groupName].stats.serversCount = totalServersCount
+        }
       }
 
       return mcpFilesPathsData
@@ -209,7 +211,7 @@ export class MCPConfigService {
     try {
       const parser = this.createParser(filePath)
       const configData = await parser.parseConfigFile()
-      return await this.convertToMCPServerInfo(configData.servers)
+      return await this.convertToMCPServerInfo(configData.servers || {})
     } catch (error) {
       this.debug(`Failed to parse config file ${filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
       return []
@@ -232,7 +234,8 @@ export class MCPConfigService {
           type: serverConfig.type,
           source: serverConfig.command || '',
           env: serverConfig.env,
-          status: 'stopped' // Default status, will be updated by server manager
+          status: 'stopped', // Default status, will be updated by server manager
+          credentials: serverConfig.credentials || undefined
         })
       }
     }
