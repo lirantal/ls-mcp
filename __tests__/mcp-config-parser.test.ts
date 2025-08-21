@@ -28,8 +28,10 @@ describe('MCPConfigParser', () => {
       assert.strictEqual(result.parsed, true)
       assert.strictEqual(result.valid, true)
       assert.ok(result.raw)
-      assert.strictEqual(Object.keys(result.servers).length, 1)
+      assert.strictEqual(Object.keys(result.servers).length, 3)
       assert.ok(result.servers['claude-server'])
+      assert.ok(result.servers['firecrawl-mcp'])
+      assert.ok(result.servers['openai-mcp'])
     })
 
     test('should parse valid JSON file with context_servers key', async () => {
@@ -99,8 +101,10 @@ describe('MCPConfigParser', () => {
       
       const result = await parser.parseConfigFile()
       
-      assert.strictEqual(Object.keys(result.servers).length, 1)
+      assert.strictEqual(Object.keys(result.servers).length, 3)
       assert.ok(result.servers['claude-server'])
+      assert.ok(result.servers['firecrawl-mcp'])
+      assert.ok(result.servers['openai-mcp'])
     })
 
     test('should extract servers from context_servers key', async () => {
@@ -131,7 +135,7 @@ describe('MCPConfigParser', () => {
         name: 'test-server',
         command: 'npx',
         args: ['test-mcp-server'],
-        transport: 'stdio'
+        transport: 'stdio' as const
       }
       
       const isValid = parser.validateServerConfig(validConfig)
@@ -143,8 +147,8 @@ describe('MCPConfigParser', () => {
       const invalidConfig = {
         command: 'npx',
         args: ['test-mcp-server'],
-        transport: 'stdio'
-      }
+        transport: 'stdio' as const
+      } as any
       
       const isValid = parser.validateServerConfig(invalidConfig)
       assert.strictEqual(isValid, false)
@@ -155,8 +159,8 @@ describe('MCPConfigParser', () => {
       const invalidConfig = {
         name: 'test-server',
         args: ['test-mcp-server'],
-        transport: 'stdio'
-      }
+        transport: 'stdio' as const
+      } as any
       
       const isValid = parser.validateServerConfig(invalidConfig)
       assert.strictEqual(isValid, false)
@@ -164,7 +168,7 @@ describe('MCPConfigParser', () => {
 
     test('should reject null config', () => {
       const parser = new MCPConfigParser('dummy-path')
-      const isValid = parser.validateServerConfig(null)
+      const isValid = parser.validateServerConfig(null as any)
       assert.strictEqual(isValid, false)
     })
   })
