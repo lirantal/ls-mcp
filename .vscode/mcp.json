@@ -1,0 +1,16 @@
+{
+	"servers": {
+		"fetch": {
+			"type": "stdio",
+			"command": "uvx",
+			"args": [
+				"mcp-server-fetch"
+			]
+		},
+		"nodejs-api-docs": {
+			"command": "npx",
+			"args": ["-y", "mcp-server-nodejs-api-docs"]
+		}
+	},
+	"inputs": []
+}
