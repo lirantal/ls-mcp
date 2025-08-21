@@ -1,0 +1,11 @@
+{
+  "mcp": {
+    "servers": {
+      "global-server": {
+        "command": "npx",
+        "args": ["global-mcp-server"],
+        "transport": "stdio"
+      }
+    }
+  }
+}

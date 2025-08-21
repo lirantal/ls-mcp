@@ -1,95 +1,34 @@
-import fs from 'node:fs/promises'
-import { parse } from 'jsonc-parser'
+import { MCPConfigParser } from './mcp-config-parser.js'
 
 export class MCPConfigLinterService {
-  private filePath: string
-  private fileContents: string | null = null
-  private parsed: boolean = false
-  private valid: boolean = false
-  private fileContentsData: any | null = null
+  private parser: MCPConfigParser
 
   constructor (filePath: string) {
-    this.filePath = filePath
+    this.parser = new MCPConfigParser(filePath)
   }
 
   async parseFile (): Promise<void> {
-    if (this.parsed) {
-      return
-    }
-    this.parsed = true
-
-    const fileContent = await this.getFileContent()
-
-    // @TODO this should also support YAML files and other formats
-    try {
-      this.fileContentsData = JSON.parse(fileContent)
-      if (typeof this.fileContentsData === 'object') {
-        this.valid = true
-        return
-      }
-    } catch (e) {
-      // ignore
-    }
-
-    try {
-      this.fileContentsData = parse(fileContent)
-      if (typeof this.fileContentsData === 'object') {
-        this.valid = true
-      }
-    } catch (error) {
-      // ignore
-    }
+    // This method is kept for backward compatibility but now delegates to the parser
+    await this.parser.parseConfigFile()
   }
 
   async isValidSyntax (): Promise<boolean> {
-    try {
-      await this.parseFile()
-      return this.valid
-    } catch (error) {
-      return false
-    }
+    return await this.parser.isValidSyntax()
   }
 
   async countMCPServers (): Promise<number> {
-    try {
-      const mcpServers = await this.getMCPServers()
-      return Object.keys(mcpServers).length
-    } catch (error) {
-      return 0
-    }
+    return await this.parser.countMCPServers()
   }
 
   async getMCPServers (): Promise<Record<string, object>> {
-    await this.parseFile()
-
-    // VS Code uses `servers`
-    if (this.fileContentsData?.servers) {
-      return this.fileContentsData.servers
-    }
-
-    // VS Code global settings.json file uses `mcp` -> `servers`
-    if (this.fileContentsData?.mcp?.servers) {
-      return this.fileContentsData.mcp.servers
-    }
-
-    // Claude and Cursor use the `mcpServers` key
-    if (this.fileContentsData?.mcpServers) {
-      return this.fileContentsData.mcpServers
-    }
-
-    // Zed uses `context_servers` key
-    if (this.fileContentsData?.context_servers) {
-      return this.fileContentsData.context_servers
-    }
-
-    return {}
+    const configData = await this.parser.parseConfigFile()
+    return configData.servers
   }
 
   async getFileContent (): Promise<string> {
-    if (this.fileContents) {
-      return this.fileContents
-    }
-    this.fileContents = await fs.readFile(this.filePath, 'utf-8')
-    return this.fileContents
+    // This method is kept for backward compatibility but the parser handles file reading internally
+    // We'll need to access the parser's internal file content
+    const configData = await this.parser.parseConfigFile()
+    return JSON.stringify(configData.raw, null, 2)
   }
 }
