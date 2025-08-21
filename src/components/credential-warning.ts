@@ -15,15 +15,15 @@ export default function CredentialWarningComponent (credentials: CredentialAnaly
   switch (riskLevel) {
     case 'high':
       riskColor = 'red'
-      riskIcon = '🔴'
+      riskIcon = styleText(['red'], '●')
       break
     case 'low':
       riskColor = 'blue'
-      riskIcon = '🔵'
+      riskIcon = styleText(['blue'], '●')
       break
     default:
       riskColor = 'blue'
-      riskIcon = '🔵'
+      riskIcon = styleText(['blue'], '●')
   }
 
   const riskText = styleText([riskColor], `${riskIcon} ${riskLevel.toUpperCase()} RISK`)
