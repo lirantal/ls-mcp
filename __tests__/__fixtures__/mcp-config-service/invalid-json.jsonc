@@ -1,0 +1,4 @@
+This is not JSON at all
+It's just plain text
+With no JSON structure whatsoever
+This should definitely fail parsing

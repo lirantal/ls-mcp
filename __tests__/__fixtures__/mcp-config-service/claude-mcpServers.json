@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "claude-server": {
+      "command": "uvx",
+      "args": ["claude-mcp-server"],
+      "transport": "stdio"
+    }
+  }
+}
