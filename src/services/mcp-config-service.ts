@@ -231,7 +231,7 @@ export class MCPConfigService {
           name: serverName,
           command: serverConfig.command || '',
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
-          transport: serverConfig.type, // Always map type to transport for our internal use
+          transport: serverConfig.type === 'streamable-http' ? 'http' : serverConfig.type, // Map streamable-http to http
           type: serverConfig.type,
           source: serverConfig.command || '',
           env: serverConfig.env,

@@ -217,16 +217,31 @@ Real MCP server configuration files use the `type` field to specify transport:
       "command": "npx",
       "args": ["example-mcp-server"],
       "type": "stdio"
+    },
+    "http-server": {
+      "type": "http",
+      "url": "https://example.com/mcp"
+    },
+    "streamable-server": {
+      "type": "streamable-http",
+      "url": "https://streamable.example.com/mcp"
     }
   }
 }
 ```
 
+**Supported Transport Types:**
+- `stdio`: Standard input/output communication
+- `sse`: Server-Sent Events communication
+- `http`: HTTP-based communication
+- `streamable-http`: Synonym for HTTP (treated identically to `http`)
+
 ### 2. Internal Data Model
 Our application maintains a clean separation between external and internal data:
-- **`type`**: Source of truth from MCP config files (stdio, sse, http)
+- **`type`**: Source of truth from MCP config files (stdio, sse, http, streamable-http)
 - **`transport`**: Internal field populated from `type` for consistent UI display
 - **Mapping**: `type` → `transport` happens at the data layer (MCPConfigService)
+- **Special Handling**: `streamable-http` is mapped to `http` since they are synonyms
 
 ### 3. Data Flow Consistency
 ```

@@ -8,7 +8,7 @@ interface MCPServerConfig {
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http'
   url?: string
-  type?: 'sse' | 'http' | 'stdio'
+  type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
   env?: Record<string, string>
 }
 
@@ -38,7 +38,7 @@ export class MCPServerManagerService {
     if (serverConfig?.type && serverConfig.type === 'sse') {
       this.transport = 'sse'
     }
-    if (serverConfig?.type && serverConfig.type === 'http') {
+    if (serverConfig?.type && (serverConfig.type === 'http' || serverConfig.type === 'streamable-http')) {
       this.transport = 'http'
     }
     if (serverConfig?.type && serverConfig.type === 'stdio') {

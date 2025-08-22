@@ -125,6 +125,26 @@ describe('MCPServerManagerService', () => {
     assert.strictEqual(urlManager.getTransport(), 'http')
   })
 
+  test('handles streamable-http type correctly', async (t) => {
+    // Test that streamable-http type is mapped to http transport
+    const streamableHttpConfig = {
+      name: 'streamable-http-server',
+      command: 'node',
+      type: 'streamable-http' as const
+    }
+    const streamableHttpManager = new MCPServerManagerService(streamableHttpConfig)
+    assert.strictEqual(streamableHttpManager.getTransport(), 'http', 'streamable-http should map to http transport')
+
+    // Test that regular http type still works
+    const httpConfig = {
+      name: 'http-server',
+      command: 'node',
+      type: 'http' as const
+    }
+    const httpManager = new MCPServerManagerService(httpConfig)
+    assert.strictEqual(httpManager.getTransport(), 'http', 'http type should map to http transport')
+  })
+
   test('handles undefined values gracefully', async (t) => {
     const serverConfig = {
       name: 'test-server',

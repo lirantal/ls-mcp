@@ -126,6 +126,23 @@ describe('MCPConfigParser', () => {
       assert.strictEqual(Object.keys(result.servers).length, 1)
       assert.ok(result.servers['global-server'])
     })
+
+    test('should handle all transport types including streamable-http', async () => {
+      const fixturePath = path.resolve('__tests__/__fixtures__/mcp-config-service/mixed-transport-types.json')
+      const parser = new MCPConfigParser(fixturePath)
+      
+      const result = await parser.parseConfigFile()
+      const servers = result.servers
+      
+      assert.ok(servers)
+      assert.strictEqual(Object.keys(servers).length, 4)
+      
+      // Check all transport types are correctly parsed
+      assert.strictEqual(servers['stdio-server'].type, 'stdio')
+      assert.strictEqual(servers['sse-server'].type, 'sse')
+      assert.strictEqual(servers['http-server'].type, 'http')
+      assert.strictEqual(servers['streamable-http-server'].type, 'streamable-http')
+    })
   })
 
   describe('validateServerConfig', () => {
@@ -140,6 +157,21 @@ describe('MCPConfigParser', () => {
       
       const isValid = parser.validateServerConfig(validConfig)
       assert.strictEqual(isValid, true)
+    })
+
+    test('should validate all supported transport types', () => {
+      const parser = new MCPConfigParser('dummy-path')
+      const validConfigs = [
+        { name: 'test-server', command: 'npx', type: 'stdio' as const },
+        { name: 'test-server', command: 'npx', type: 'sse' as const },
+        { name: 'test-server', command: 'npx', type: 'http' as const },
+        { name: 'test-server', command: 'npx', type: 'streamable-http' as const }
+      ]
+      
+      for (const config of validConfigs) {
+        const isValid = parser.validateServerConfig(config)
+        assert.strictEqual(isValid, true, `Config with type '${config.type}' should be valid`)
+      }
     })
 
     test('should reject invalid server config without name', () => {

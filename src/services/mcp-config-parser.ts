@@ -122,8 +122,8 @@ export class MCPConfigParser {
   /**
    * Validate type value
    */
-  private validateType (type: any): type is 'sse' | 'http' | 'stdio' {
-    return ['sse', 'http', 'stdio'].includes(type)
+  private validateType (type: any): type is 'sse' | 'http' | 'stdio' | 'streamable-http' {
+    return ['sse', 'http', 'stdio', 'streamable-http'].includes(type)
   }
 
   /**

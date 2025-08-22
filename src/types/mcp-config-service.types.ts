@@ -10,7 +10,7 @@ export interface MCPServerConfig {
   command: string
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http'
-  type?: 'sse' | 'http' | 'stdio'
+  type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
   env?: Record<string, string>
 }
 
@@ -32,7 +32,7 @@ export interface MCPServerInfo {
   command: string
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http'
-  type?: 'sse' | 'http' | 'stdio'
+  type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
   source?: string
   env?: Record<string, string>
   status?: 'running' | 'stopped'

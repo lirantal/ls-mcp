@@ -1,0 +1,22 @@
+{
+  "servers": {
+    "stdio-server": {
+      "command": "npx",
+      "args": ["stdio-mcp-server"],
+      "type": "stdio"
+    },
+    "sse-server": {
+      "command": "npx",
+      "args": ["sse-mcp-server"],
+      "type": "sse"
+    },
+    "http-server": {
+      "type": "http",
+      "url": "https://example.com/mcp"
+    },
+    "streamable-http-server": {
+      "type": "streamable-http",
+      "url": "https://streamable.example.com/mcp"
+    }
+  }
+}
