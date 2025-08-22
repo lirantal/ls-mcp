@@ -7,10 +7,22 @@ import MCPServerSourceComponent from '../components/mcp-server-source.js'
 import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 import CredentialWarningComponent from '../components/credential-warning.js'
+import SummaryComponent from '../components/summary.js'
 
 interface GroupMetadata {
   mcpServersRunning?: number
   mcpServersTotal?: number
+}
+
+interface SummaryStats {
+  totalServers: number
+  runningServers: number
+  highRiskCredentials: number
+  transportBreakdown: {
+    stdio: number
+    sse: number
+    http: number
+  }
 }
 
 export class RenderService {
@@ -228,5 +240,28 @@ export class RenderService {
     }
 
     return `${filled}${empty} ${count} / ${total} ${label}`
+  }
+
+  /**
+   * Print summary statistics at the end of the output
+   */
+  static printSummary (stats: SummaryStats): void {
+    console.log('\n')
+    console.log('      ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄')
+    console.log()
+
+    const summaryOutput = SummaryComponent(stats)
+    const lines = summaryOutput.split('\n')
+
+    for (const line of lines) {
+      if (line === 'SUMMARY') {
+        console.log('      ' + line)
+      } else {
+        console.log('      ' + line)
+      }
+    }
+
+    console.log()
+    console.log('      ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄')
   }
 }

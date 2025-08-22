@@ -13,6 +13,7 @@ interface MCPServerInfo {
   source?: string
   env?: Record<string, string>
   status?: 'running' | 'stopped'
+  credentials?: any
 }
 
 async function init () {
@@ -28,6 +29,11 @@ async function init () {
   }
 
   let pathIndex = 0
+  let totalServers = 0
+  let totalRunning = 0
+  let totalHighRiskCredentials = 0
+  const transportCounts = { stdio: 0, sse: 0, http: 0 }
+
   for (const groupName of Object.keys(mcpFilesList)) {
     const group = mcpFilesList[groupName]
 
@@ -43,6 +49,25 @@ async function init () {
 
         const totalMCPServers = filePathData.servers ? filePathData.servers.length : 0
         const totalMCPServersRunning = mcpServers.filter((server: MCPServerInfo) => server.status === 'running').length
+
+        // Accumulate summary statistics
+        totalServers += totalMCPServers
+        totalRunning += totalMCPServersRunning
+
+        // Count transport types
+        for (const server of mcpServers) {
+          if (server.transport) {
+            const transport = server.transport.toLowerCase()
+            if (transport in transportCounts) {
+              transportCounts[transport as keyof typeof transportCounts]++
+            }
+          }
+
+          // Count high-risk credentials
+          if (server.credentials?.hasCredentials && server.credentials?.riskLevel === 'high') {
+            totalHighRiskCredentials++
+          }
+        }
 
         const mcpGroupData = [
           { key: 'PROVIDER', value: group.friendlyName },
@@ -65,6 +90,16 @@ async function init () {
   if (pathIndex === 0) {
     exitWithError('No MCP servers found in known configuration files.')
   }
+
+  // Display summary statistics
+  const summaryStats = {
+    totalServers,
+    runningServers: totalRunning,
+    highRiskCredentials: totalHighRiskCredentials,
+    transportBreakdown: transportCounts
+  }
+
+  RenderService.printSummary(summaryStats)
 }
 
 init().then(() => {
