@@ -25,16 +25,11 @@ export class MCPFiles {
           if (filePathData.servers && filePathData.servers.length > 0) {
             // Update server status for each server in this file
             for (const server of filePathData.servers) {
-              // Update the server object to have the correct transport value for CLI counting
-              if (!server.transport && server.type) {
-                server.transport = server.type
-              }
-
               const serverConfig = {
                 name: server.name,
                 command: server.command,
                 args: server.args,
-                transport: server.transport || server.type, // Use type field as fallback when transport is undefined
+                transport: server.transport, // transport is always populated from type in the data layer
                 type: server.type,
                 env: server.env
               }

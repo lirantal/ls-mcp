@@ -65,7 +65,7 @@ The credential patterns are organized by risk level for easier maintenance:
 The refactored system now has a clean separation of concerns:
 
 - **`MCPServerConfig`**: Pure configuration data from MCP config files
-  - Contains: `name`, `command`, `args`, `transport`, `type`, `env`
+  - Contains: `name`, `command`, `args`, `type`, `env`
   - **No credentials** - this is raw config data
 
 - **`MCPServerInfo`**: Enriched metadata for our application
@@ -88,7 +88,7 @@ When an MCP server configuration includes environment variables with credentials
     "firecrawl-mcp": {
       "command": "npx",
       "args": ["-y", "firecrawl-mcp"],
-      "transport": "stdio",
+      "type": "stdio",
       "env": {
         "FIRECRAWL_API_KEY": "12345"
       }

@@ -37,6 +37,16 @@ The project has been refactored into a modular service architecture for better s
 ### Type Definitions
 *   `src/types/mcp-config-service.types.ts`: Comprehensive type definitions for all MCP configuration services, designed for future extraction to separate npm packages.
 
+### Data Model Architecture
+The project maintains a clean separation between external MCP configuration files and internal application data:
+
+*   **External Config Format**: MCP config files use `type` field for transport specification (e.g., `"type": "stdio"`)
+*   **Internal Data Model**: Our application maps `type` to `transport` field for consistent UI display and internal logic
+*   **Clean Mapping**: The `MCPConfigService` handles the one-way mapping from `type` → `transport` at the data layer
+*   **UI Consistency**: All transport information in the UI (TRANSPORT column, summary counts) comes from the internal `transport` field
+
+This architecture ensures maintainability and clear separation of concerns between external data formats and internal application logic.
+
 ### Testing
 *   `__tests__/`: Comprehensive test suite with proper isolation and mocking to prevent real filesystem access during testing.
 *   `__tests__/__fixtures__/`: Test fixture files for isolated testing of configuration parsing.
@@ -45,6 +55,8 @@ The project has been refactored into a modular service architecture for better s
 
 ### ✅ Completed Refactoring
 - **Service Architecture**: Successfully separated MCP configuration logic into dedicated, focused services
+- **Data Model Architecture**: Implemented clean separation between external MCP config format (`type`) and internal app data (`transport`)
+- **Transport Handling**: Fixed transport counting by properly mapping `type` field to `transport` field at the data layer
 - **Test Isolation**: Fixed critical issue where tests were accessing real files outside the project directory
 - **Type Safety**: Created comprehensive TypeScript types for all services
 - **Error Handling**: Improved error handling and graceful degradation for unsupported operating systems

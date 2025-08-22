@@ -171,7 +171,7 @@ Manages MCP server process detection and status reporting.
 #### Capabilities
 - **Process Detection**: Identifies running MCP server processes
 - **Status Reporting**: Provides running/stopped status for each server
-- **Transport Support**: Handles different transport types (stdio, sse, http)
+- **Transport Support**: Maps MCP config `type` field to internal `transport` field for consistent UI display
 - **Error Handling**: Gracefully handles process detection failures
 
 ### 5. RenderService
@@ -205,6 +205,47 @@ Main.ts → MCPServerManagerService → Process List → Status Update
 ```
 Status Data → RenderService → Formatted Output → CLI Display
 ```
+
+## Data Model Architecture
+
+### 1. MCP Configuration File Format
+Real MCP server configuration files use the `type` field to specify transport:
+```json
+{
+  "mcpServers": {
+    "example-server": {
+      "command": "npx",
+      "args": ["example-mcp-server"],
+      "type": "stdio"
+    }
+  }
+}
+```
+
+### 2. Internal Data Model
+Our application maintains a clean separation between external and internal data:
+- **`type`**: Source of truth from MCP config files (stdio, sse, http)
+- **`transport`**: Internal field populated from `type` for consistent UI display
+- **Mapping**: `type` → `transport` happens at the data layer (MCPConfigService)
+
+### 3. Data Flow Consistency
+```
+MCP Config File (type: "stdio") 
+    ↓
+MCPConfigParser (extracts type)
+    ↓
+MCPConfigService (maps type → transport)
+    ↓
+Internal Data Model (transport: "stdio")
+    ↓
+UI Components (TRANSPORT column, summary counts)
+```
+
+### 4. Benefits of This Architecture
+- **Clear Separation**: External config format vs. internal app data
+- **Consistent UI**: All transport information comes from one source (`transport`)
+- **Maintainable**: Changes to config format only affect the mapping layer
+- **Type Safety**: Internal interfaces clearly define expected data structure
 
 ## Error Handling Strategy
 

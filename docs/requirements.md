@@ -44,8 +44,9 @@ The following AI applications are currently supported:
 - **Must** parse valid JSON and JSONC files
 - **Must** handle malformed JSON gracefully
 - **Must** validate MCP server configurations
-- **Must** extract server information (name, command, args, transport, type, env)
-- **Must** support server transport types: `stdio`, `sse`, `http`
+- **Must** extract server information (name, command, args, type, env)
+- **Must** support server transport types: `stdio`, `sse`, `http` (from `type` field)
+- **Must** maintain clean separation between external config format and internal data model
 
 ### 5. Process Detection
 

@@ -110,7 +110,6 @@ export class MCPConfigParser {
           name: serverName,
           command: serverConfig.command || '',
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
-          transport: this.validateTransport(serverConfig.transport) ? serverConfig.transport : undefined,
           type: this.validateType(serverConfig.type) ? serverConfig.type : undefined,
           env
         }
@@ -118,13 +117,6 @@ export class MCPConfigParser {
     }
 
     return normalized
-  }
-
-  /**
-   * Validate transport value
-   */
-  private validateTransport (transport: any): transport is 'stdio' | 'sse' | 'http' {
-    return ['stdio', 'sse', 'http'].includes(transport)
   }
 
   /**
