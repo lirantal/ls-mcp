@@ -6,7 +6,7 @@ interface MCPServerConfig {
   name: string
   command: string
   args?: string[]
-  transport?: 'stdio' | 'sse'
+  transport?: 'stdio' | 'sse' | 'http'
   url?: string
   type?: 'sse' | 'http' | 'stdio'
   env?: Record<string, string>

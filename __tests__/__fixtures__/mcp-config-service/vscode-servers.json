@@ -3,12 +3,12 @@
     "test-server": {
       "command": "npx",
       "args": ["-y", "test-mcp-server"],
-      "transport": "stdio"
+      "type": "stdio"
     },
     "another-server": {
       "command": "uvx",
       "args": ["another-mcp-server"],
-      "transport": "stdio"
+      "type": "stdio"
     }
   }
 }

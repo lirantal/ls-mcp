@@ -56,8 +56,10 @@ async function init () {
 
         // Count transport types
         for (const server of mcpServers) {
-          if (server.transport) {
-            const transport = server.transport.toLowerCase()
+          // Use transport field if available, otherwise fall back to type field
+          const transportValue = server.transport || server.type
+          if (transportValue) {
+            const transport = transportValue.toLowerCase()
             if (transport in transportCounts) {
               transportCounts[transport as keyof typeof transportCounts]++
             }

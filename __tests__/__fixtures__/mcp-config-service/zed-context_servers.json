@@ -3,7 +3,7 @@
     "zed-server": {
       "command": "npx",
       "args": ["zed-mcp-server"],
-      "transport": "stdio"
+      "type": "stdio"
     }
   }
 }
