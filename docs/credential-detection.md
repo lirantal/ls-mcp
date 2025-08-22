@@ -37,13 +37,14 @@ The credential patterns are organized by risk level for easier maintenance:
 
 - Added `CredentialVariable` interface for individual credential variables
 - Added `CredentialAnalysisResult` interface for credential analysis results
-- Updated `MCPServerConfig` and `MCPServerInfo` interfaces to include credential information
+- Updated `MCPServerInfo` interface to include credential information
+- **Note**: `MCPServerConfig` contains only pure configuration data from files, while `MCPServerInfo` contains our app's enriched metadata including credentials
 
 ### 3. MCP Config Parser Integration (`src/services/mcp-config-parser.ts`)
 
-- Integrated credential detection during server configuration normalization
-- Automatically analyzes environment variables when parsing MCP server configs
-- Attaches credential analysis results to each server configuration
+- Parses MCP server configurations into `MCPServerConfig` objects (pure config data)
+- **No longer adds credentials** - this is handled during conversion to `MCPServerInfo`
+- Maintains clean separation between raw config and app analysis
 
 ### 4. Render Service Updates (`src/services/render-service.ts`)
 
@@ -58,6 +59,24 @@ The credential patterns are organized by risk level for easier maintenance:
   - 🔵 LOW RISK (blue) - Organization IDs, account identifiers
 - **Summary Display**: Shows count of credential variables and their names
 - **Value Masking**: Displays masked values for security
+
+## Type System Architecture
+
+The refactored system now has a clean separation of concerns:
+
+- **`MCPServerConfig`**: Pure configuration data from MCP config files
+  - Contains: `name`, `command`, `args`, `transport`, `type`, `env`
+  - **No credentials** - this is raw config data
+
+- **`MCPServerInfo`**: Enriched metadata for our application
+  - Contains: All config data + `source`, `status`, `credentials`
+  - **Credentials are added here** during conversion from config to info
+
+This architecture ensures that:
+1. Configuration parsing remains pure and focused
+2. Credential analysis happens at the right layer (app logic)
+3. Types clearly represent their purpose
+4. The system is more maintainable and semantically correct
 
 ## Usage Example
 

@@ -4,6 +4,7 @@ import fs from 'node:fs/promises'
 import util from 'node:util'
 import { MCPPathRegistry } from './mcp-path-registry.js'
 import { MCPConfigParser } from './mcp-config-parser.js'
+import { CredentialDetectionService } from './credential-detection-service.js'
 import {
   type MCPAppPathsRecord,
   type MCPFilePath,
@@ -235,7 +236,7 @@ export class MCPConfigService {
           source: serverConfig.command || '',
           env: serverConfig.env,
           status: 'stopped', // Default status, will be updated by server manager
-          credentials: serverConfig.credentials || undefined
+          credentials: CredentialDetectionService.analyzeEnvironmentVariables(serverConfig.env)
         })
       }
     }

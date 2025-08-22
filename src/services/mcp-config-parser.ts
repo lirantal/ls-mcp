@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises'
 import { parse } from 'jsonc-parser'
 import { type MCPConfigData, type MCPServerConfig } from '../types/mcp-config-service.types.js'
-import { CredentialDetectionService } from './credential-detection-service.js'
 
 export class MCPConfigParser {
   private filePath: string
@@ -113,8 +112,7 @@ export class MCPConfigParser {
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
           transport: this.validateTransport(serverConfig.transport) ? serverConfig.transport : undefined,
           type: this.validateType(serverConfig.type) ? serverConfig.type : undefined,
-          env,
-          credentials: CredentialDetectionService.analyzeEnvironmentVariables(env)
+          env
         }
       }
     }

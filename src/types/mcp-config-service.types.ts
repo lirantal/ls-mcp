@@ -12,7 +12,6 @@ export interface MCPServerConfig {
   transport?: 'stdio' | 'sse' | 'http'
   type?: 'sse' | 'http' | 'stdio'
   env?: Record<string, string>
-  credentials?: CredentialAnalysisResult
 }
 
 export interface MCPAppMetadata {
@@ -66,11 +65,11 @@ export type MCPAppPathsRecord = Record<string, MCPFilePath[]>
 export interface CredentialVariable {
   name: string
   value: string
-  riskLevel: 'low' | 'medium' | 'high'
+  riskLevel: 'low' | 'high'
 }
 
 export interface CredentialAnalysisResult {
   hasCredentials: boolean
   credentialVars: CredentialVariable[]
-  riskLevel: 'none' | 'low' | 'medium' | 'high'
+  riskLevel: 'none' | 'low' | 'high'
 }
