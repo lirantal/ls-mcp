@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.11.0
+
+### Minor Changes
+
+- [`a3f6b4c`](https://github.com/lirantal/ls-mcp/commit/a3f6b4c36a6b6f08df3383a5941c3d9198f520b1) Thanks [@lirantal](https://github.com/lirantal)! - feat: detect URL sources
+
 ## 1.10.0
 
 ### Minor Changes
