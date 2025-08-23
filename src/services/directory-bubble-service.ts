@@ -17,6 +17,8 @@ export class DirectoryBubbleService {
       let currentDir = path.resolve(startDir)
       const homeDir = homedir()
       const rootDir = '/'
+      let iterationCount = 0
+      const maxIterations = 100 // Safety limit to prevent infinite loops
 
       // Check the start directory first
       const startDirResult = await this.checkDirectoryForConfig(currentDir, localPath)
@@ -25,13 +27,20 @@ export class DirectoryBubbleService {
       }
 
       // Bubble up directory tree until we reach home directory or root
-      while (currentDir !== homeDir && currentDir !== rootDir) {
+      while (currentDir !== homeDir && currentDir !== rootDir && iterationCount < maxIterations) {
         const parentDir = this.getParentDirectory(currentDir)
         if (!parentDir || parentDir === currentDir) {
           break
         }
 
+        // Additional safety check: ensure we're actually moving up the tree
+        if (parentDir === currentDir || parentDir.length >= currentDir.length) {
+          break
+        }
+
         currentDir = parentDir
+        iterationCount++
+
         const found = await this.checkDirectoryForConfig(currentDir, localPath)
         if (found) {
           return path.join(currentDir, localPath)

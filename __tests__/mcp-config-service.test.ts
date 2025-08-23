@@ -325,4 +325,44 @@ describe('MCPConfigService', () => {
       assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http type should map to http transport')
     })
   })
+
+  describe('hostname extraction from URLs', () => {
+    test('should extract hostname from URL-based server configs', async () => {
+      const mockPathRegistry = {
+        getPathsForOS: mock.fn(() => ({
+          test: [{ filePath: '__tests__/__fixtures__/mcp-config-service/url-based-servers.json', type: 'local' as const }]
+        })),
+        getSupportedApps: mock.fn(() => ['test'])
+      }
+      
+      const service = new MCPConfigService()
+      // @ts-ignore - Mocking private property for testing
+      service.pathRegistry = mockPathRegistry
+      
+      const result = await service.getMCPFileGroups()
+      
+      assert.ok(result.test)
+      assert.strictEqual(result.test.paths.length, 1)
+      assert.strictEqual(result.test.paths[0].parsable, true)
+      assert.ok(result.test.paths[0].servers)
+      
+      // Test hostname extraction for URL-based servers
+      const localhostServer = result.test.paths[0].servers?.find(s => s.name === 'localhost-server')
+      assert.ok(localhostServer, 'Should find localhost server')
+      assert.strictEqual(localhostServer.source, 'localhost', 'Should extract hostname from localhost URL')
+      
+      const apiServer = result.test.paths[0].servers?.find(s => s.name === 'api-server')
+      assert.ok(apiServer, 'Should find API server')
+      assert.strictEqual(apiServer.source, 'api.example.com', 'Should extract hostname from API URL')
+      
+      const ipServer = result.test.paths[0].servers?.find(s => s.name === 'ip-server')
+      assert.ok(ipServer, 'Should find IP server')
+      assert.strictEqual(ipServer.source, '192.168.1.100', 'Should extract hostname from IP URL')
+      
+      // Test that command-based servers still work as before
+      const commandServer = result.test.paths[0].servers?.find(s => s.name === 'command-server')
+      assert.ok(commandServer, 'Should find command server')
+      assert.strictEqual(commandServer.source, 'npx', 'Should use command for non-URL servers')
+    })
+  })
 })

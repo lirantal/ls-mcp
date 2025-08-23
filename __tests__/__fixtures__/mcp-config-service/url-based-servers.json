@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "localhost-server": {
+      "type": "http",
+      "url": "http://localhost:3000/mcp"
+    },
+    "api-server": {
+      "type": "http",
+      "url": "https://api.example.com/mcp"
+    },
+    "ip-server": {
+      "type": "http",
+      "url": "http://192.168.1.100:8080/mcp"
+    },
+    "command-server": {
+      "command": "npx",
+      "args": ["mcp-server"],
+      "type": "stdio"
+    }
+  }
+}

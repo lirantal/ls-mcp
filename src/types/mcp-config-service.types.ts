@@ -11,6 +11,7 @@ export interface MCPServerConfig {
   args?: string[]
   transport?: 'stdio' | 'sse' | 'http'
   type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
+  url?: string
   env?: Record<string, string>
 }
 

@@ -78,7 +78,7 @@ describe('MCPServerManagerService', () => {
     assert.strictEqual(source, 'python')
   })
 
-  test('getSource returns URL when available', async (t) => {
+  test('getSource returns hostname when URL is available', async (t) => {
     const serverConfig = {
       name: 'web-server',
       command: '',
@@ -88,7 +88,7 @@ describe('MCPServerManagerService', () => {
     const manager = new MCPServerManagerService(serverConfig)
     const source = manager.getSource()
 
-    assert.strictEqual(source, 'http://localhost:3000/mcp')
+    assert.strictEqual(source, 'localhost')
   })
 
   test('isRunning returns false for non-existent processes', async (t) => {

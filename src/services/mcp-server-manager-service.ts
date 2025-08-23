@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { execSync } from 'node:child_process'
 import { platform } from 'node:os'
+import { extractHostname } from '../utils/url-utils.js'
 
 interface MCPServerConfig {
   name: string
@@ -46,7 +47,7 @@ export class MCPServerManagerService {
     }
 
     if (serverConfig.url) {
-      this.source = serverConfig.url
+      this.source = extractHostname(serverConfig.url)
       this.transport = 'http'  // URLs always use http transport
     } else {
       // Build the full command with arguments
