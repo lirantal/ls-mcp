@@ -111,6 +111,7 @@ export class MCPConfigParser {
           command: serverConfig.command || '',
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
           type: this.validateType(serverConfig.type) ? serverConfig.type : this.inferTransportType(serverConfig),
+          url: serverConfig.url,
           env
         }
       }

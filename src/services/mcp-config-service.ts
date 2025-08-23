@@ -6,6 +6,7 @@ import { MCPPathRegistry } from './mcp-path-registry.js'
 import { MCPConfigParser } from './mcp-config-parser.js'
 import { CredentialDetectionService } from './credential-detection-service.js'
 import { DirectoryBubbleService } from './directory-bubble-service.js'
+import { extractHostname } from '../utils/url-utils.js'
 import {
   type MCPAppPathsRecord,
   type MCPFilePath,
@@ -255,13 +256,21 @@ export class MCPConfigService {
 
     for (const [serverName, serverConfig] of Object.entries(servers)) {
       if (serverConfig && typeof serverConfig === 'object') {
+        // Determine the source: extract hostname from URL or use command
+        let source: string
+        if (serverConfig.url) {
+          source = extractHostname(serverConfig.url)
+        } else {
+          source = serverConfig.command || ''
+        }
+
         serverInfos.push({
           name: serverName,
           command: serverConfig.command || '',
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
           transport: serverConfig.type === 'streamable-http' ? 'http' : serverConfig.type, // Map streamable-http to http
           type: serverConfig.type,
-          source: serverConfig.command || '',
+          source,
           env: serverConfig.env,
           status: 'stopped', // Default status, will be updated by server manager
           credentials: CredentialDetectionService.analyzeEnvironmentVariables(serverConfig.env)
