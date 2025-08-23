@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "services-server": {
+      "command": "node",
+      "args": ["services-mcp-server.js"],
+      "env": {
+        "SERVICES_API_KEY": "services-value"
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import util from 'node:util'
 import { MCPPathRegistry } from './mcp-path-registry.js'
 import { MCPConfigParser } from './mcp-config-parser.js'
 import { CredentialDetectionService } from './credential-detection-service.js'
+import { DirectoryBubbleService } from './directory-bubble-service.js'
 import {
   type MCPAppPathsRecord,
   type MCPFilePath,
@@ -13,15 +14,23 @@ import {
   type MCPFileGroupsResultRecord
 } from '../types/mcp-config-service.types.js'
 
+export interface MCPConfigServiceOptions {
+  enableDirectoryBubbling?: boolean
+}
+
 export class MCPConfigService {
   private pathRegistry: MCPPathRegistry
   private currentOS: string
   private debug: util.DebugLogger
+  private directoryBubbleService: DirectoryBubbleService
+  private enableDirectoryBubbling: boolean
 
-  constructor () {
+  constructor (options: MCPConfigServiceOptions = {}) {
     this.pathRegistry = new MCPPathRegistry()
     this.currentOS = platform()
     this.debug = util.debuglog('ls-mcp')
+    this.directoryBubbleService = new DirectoryBubbleService()
+    this.enableDirectoryBubbling = options.enableDirectoryBubbling ?? false
   }
 
   /**
@@ -154,8 +163,27 @@ export class MCPConfigService {
         let totalServersCount = 0
 
         for (const filePathData of paths) {
-          const resolvedPath = filePathData.filePath.replace('~', process.env.HOME || '')
-          const absolutePath = path.resolve(resolvedPath)
+          let resolvedPath = filePathData.filePath.replace('~', process.env.HOME || '')
+          let absolutePath = path.resolve(resolvedPath)
+
+          // For local paths, try to bubble up if not found in current directory and if enabled
+          if (filePathData.type === 'local' && this.enableDirectoryBubbling) {
+            try {
+              await fs.access(resolvedPath)
+              // File exists in current directory, no need to bubble up
+            } catch (error) {
+              // File not found in current directory, try to bubble up
+              const bubbledPath = await this.directoryBubbleService.findLocalConfigInParentDirectories(
+                filePathData.filePath,
+                process.cwd()
+              )
+
+              if (bubbledPath) {
+                resolvedPath = bubbledPath
+                absolutePath = path.resolve(resolvedPath)
+              }
+            }
+          }
 
           if (uniqueFilePaths.has(absolutePath)) {
             continue
