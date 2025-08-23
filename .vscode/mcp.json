@@ -13,10 +13,6 @@
 		},
 		"github": {
 			"url": "https://api.githubcopilot.com/mcp/"
-		  },
-		"semgrep": {
-			"type": "streamable-http",
-			"url": "https://mcp.semgrep.ai/mcp"
 		  }
 	},
 	"inputs": []
