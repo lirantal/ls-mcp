@@ -155,6 +155,12 @@ export class MCPConfigParser {
       }
     }
 
+    // Rule 5: Default to stdio if command is present but no other indicators found
+    // This is a reasonable default since most MCP servers use stdio transport
+    if (serverConfig.command && typeof serverConfig.command === 'string') {
+      return 'stdio'
+    }
+
     // No transport type could be inferred
     return undefined
   }

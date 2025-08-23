@@ -162,6 +162,92 @@ describe('MCPConfigParser', () => {
       assert.strictEqual(servers['http-server'].type, 'http')
       assert.strictEqual(servers['streamable-http-server'].type, 'streamable-http')
     })
+
+    test('should correctly infer transport types using all inference rules', async () => {
+      const parser = new MCPConfigParser('dummy-path')
+      
+      // Test Rule 1: URL-based inference → http
+      const urlServerConfig = {
+        name: 'url-server',
+        url: 'https://example.com/mcp'
+      }
+      const urlServer = parser['normalizeServerConfigs']({ 'url-server': urlServerConfig })
+      assert.strictEqual(urlServer['url-server'].type, 'http', 'URL-based server should infer HTTP transport')
+      
+      // Test Rule 2-4: Args-based inference
+      const stdioArgsConfig = {
+        name: 'stdio-args-server',
+        command: 'npx',
+        args: ['-y', 'stdio-mcp-server', '--stdio']
+      }
+      const stdioArgsServer = parser['normalizeServerConfigs']({ 'stdio-args-server': stdioArgsConfig })
+      assert.strictEqual(stdioArgsServer['stdio-args-server'].type, 'stdio', 'Server with --stdio in args should infer stdio transport')
+      
+      const httpArgsConfig = {
+        name: 'http-args-server',
+        command: 'npx',
+        args: ['-y', 'http-mcp-server', '--http', '--port', '3000']
+      }
+      const httpArgsServer = parser['normalizeServerConfigs']({ 'http-args-server': httpArgsConfig })
+      assert.strictEqual(httpArgsServer['http-args-server'].type, 'http', 'Server with --http in args should infer HTTP transport')
+      
+      const sseArgsConfig = {
+        name: 'sse-args-server',
+        command: 'npx',
+        args: ['-y', 'sse-mcp-server', '--sse', '--endpoint', '/mcp']
+      }
+      const sseArgsServer = parser['normalizeServerConfigs']({ 'sse-args-server': sseArgsConfig })
+      assert.strictEqual(sseArgsServer['sse-args-server'].type, 'sse', 'Server with --sse in args should infer SSE transport')
+      
+      // Test Rule 5: Default fallback → stdio (when command is present but no other indicators)
+      const defaultConfig = {
+        name: 'default-server',
+        command: 'npx',
+        args: ['-y', 'generic-mcp-server']
+      }
+      const defaultServer = parser['normalizeServerConfigs']({ 'default-server': defaultConfig })
+      assert.strictEqual(defaultServer['default-server'].type, 'stdio', 'Server with command but no transport indicators should default to stdio')
+      
+      // Test case with no transport indicators and no command → undefined
+      const noIndicatorsConfig = {
+        name: 'no-indicators-server'
+        // No command, no url, no args
+      }
+      const noIndicatorsServer = parser['normalizeServerConfigs']({ 'no-indicators-server': noIndicatorsConfig })
+      assert.strictEqual(noIndicatorsServer['no-indicators-server'].type, undefined, 'Server with no indicators should have undefined type')
+      
+      // Test the specific regression case that happened: nodejs-api-docs scenario
+      const nodejsApiDocsConfig = {
+        name: 'nodejs-api-docs',
+        command: 'npx',
+        args: ['-y', 'mcp-server-nodejs-api-docs']
+      }
+      const nodejsApiDocsServer = parser['normalizeServerConfigs']({ 'nodejs-api-docs': nodejsApiDocsConfig })
+      assert.strictEqual(nodejsApiDocsServer['nodejs-api-docs'].type, 'stdio', 'nodejs-api-docs server should default to stdio transport (regression test)')
+    })
+
+    test('should respect transport inference priority (explicit type overrides inference)', async () => {
+      const parser = new MCPConfigParser('dummy-path')
+      
+      // Test that explicit type takes precedence over URL inference
+      const explicitTypeWithUrlConfig = {
+        name: 'explicit-http-server',
+        type: 'stdio', // Explicit type
+        url: 'https://example.com/mcp' // Would normally infer http
+      }
+      const explicitTypeWithUrlServer = parser['normalizeServerConfigs']({ 'explicit-http-server': explicitTypeWithUrlConfig })
+      assert.strictEqual(explicitTypeWithUrlServer['explicit-http-server'].type, 'stdio', 'Explicit type should override URL inference')
+      
+      // Test that explicit type takes precedence over args inference
+      const explicitTypeWithArgsConfig = {
+        name: 'explicit-stdio-server',
+        type: 'http', // Explicit type
+        command: 'npx',
+        args: ['-y', 'stdio-mcp-server', '--stdio'] // Would normally infer stdio
+      }
+      const explicitTypeWithArgsServer = parser['normalizeServerConfigs']({ 'explicit-http-server': explicitTypeWithArgsConfig })
+      assert.strictEqual(explicitTypeWithArgsServer['explicit-http-server'].type, 'http', 'Explicit type should override args inference')
+    })
   })
 
   describe('validateServerConfig', () => {
