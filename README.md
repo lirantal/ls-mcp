@@ -28,6 +28,7 @@
 - **📁 Directory Bubbling**: Intelligent discovery of project-scoped MCP configs from nested directories
 - **🔄 Process Detection**: Real-time status of running MCP servers
 - **🔒 Credential Analysis**: Security analysis of environment variables and API keys
+- **🌐 URL Hostname Extraction**: Clean display of hostnames for URL-based MCP servers
 - **🌍 Cross-Platform**: Support for Windows and macOS (Linux support coming soon)
 - **⚡ High Performance**: Fast discovery with intelligent caching and optimization
 
@@ -51,6 +52,20 @@ cd ~/projects/my-project/backend/services/api
 npx ls-mcp  # Automatically finds .vscode/mcp.json from project root
 ```
 
+### URL Hostname Extraction
+
+The tool now displays clean hostnames for URL-based MCP servers instead of full URLs:
+
+```bash
+# Before: Full URLs cluttered the SOURCE column
+SOURCE                    | STATUS | NAME           | TRANSPORT
+http://localhost:3000/mcp | ❌     | local-server  | http
+
+# After: Clean hostnames for better readability
+SOURCE      | STATUS | NAME           | TRANSPORT
+localhost   | ❌     | local-server  | http
+```
+
 ### Debug Mode
 
 To enable verbose debugging output, set the `NODE_DEBUG` environment variable:
@@ -62,6 +77,17 @@ NODE_DEBUG=ls-mcp npx ls-mcp
 # Enable all debug logging
 NODE_DEBUG=* npx ls-mcp
 ```
+
+## Documentation
+
+For detailed information about the project architecture and features:
+
+- **[Project Overview](./docs/project.md)**: Comprehensive project analysis and architecture
+- **[Design Documentation](./docs/design.md)**: Technical design decisions and implementation details
+- **[Requirements](./docs/requirements.md)**: Functional and non-functional requirements
+- **[Directory Bubbling](./docs/directory-bubbling.md)**: Intelligent directory traversal feature
+- **[URL Hostname Extraction](./docs/url-hostname-extraction.md)**: Clean display of hostnames for URL-based servers
+- **[Credential Detection](./docs/credential-detection.md)**: Security analysis features
 
 ## Contributing
 

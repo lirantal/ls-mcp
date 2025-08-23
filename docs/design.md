@@ -333,6 +333,7 @@ When MCP server configurations don't explicitly specify a `type` field, the syst
     "web-server": {
       "url": "https://example.com/mcp"
       // No type field → automatically inferred as "http"
+      // Hostname "example.com" will be displayed in SOURCE column
     }
   }
 }
@@ -386,6 +387,58 @@ When MCP server configurations don't explicitly specify a `type` field, the syst
 - **Backward Compatibility**: Works with existing MCP server configurations
 - **Intelligent Defaults**: Reasonable assumptions based on configuration patterns
 - **Comprehensive Coverage**: Handles all common MCP server configuration scenarios
+
+## URL Hostname Extraction
+
+### Overview
+The URL hostname extraction feature (Feature #80) improves the readability of MCP server configurations by displaying only the hostname portion for URL-based servers in the SOURCE column.
+
+### Implementation Details
+
+#### 1. Hostname Extraction Logic
+```typescript
+export function extractHostname(urlString: string): string {
+  try {
+    // Handle URLs without protocol by adding a default one
+    let urlToParse = urlString
+    if (!urlToParse.includes('://')) {
+      urlToParse = `http://${urlToParse}`
+    }
+    const url = new URL(urlToParse)
+    return url.hostname
+  } catch (error) {
+    // If URL parsing fails, return the original string
+    return urlString
+  }
+}
+```
+
+#### 2. Service Integration
+- **MCPConfigService**: Extracts hostname during server configuration conversion
+- **MCPServerManagerService**: Sets source field to hostname when URL is available
+- **Fallback Handling**: Returns original string if URL parsing fails
+
+#### 3. URL Format Support
+- **HTTP/HTTPS**: Standard web protocols
+- **Custom Protocols**: Any protocol supported by Node.js URL constructor
+- **Protocol-less URLs**: Automatically adds `http://` for parsing
+- **IP Addresses**: Handles both IPv4 and IPv6 addresses
+- **Port Numbers**: Port information is stripped from display
+- **Query Parameters**: Query strings are ignored in hostname extraction
+
+#### 4. Benefits
+- **Cleaner Output**: SOURCE column is more readable and concise
+- **Better UX**: Users can quickly identify server location without URL clutter
+- **Consistent Display**: All URL-based servers show consistent hostname format
+- **Robust Parsing**: Handles various URL formats gracefully with fallback
+
+#### 5. Example Transformations
+```
+Before: "http://localhost:3000/mcp" → After: "localhost"
+Before: "https://api.example.com/v1/mcp" → After: "api.example.com"
+Before: "192.168.1.100:8080" → After: "192.168.1.100"
+Before: "invalid-url" → After: "invalid-url" (fallback)
+```
 
 ## Error Handling Strategy
 
