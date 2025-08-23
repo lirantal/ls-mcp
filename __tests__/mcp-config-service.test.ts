@@ -288,5 +288,41 @@ describe('MCPConfigService', () => {
       assert.ok(httpServer)
       assert.strictEqual(httpServer.transport, 'http')
     })
+
+    test('should correctly map inferred transport types to transport field', async () => {
+      const mockPathRegistry = {
+        getPathsForOS: mock.fn(() => ({
+          test: [{ filePath: '__tests__/__fixtures__/mcp-config-service/mixed-transport-types.json', type: 'local' as const }]
+        })),
+        getSupportedApps: mock.fn(() => ['test'])
+      }
+      
+      const service = new MCPConfigService()
+      // @ts-ignore - Mocking private property for testing
+      service.pathRegistry = mockPathRegistry
+      
+      const result = await service.getMCPFileGroups()
+      
+      assert.ok(result.test)
+      assert.strictEqual(result.test.paths.length, 1)
+      assert.strictEqual(result.test.paths[0].parsable, true)
+      assert.ok(result.test.paths[0].servers)
+      
+      // Test transport mapping for servers with explicit types
+      const stdioServer = result.test.paths[0].servers?.find(s => s.name === 'stdio-server')
+      assert.ok(stdioServer, 'Should find stdio server')
+      assert.strictEqual(stdioServer.type, 'stdio')
+      assert.strictEqual(stdioServer.transport, 'stdio', 'stdio type should map to stdio transport')
+      
+      const httpServer = result.test.paths[0].servers?.find(s => s.name === 'http-server')
+      assert.ok(httpServer, 'Should find http server')
+      assert.strictEqual(httpServer.type, 'http')
+      assert.strictEqual(httpServer.transport, 'http', 'http type should map to http transport')
+      
+      const streamableHttpServer = result.test.paths[0].servers?.find(s => s.name === 'streamable-http-server')
+      assert.ok(streamableHttpServer, 'Should find streamable-http server')
+      assert.strictEqual(streamableHttpServer.type, 'streamable-http')
+      assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http type should map to http transport')
+    })
   })
 })

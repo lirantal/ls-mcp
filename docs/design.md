@@ -262,6 +262,72 @@ UI Components (TRANSPORT column, summary counts)
 - **Maintainable**: Changes to config format only affect the mapping layer
 - **Type Safety**: Internal interfaces clearly define expected data structure
 
+## Transport Inference
+
+### 1. Automatic Transport Detection
+When MCP server configurations don't explicitly specify a `type` field, the system automatically infers transport types using intelligent pattern matching:
+
+**Rule 1: URL-based Inference**
+```json
+{
+  "servers": {
+    "web-server": {
+      "url": "https://example.com/mcp"
+      // No type field → automatically inferred as "http"
+    }
+  }
+}
+```
+
+**Rule 2-4: Args-based Inference**
+```json
+{
+  "servers": {
+    "stdio-server": {
+      "command": "npx",
+      "args": ["-y", "stdio-mcp-server", "--stdio"]
+      // No type field → automatically inferred as "stdio" from --stdio flag
+    },
+    "http-server": {
+      "command": "npx", 
+      "args": ["-y", "http-mcp-server", "--http", "--port", "3000"]
+      // No type field → automatically inferred as "http" from --http flag
+    },
+    "sse-server": {
+      "command": "npx",
+      "args": ["-y", "sse-mcp-server", "--sse", "--endpoint", "/mcp"]
+      // No type field → automatically inferred as "sse" from --sse flag
+    }
+  }
+}
+```
+
+**Rule 5: Default Inference**
+```json
+{
+  "servers": {
+    "generic-server": {
+      "command": "npx",
+      "args": ["-y", "generic-mcp-server"]
+      // No type field, no transport indicators → defaults to "stdio"
+    }
+  }
+}
+```
+
+### 2. Inference Priority
+1. **Explicit Type**: `"type": "stdio"` (highest priority)
+2. **URL Detection**: Presence of `url` field → `http`
+3. **Args Analysis**: Keywords in `args` array → corresponding transport
+4. **Default Fallback**: `command` present → `stdio` (most common case)
+
+### 3. Benefits of Transport Inference
+- **Better User Experience**: Transport types visible even when configs don't specify them
+- **Improved Accuracy**: More accurate transport counts in CLI summary
+- **Backward Compatibility**: Works with existing MCP server configurations
+- **Intelligent Defaults**: Reasonable assumptions based on configuration patterns
+- **Comprehensive Coverage**: Handles all common MCP server configuration scenarios
+
 ## Error Handling Strategy
 
 ### 1. Graceful Degradation

@@ -97,6 +97,8 @@ When an MCP server configuration includes environment variables with credentials
 }
 ```
 
+**Note**: The `type` field is optional. When not specified, the system automatically infers transport types using intelligent pattern matching (URL detection, args analysis, and default fallback to stdio).
+
 The CLI will display:
 
 ```

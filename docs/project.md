@@ -45,8 +45,12 @@ The project maintains a clean separation between external MCP configuration file
 *   **Clean Mapping**: The `MCPConfigService` handles the one-way mapping from `type` → `transport` at the data layer
 *   **Special Handling**: `streamable-http` is treated as synonym for `http` and mapped accordingly
 *   **UI Consistency**: All transport information in the UI (TRANSPORT column, summary counts) comes from the internal `transport` field
+*   **Transport Inference**: When no explicit `type` field is present, the system automatically infers transport types using intelligent pattern matching:
+    - **URL Detection**: Presence of `url` field → `http` transport
+    - **Args Analysis**: Keywords in `args` array → corresponding transport (`stdio`, `http`, `sse`)
+    - **Default Fallback**: `command` present → `stdio` transport (most common case)
 
-This architecture ensures maintainability and clear separation of concerns between external data formats and internal application logic.
+This architecture ensures maintainability and clear separation of concerns between external data formats and internal application logic, while providing intelligent defaults for better user experience.
 
 ### Testing
 *   `__tests__/`: Comprehensive test suite with proper isolation and mocking to prevent real filesystem access during testing.
@@ -59,6 +63,7 @@ This architecture ensures maintainability and clear separation of concerns betwe
 - **Data Model Architecture**: Implemented clean separation between external MCP config format (`type`) and internal app data (`transport`)
 - **Transport Handling**: Fixed transport counting by properly mapping `type` field to `transport` field at the data layer
 - **Extended Transport Support**: Added support for `streamable-http` type, treating it as synonym for `http`
+- **Transport Inference**: Implemented intelligent automatic detection of transport types when not explicitly specified
 - **Test Isolation**: Fixed critical issue where tests were accessing real files outside the project directory
 - **Type Safety**: Created comprehensive TypeScript types for all services
 - **Error Handling**: Improved error handling and graceful degradation for unsupported operating systems

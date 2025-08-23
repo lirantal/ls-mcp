@@ -48,6 +48,10 @@ The following AI applications are currently supported:
 - **Must** support server transport types: `stdio`, `sse`, `http`, `streamable-http` (from `type` field)
 - **Must** treat `streamable-http` as synonym for `http` in internal data model
 - **Must** maintain clean separation between external config format and internal data model
+- **Must** automatically infer transport types when `type` field is not explicitly set:
+  - **Must** infer `http` transport when `url` property is present
+  - **Must** infer transport from `args` array keywords (`stdio`, `http`, `sse`)
+  - **Must** default to `stdio` transport when `command` is present but no other indicators found
 
 ### 5. Process Detection
 

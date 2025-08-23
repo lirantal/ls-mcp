@@ -10,7 +10,14 @@
 		"nodejs-api-docs": {
 			"command": "npx",
 			"args": ["-y", "mcp-server-nodejs-api-docs"]
-		}
+		},
+		"github": {
+			"url": "https://api.githubcopilot.com/mcp/"
+		  },
+		"semgrep": {
+			"type": "streamable-http",
+			"url": "https://mcp.semgrep.ai/mcp"
+		  }
 	},
 	"inputs": []
 }

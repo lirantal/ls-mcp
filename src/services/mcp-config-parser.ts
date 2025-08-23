@@ -110,7 +110,7 @@ export class MCPConfigParser {
           name: serverName,
           command: serverConfig.command || '',
           args: Array.isArray(serverConfig.args) ? serverConfig.args : undefined,
-          type: this.validateType(serverConfig.type) ? serverConfig.type : undefined,
+          type: this.validateType(serverConfig.type) ? serverConfig.type : this.inferTransportType(serverConfig),
           env
         }
       }
@@ -124,6 +124,39 @@ export class MCPConfigParser {
    */
   private validateType (type: any): type is 'sse' | 'http' | 'stdio' | 'streamable-http' {
     return ['sse', 'http', 'stdio', 'streamable-http'].includes(type)
+  }
+
+  /**
+   * Infer transport type from server configuration when type field is not explicitly set
+   */
+  private inferTransportType (serverConfig: any): 'sse' | 'http' | 'stdio' | undefined {
+    // Rule 1: If URL is present, infer HTTP transport
+    if (serverConfig.url && typeof serverConfig.url === 'string') {
+      return 'http'
+    }
+
+    // Rule 2-4: Search through args array for transport indicators
+    if (Array.isArray(serverConfig.args)) {
+      const argsString = serverConfig.args.join(' ').toLowerCase()
+
+      // Check for stdio indicators
+      if (argsString.includes('stdio')) {
+        return 'stdio'
+      }
+
+      // Check for HTTP indicators
+      if (argsString.includes('http')) {
+        return 'http'
+      }
+
+      // Check for SSE indicators
+      if (argsString.includes('sse')) {
+        return 'sse'
+      }
+    }
+
+    // No transport type could be inferred
+    return undefined
   }
 
   /**
