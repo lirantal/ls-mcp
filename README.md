@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center">
-  Detect and list MCPs in your local dev environment (Model Context Protocol)
+  Detect Configured MCP (Model Context Protocol) in your local dev environment
 </p>
 
 <p align="center">
@@ -24,46 +24,15 @@
 
 ## Features
 
-- **🔍 MCP Discovery**: Automatically detect MCP servers across multiple AI applications
-- **📁 Directory Bubbling**: Intelligent discovery of project-scoped MCP configs from nested directories
+- **🔍 MCP Discovery**: Automatically detect MCP servers across various AI applications and agentic IDEs
+- **📁 Directory Bubbling**: Intelligent discovery of project-scoped MCP configs from nested directories, supporting project-scoped MCP Server configuration and global configurations
 - **🔄 Process Detection**: Real-time status of running MCP servers
-- **🔒 Credential Analysis**: Security analysis of environment variables and API keys
-- **🌐 URL Hostname Extraction**: Clean display of hostnames for URL-based MCP servers
-- **🌍 Cross-Platform**: Support for Windows and macOS (Linux support coming soon)
-- **⚡ High Performance**: Fast discovery with intelligent caching and optimization
+- **🔒 Credential Analysis**: Security analysis of environment variables and API keys for potentially exposed credentials in MCP Servers
 
 ## Usage: CLI
 
 ```bash
 npx ls-mcp
-```
-
-### Directory Bubbling
-
-The tool now includes intelligent directory bubbling for better Developer Experience. Run `ls-mcp` from anywhere in your project structure:
-
-```bash
-# From project root (traditional behavior)
-cd ~/projects/my-project
-npx ls-mcp
-
-# From nested directory (new feature!)
-cd ~/projects/my-project/backend/services/api
-npx ls-mcp  # Automatically finds .vscode/mcp.json from project root
-```
-
-### URL Hostname Extraction
-
-The tool now displays clean hostnames for URL-based MCP servers instead of full URLs:
-
-```bash
-# Before: Full URLs cluttered the SOURCE column
-SOURCE                    | STATUS | NAME           | TRANSPORT
-http://localhost:3000/mcp | ❌     | local-server  | http
-
-# After: Clean hostnames for better readability
-SOURCE      | STATUS | NAME           | TRANSPORT
-localhost   | ❌     | local-server  | http
 ```
 
 ### Debug Mode
@@ -88,10 +57,6 @@ For detailed information about the project architecture and features:
 - **[Directory Bubbling](./docs/directory-bubbling.md)**: Intelligent directory traversal feature
 - **[URL Hostname Extraction](./docs/url-hostname-extraction.md)**: Clean display of hostnames for URL-based servers
 - **[Credential Detection](./docs/credential-detection.md)**: Security analysis features
-
-## Contributing
-
-Please consult [CONTRIBUTING](./.github/CONTRIBUTING.md) for guidelines on contributing to this project.
 
 ## Author
 
