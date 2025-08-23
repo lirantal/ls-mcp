@@ -20,13 +20,71 @@ The `ls-mcp` project is designed as a modular, service-oriented architecture for
                        │  │MCPConfig    │ │    │  │OS Path      │ │
                        │  │Parser       │ │    │  │Resolution   │ │
                        │  └─────────────┘ │    │  └─────────────┘ │
-                       └──────────────────┘    └─────────────────┘
-                                │                        │
-                                ▼                        ▼
+                       │  ┌─────────────┐ │    └─────────────────┘
+                       │  │Directory    │ │
+                       │  │Bubble       │ │
+                       │  │Service      │ │
+                       │  └─────────────┘ │
+                       └──────────────────┘
+                                │
+                                ▼
                        ┌──────────────────┐    ┌─────────────────┐
                        │MCPServerManager │    │  RenderService  │
                        │Service          │    │                 │
                        └──────────────────┘    └─────────────────┘
+```
+
+## Directory Bubbling Service (`src/services/directory-bubble-service.ts`)
+
+### Purpose
+The DirectoryBubbleService provides intelligent directory traversal capabilities to enhance the discovery of local MCP configuration files. It automatically searches parent directories when local configs are not found in the current directory, improving Developer Experience.
+
+### Design Principles
+- **Intelligent Traversal**: Automatically bubbles up directory tree until finding config files or reaching boundaries
+- **Boundary Safety**: Stops at home directory (`~`) or root directory (`/`) to prevent infinite loops
+- **Performance Optimized**: Stops at first encounter of matching config file (closest to current directory)
+- **Error Resilient**: Silently handles permission errors, non-existent directories, and other filesystem issues
+- **Symlink Aware**: Follows symlinks during traversal for comprehensive coverage
+
+### Key Methods
+
+#### `findLocalConfigInParentDirectories(localPath, startDir)`
+Searches for a local MCP configuration file by traversing up the directory tree.
+
+```typescript
+async findLocalConfigInParentDirectories(
+  localPath: string,
+  startDir: string
+): Promise<string | null>
+```
+
+**Flow:**
+1. Check if config file exists in start directory
+2. If not found, traverse up to parent directory
+3. Continue until config file is found or boundaries are reached
+4. Return absolute path to found config file or null
+
+#### `checkDirectoryForConfig(dir, configPath)`
+Checks if a specific configuration file exists in a given directory.
+
+#### `getParentDirectory(dir)`
+Safely gets the parent directory path, handling edge cases like root directory.
+
+### Integration with MCPConfigService
+- **Optional Feature**: Directory bubbling is controlled by constructor options
+- **Local Paths Only**: Only applies to paths marked as `'local'` type
+- **Seamless Integration**: Works transparently with existing configuration discovery logic
+
+### Example Usage
+```typescript
+const bubbleService = new DirectoryBubbleService()
+
+// Find .vscode/mcp.json starting from nested directory
+const configPath = await bubbleService.findLocalConfigInParentDirectories(
+  '.vscode/mcp.json',
+  '/projects/my-project/backend/services'
+)
+// Returns: '/projects/my-project/.vscode/mcp.json'
 ```
 
 ## CLI Design (`bin/cli.ts`)
@@ -108,13 +166,14 @@ getMCPConfigService(): MCPConfigService
 ### 1. MCPConfigService
 
 #### Purpose
-Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing.
+Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing. Now includes optional directory bubbling functionality for enhanced local configuration file discovery.
 
 #### Key Responsibilities
 - **Path Resolution**: Coordinates with MCPPathRegistry for OS-specific paths
 - **File Parsing**: Coordinates with MCPConfigParser for configuration parsing
 - **Data Aggregation**: Combines results from multiple sources
 - **Error Handling**: Provides meaningful error messages for different failure scenarios
+- **Directory Bubbling**: Intelligently traverses parent directories to find local MCP configuration files
 
 #### Public API
 ```typescript

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "backend-server": {
+      "command": "python",
+      "args": ["backend-mcp-server.py"],
+      "env": {
+        "BACKEND_API_KEY": "backend-value"
+      }
+    }
+  }
+}

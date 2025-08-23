@@ -6,7 +6,8 @@ export class MCPFiles {
   private mcpConfigService: MCPConfigService
 
   constructor () {
-    this.mcpConfigService = new MCPConfigService()
+    // Enable directory bubbling for better DX when running from nested directories
+    this.mcpConfigService = new MCPConfigService({ enableDirectoryBubbling: true })
   }
 
   /**

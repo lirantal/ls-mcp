@@ -22,10 +22,33 @@
   <img src="https://github.com/lirantal/ls-mcp/blob/main/.github/ls-mcp-logo.png?raw=true" alt="ls-mcp logo"/>
 </div>
 
+## Features
+
+- **🔍 MCP Discovery**: Automatically detect MCP servers across multiple AI applications
+- **📁 Directory Bubbling**: Intelligent discovery of project-scoped MCP configs from nested directories
+- **🔄 Process Detection**: Real-time status of running MCP servers
+- **🔒 Credential Analysis**: Security analysis of environment variables and API keys
+- **🌍 Cross-Platform**: Support for Windows and macOS (Linux support coming soon)
+- **⚡ High Performance**: Fast discovery with intelligent caching and optimization
+
 ## Usage: CLI
 
 ```bash
 npx ls-mcp
+```
+
+### Directory Bubbling
+
+The tool now includes intelligent directory bubbling for better Developer Experience. Run `ls-mcp` from anywhere in your project structure:
+
+```bash
+# From project root (traditional behavior)
+cd ~/projects/my-project
+npx ls-mcp
+
+# From nested directory (new feature!)
+cd ~/projects/my-project/backend/services/api
+npx ls-mcp  # Automatically finds .vscode/mcp.json from project root
 ```
 
 ### Debug Mode

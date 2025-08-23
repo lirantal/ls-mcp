@@ -10,6 +10,8 @@ The tool works by scanning for known MCP configuration files associated with var
 
 1.  **File Discovery:** The tool starts by looking for MCP configuration files in predefined locations. These locations are specific to different applications (like VS Code, Claude, Cursor, etc.) and operating systems (macOS, Windows). The tool gracefully handles unsupported operating systems (like Linux) by providing meaningful error messages.
 
+   **Directory Bubbling Feature:** For local (project-scoped) MCP configuration files, the tool now includes an intelligent directory bubbling feature. If a local config file isn't found in the current directory, it automatically searches up the directory tree until it finds the file or reaches the user's home directory or root directory. This provides better Developer Experience (DX) by allowing users to run `ls-mcp` from anywhere within their project structure and still detect project-scoped MCP config files.
+
 2.  **Configuration Parsing:** Once a configuration file is found, it is parsed to extract the list of configured MCP servers. The tool can handle standard JSON and JSON with comments (JSONC). It's designed to be flexible and can find server configurations under different keys like `servers`, `mcp.servers`, `mcpServers`, and `context_servers` to support a variety of applications.
 
 3.  **Process Detection:** For each configured MCP server, the tool checks if it is currently running. It does this by executing system commands (`ps` on macOS and `powershell` on Windows) to get a list of all active processes. It then compares the command from the MCP configuration with the running processes to determine the server's status. The tool includes specific logic to handle common ways of running MCP servers, such as using `uvx` or `npx`.
@@ -27,12 +29,13 @@ The project is a TypeScript-based Node.js application with a clear, modular, ser
 ### Service Layer
 The project has been refactored into a modular service architecture for better separation of concerns and testability:
 
-*   `src/services/mcp-config-service.ts`: Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing.
+*   `src/services/mcp-config-service.ts`: Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing. Includes optional directory bubbling functionality for enhanced local config file discovery.
 *   `src/services/mcp-path-registry.ts`: Handles OS-specific path resolution for MCP configuration files across different AI applications.
 *   `src/services/mcp-config-parser.ts`: Handles parsing and validation of MCP configuration files in various formats (JSON, JSONC).
 *   `src/services/mcp-server-manager-service.ts`: Manages MCP server process detection and status reporting.
 *   `src/services/render-service.ts`: Handles output formatting and display of MCP configuration information.
 *   `src/services/mcp-config-linter-service.ts`: Legacy service that now delegates to the new MCPConfigParser for backward compatibility.
+*   `src/services/directory-bubble-service.ts`: Handles intelligent directory traversal to find local MCP config files in parent directories, improving Developer Experience when running from nested project subdirectories.
 
 ### Type Definitions
 *   `src/types/mcp-config-service.types.ts`: Comprehensive type definitions for all MCP configuration services, designed for future extraction to separate npm packages.
@@ -64,6 +67,7 @@ This architecture ensures maintainability and clear separation of concerns betwe
 - **Transport Handling**: Fixed transport counting by properly mapping `type` field to `transport` field at the data layer
 - **Extended Transport Support**: Added support for `streamable-http` type, treating it as synonym for `http`
 - **Transport Inference**: Implemented intelligent automatic detection of transport types when not explicitly specified
+- **Directory Bubbling**: Implemented intelligent directory traversal for local MCP config files, providing better DX when running from nested project subdirectories
 - **Test Isolation**: Fixed critical issue where tests were accessing real files outside the project directory
 - **Type Safety**: Created comprehensive TypeScript types for all services
 - **Error Handling**: Improved error handling and graceful degradation for unsupported operating systems
@@ -72,14 +76,58 @@ This architecture ensures maintainability and clear separation of concerns betwe
 ### 🔧 Current Test Coverage
 - **MCPPathRegistry**: 100% coverage
 - **MCPConfigParser**: 97% coverage  
-- **MCPConfigService**: 90.76% coverage
+- **MCPConfigService**: 90.84% coverage
 - **MCPServerManagerService**: 54.3% coverage (needs improvement)
 - **RenderService**: 98.65% coverage
+- **DirectoryBubbleService**: 95.89% coverage
 
 ### 🚀 Ready for Future
 - **Package Extraction**: Services are designed to be easily extracted to separate npm packages
 - **Linux Support**: Architecture supports adding Linux support in future iterations
 - **Plugin System**: Extensible design for custom AI application definitions
+
+## Directory Bubbling Feature
+
+### Overview
+The directory bubbling feature enhances the Developer Experience (DX) by automatically detecting MCP configuration files in parent directories when running `ls-mcp` from nested project subdirectories.
+
+### How It Works
+1. **Local Path Detection**: When processing local (project-scoped) MCP configuration files, the tool first checks if the file exists in the current directory
+2. **Intelligent Traversal**: If not found, it automatically "bubbles up" the directory tree, checking each parent directory for the configuration file
+3. **Boundary Safety**: The traversal stops at the user's home directory (`~`) or root directory (`/`) to prevent infinite loops
+4. **First Match Wins**: The tool stops at the first encounter of a matching configuration file (closest to the current directory)
+
+### Example Scenarios
+
+#### Scenario 1: Running from Project Root
+```bash
+cd ~/projects/my-project
+ls-mcp  # ✅ Detects .vscode/mcp.json in current directory
+```
+
+#### Scenario 2: Running from Nested Directory
+```bash
+cd ~/projects/my-project/backend/services/api
+ls-mcp  # ✅ Automatically detects .vscode/mcp.json from project root
+```
+
+#### Scenario 3: Multiple Config Files
+```bash
+cd ~/projects/my-project/backend/services
+# If both ~/projects/my-project/.vscode/mcp.json and ~/projects/my-project/backend/.mcp.json exist
+ls-mcp  # ✅ Detects the closer .mcp.json file in backend directory
+```
+
+### Configuration
+- **Enabled by Default**: Directory bubbling is automatically enabled for the CLI
+- **Optional Feature**: Can be disabled by modifying the MCPConfigService constructor options
+- **Local Paths Only**: Only applies to paths marked as `'local'` type, never to global paths
+
+### Benefits
+- **Better DX**: Run `ls-mcp` from anywhere in your project structure
+- **No More Navigation**: No need to navigate to project root to check MCP configurations
+- **Intelligent Discovery**: Automatically finds the most relevant configuration file
+- **Backward Compatible**: Existing behavior unchanged for users running from project root
 
 ## How to Extend the Project
 
