@@ -16,7 +16,7 @@ The tool works by scanning for known MCP configuration files associated with var
 
 3.  **Process Detection:** For each configured MCP server, the tool checks if it is currently running. It does this by executing system commands (`ps` on macOS and `powershell` on Windows) to get a list of all active processes. It then compares the command from the MCP configuration with the running processes to determine the server's status. The tool includes specific logic to handle common ways of running MCP servers, such as using `uvx` or `npx`.
 
-4.  **Output Rendering:** Finally, all the gathered information is displayed in a formatted table in the console. The table shows the server's status (running or stopped), name, source (the command used to start it), and transport protocol.
+4.  **Output Rendering:** Finally, all the gathered information is displayed in a formatted table in the console. The table shows the server's status (running or stopped), name, source (the command used to start it or hostname for URL-based servers), and transport protocol.
 
 ## Project Structure
 
@@ -67,6 +67,7 @@ This architecture ensures maintainability and clear separation of concerns betwe
 - **Transport Handling**: Fixed transport counting by properly mapping `type` field to `transport` field at the data layer
 - **Extended Transport Support**: Added support for `streamable-http` type, treating it as synonym for `http`
 - **Transport Inference**: Implemented intelligent automatic detection of transport types when not explicitly specified
+- **URL Hostname Extraction**: Implemented feature #80 to display only hostnames for URL-based MCP servers in the SOURCE column, improving readability
 - **Directory Bubbling**: Implemented intelligent directory traversal for local MCP config files, providing better DX when running from nested project subdirectories
 - **Test Isolation**: Fixed critical issue where tests were accessing real files outside the project directory
 - **Type Safety**: Created comprehensive TypeScript types for all services
@@ -85,6 +86,45 @@ This architecture ensures maintainability and clear separation of concerns betwe
 - **Package Extraction**: Services are designed to be easily extracted to separate npm packages
 - **Linux Support**: Architecture supports adding Linux support in future iterations
 - **Plugin System**: Extensible design for custom AI application definitions
+
+## URL Hostname Extraction Feature
+
+### Overview
+The URL hostname extraction feature improves the readability of MCP server configurations by displaying only the hostname for URL-based servers instead of the full URL in the SOURCE column.
+
+### How It Works
+1. **URL Detection**: When an MCP server configuration contains a `url` field, the system automatically extracts the hostname portion
+2. **Hostname Extraction**: Uses Node.js built-in `URL` constructor to parse URLs and extract the hostname
+3. **Fallback Handling**: If URL parsing fails, the original string is displayed as a fallback
+4. **Protocol Handling**: Automatically adds `http://` protocol if none is specified for proper parsing
+
+### Example Scenarios
+
+#### Before (Full URL Display)
+```
+SOURCE                    | STATUS | NAME           | TRANSPORT
+http://localhost:3000/mcp | ❌     | local-server  | http
+https://api.example.com  | ❌     | api-server    | http
+```
+
+#### After (Hostname Display)
+```
+SOURCE      | STATUS | NAME           | TRANSPORT
+localhost   | ❌     | local-server  | http
+api.example.com | ❌     | api-server    | http
+```
+
+### Benefits
+- **Cleaner Output**: SOURCE column is more readable and concise
+- **Better UX**: Users can quickly identify the server location without URL clutter
+- **Consistent Display**: All URL-based servers show consistent hostname format
+- **Robust Parsing**: Handles various URL formats including those without protocols
+
+### Implementation Details
+- **Utility Function**: `extractHostname()` in `src/utils/url-utils.ts`
+- **Service Integration**: Integrated into both `MCPConfigService` and `MCPServerManagerService`
+- **Error Handling**: Graceful fallback to original string if parsing fails
+- **Protocol Support**: Handles HTTP, HTTPS, and custom protocols
 
 ## Directory Bubbling Feature
 

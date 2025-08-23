@@ -206,6 +206,28 @@ constructor () {
 - **Integration Tests**: Comprehensive testing of MCPConfigService integration
 - **Edge Cases**: Boundary conditions, error scenarios, symlink handling
 
+### Test Architecture Improvements
+The directory bubbling tests have been significantly improved to address performance and reliability issues:
+
+#### Before (Problematic Tests)
+- **Global Mocking**: Tests were mocking `fs.access` globally, causing conflicts
+- **Heavy Operations**: Tests called `getMCPFileGroups()` which performed real filesystem operations
+- **Hanging Tests**: Tests would hang indefinitely due to infinite loops and filesystem access
+- **Poor Isolation**: Tests were not properly isolated from system dependencies
+
+#### After (Improved Tests)
+- **Direct Service Mocking**: Tests now mock `DirectoryBubbleService.prototype.findLocalConfigInParentDirectories` directly
+- **Lightweight Testing**: Tests focus on service configuration and integration rather than heavy filesystem operations
+- **Fast Execution**: Tests complete in ~5 seconds instead of hanging
+- **Proper Isolation**: Each test is properly isolated and tests specific functionality
+
+#### Test Strategy
+- **Service Configuration Tests**: Verify that `enableDirectoryBubbling` is set correctly
+- **Service Creation Tests**: Ensure services can be instantiated with different options
+- **Integration Tests**: Verify proper wiring between MCPConfigService and DirectoryBubbleService
+- **Error Handling Tests**: Test resilience when directory bubbling fails
+- **Mock Validation**: Verify that mocks are called appropriately based on configuration
+
 ### Test Scenarios
 - ✅ Config file in current directory
 - ✅ Config file in parent directory

@@ -54,6 +54,7 @@ The following AI applications are currently supported:
 - **Must** maintain clean separation between external config format and internal data model
 - **Must** automatically infer transport types when `type` field is not explicitly set:
   - **Must** infer `http` transport when `url` property is present
+- **Must** extract and display only hostname for URL-based MCP servers in the SOURCE column (Feature #80)
   - **Must** infer transport from `args` array keywords (`stdio`, `http`, `sse`)
   - **Must** default to `stdio` transport when `command` is present but no other indicators found
 
