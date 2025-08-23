@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.10.0
+
+### Minor Changes
+
+- [`efc2985`](https://github.com/lirantal/ls-mcp/commit/efc29852f75df45f2ce230e49109254b9d2b0160) Thanks [@lirantal](https://github.com/lirantal)! - feat: automatically infer transport types, print summary results, and detect potential sensitive creds in MCP Server config files
+
 ## 1.9.1
 
 ### Patch Changes
