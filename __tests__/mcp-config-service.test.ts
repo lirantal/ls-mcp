@@ -142,9 +142,10 @@ describe('MCPConfigService', () => {
     test('should return supported operating systems', () => {
       const osList = service.getSupportedOperatingSystems()
       
-      assert.strictEqual(osList.length, 2)
+      assert.strictEqual(osList.length, 3)
       assert.ok(osList.includes('win32'))
       assert.ok(osList.includes('darwin'))
+      assert.ok(osList.includes('linux'))
     })
   })
 

@@ -8,7 +8,7 @@
 
 The tool works by scanning for known MCP configuration files associated with various code editors and tools. Here's a high-level overview of the process:
 
-1.  **File Discovery:** The tool starts by looking for MCP configuration files in predefined locations. These locations are specific to different applications (like VS Code, Claude, Cursor, etc.) and operating systems (macOS, Windows). The tool gracefully handles unsupported operating systems (like Linux) by providing meaningful error messages.
+1.  **File Discovery:** The tool starts by looking for MCP configuration files in predefined locations. These locations are specific to different applications (like VS Code, Claude, Cursor, etc.) and operating systems (Windows, macOS, and Linux). The tool gracefully handles unsupported operating systems by providing meaningful error messages.
 
    **Directory Bubbling Feature:** For local (project-scoped) MCP configuration files, the tool now includes an intelligent directory bubbling feature. If a local config file isn't found in the current directory, it automatically searches up the directory tree until it finds the file or reaches the user's home directory or root directory. This provides better Developer Experience (DX) by allowing users to run `ls-mcp` from anywhere within their project structure and still detect project-scoped MCP config files.
 
@@ -72,7 +72,8 @@ This architecture ensures maintainability and clear separation of concerns betwe
 - **Test Isolation**: Fixed critical issue where tests were accessing real files outside the project directory
 - **Type Safety**: Created comprehensive TypeScript types for all services
 - **Error Handling**: Improved error handling and graceful degradation for unsupported operating systems
-- **CI Compatibility**: Tests now pass in all environments, including Linux CI (with graceful unsupported OS handling)
+- **CI Compatibility**: Tests now pass in all environments, including Linux CI
+- **Linux Support**: Added comprehensive Linux support with appropriate file paths for all supported applications
 
 ### 🔧 Current Test Coverage
 - **MCPPathRegistry**: 100% coverage
@@ -84,7 +85,7 @@ This architecture ensures maintainability and clear separation of concerns betwe
 
 ### 🚀 Ready for Future
 - **Package Extraction**: Services are designed to be easily extracted to separate npm packages
-- **Linux Support**: Architecture supports adding Linux support in future iterations
+- **Enhanced Features**: Architecture supports future enhancements and additional AI application definitions
 - **Plugin System**: Extensible design for custom AI application definitions
 
 ## URL Hostname Extraction Feature
@@ -201,7 +202,6 @@ If you encounter a bug, here's how you can approach fixing it:
 The codebase has been significantly refactored to improve maintainability and testability. Here are some potential areas for future improvement:
 
 *   **Improve MCPServerManagerService test coverage:** Currently at 54.3%, this service needs more comprehensive testing, especially for process detection edge cases and different transport type handling.
-*   **Add Linux support:** The architecture is ready for Linux support to be added by extending the `MCPPathRegistry` with Linux-specific paths.
 *   **Performance optimization:** For systems with many MCP servers, consider adding caching and parallel processing optimizations.
 *   **Enhanced error reporting:** Improve user-facing error messages and add debugging information for developers.
 

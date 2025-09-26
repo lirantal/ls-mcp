@@ -24,9 +24,9 @@ This document outlines the requirements for the `ls-mcp` project, a command-line
 ### 2. Operating System Support
 
 - **Must** support Windows (`win32`) operating systems
-- **Must** support macOS (`darwin`) operating systems
-- **Must** gracefully handle unsupported operating systems (e.g., Linux)
-- **Future**: Linux support should be added in a future iteration
+- **Must** support macOS (`darwin`) operating systems  
+- **Must** support Linux (`linux`) operating systems
+- **Must** gracefully handle unsupported operating systems
 
 ### 3. AI Application Support
 

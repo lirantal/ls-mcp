@@ -93,6 +93,53 @@ export class MCPPathRegistry {
     ]
   }
 
+  private static readonly LINUX_PATHS: MCPAppPathsRecord = {
+    claude: [
+      { filePath: path.join(process.env.HOME || '', '.config', 'Claude', 'claude_desktop_config.json'), type: 'global' }
+    ],
+    claude_code: [
+      { filePath: '.mcp.json', type: 'local' }
+    ],
+    cursor: [
+      { filePath: path.join(process.env.HOME || '', '.cursor', 'mcp.json'), type: 'global' },
+      { filePath: path.join('.cursor', 'mcp.json'), type: 'local' }
+    ],
+    vscode: [
+      { filePath: path.join('.vscode', 'mcp.json'), type: 'local' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code', 'User', 'settings.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code - Insiders', 'User', 'settings.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code', 'User', 'mcp.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code - Insiders', 'User', 'mcp.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.mcp.json'), type: 'global' }
+    ],
+    cline: [
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code - Insiders', 'User', 'globalStorage', 'saoudrizwan.claude-dev', 'settings', 'cline_mcp_settings.json'), type: 'global' }
+    ],
+    windsurf: [
+      { filePath: path.join('.codeium', 'windsurf', 'mcp_config.json'), type: 'local' }
+    ],
+    roo: [
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' },
+      { filePath: path.join(process.env.HOME || '', '.config', 'Code - Insiders', 'User', 'globalStorage', 'rooveterinaryinc.roo-cline', 'settings', 'cline_mcp_settings.json'), type: 'global' }
+    ],
+    'intellij-github-copilot': [
+      { filePath: path.join(process.env.HOME || '', '.config', 'github-copilot', 'intellij', 'mcp.json'), type: 'global' }
+    ],
+    junie: [
+      { filePath: path.join(process.env.HOME || '', '.junie', 'mcp.json'), type: 'global' },
+      { filePath: path.join('.junie', 'mcp', 'mcp.json'), type: 'local' }
+    ],
+    zed: [
+      { filePath: path.join(process.env.HOME || '', '.config', 'zed', 'settings.json'), type: 'global' },
+      { filePath: path.join('.zed', 'settings.json'), type: 'local' }
+    ],
+    gemini: [
+      { filePath: path.join(process.env.HOME || '', '.gemini', 'settings.json'), type: 'global' },
+      { filePath: path.join('.gemini', 'settings.json'), type: 'local' }
+    ]
+  }
+
   private customApps: Map<string, MCPAppPathsRecord> = new Map()
 
   /**
@@ -106,6 +153,8 @@ export class MCPPathRegistry {
       case 'darwin':
       case 'macos':
         return { ...MCPPathRegistry.DARWIN_PATHS }
+      case 'linux':
+        return { ...MCPPathRegistry.LINUX_PATHS }
       default:
         throw new Error(`Unsupported operating system: ${os}`)
     }
@@ -137,7 +186,7 @@ export class MCPPathRegistry {
    * Get all supported operating systems
    */
   getSupportedOperatingSystems (): string[] {
-    return ['win32', 'darwin']
+    return ['win32', 'darwin', 'linux']
   }
 
   /**
