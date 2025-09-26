@@ -46,10 +46,20 @@ describe('MCPPathRegistry', () => {
       assert.strictEqual(paths.claude[0].filePath, path.join(process.env.HOME || '', 'Library', 'Application Support', 'Claude', 'claude_desktop_config.json'))
     })
 
+    test('should return Linux paths for linux', () => {
+      const paths = registry.getPathsForOS('linux')
+      
+      assert.ok(paths.claude)
+      assert.ok(paths.vscode)
+      assert.ok(paths.cursor)
+      assert.strictEqual(paths.claude[0].filePath, path.join(process.env.HOME || '', '.config', 'Claude', 'claude_desktop_config.json'))
+      assert.strictEqual(paths.claude[0].type, 'global')
+    })
+
     test('should throw error for unsupported OS', () => {
       assert.throws(() => {
-        registry.getPathsForOS('linux')
-      }, /Unsupported operating system: linux/)
+        registry.getPathsForOS('unsupported-os')
+      }, /Unsupported operating system: unsupported-os/)
     })
   })
 
@@ -70,6 +80,16 @@ describe('MCPPathRegistry', () => {
       assert.strictEqual(paths[0].type, 'global')
       assert.strictEqual(paths[1].filePath, path.join('.cursor', 'mcp.json'))
       assert.strictEqual(paths[1].type, 'local')
+    })
+
+    test('should return paths for specific app on Linux', () => {
+      const paths = registry.getPathsForApp('linux', 'vscode')
+      
+      assert.strictEqual(paths.length, 6)
+      assert.strictEqual(paths[0].filePath, path.join('.vscode', 'mcp.json'))
+      assert.strictEqual(paths[0].type, 'local')
+      assert.strictEqual(paths[1].filePath, path.join(process.env.HOME || '', '.config', 'Code', 'User', 'settings.json'))
+      assert.strictEqual(paths[1].type, 'global')
     })
 
     test('should throw error for non-existent app', () => {
@@ -109,15 +129,31 @@ describe('MCPPathRegistry', () => {
       assert.ok(apps.includes('zed'))
       assert.ok(apps.includes('gemini'))
     })
+
+    test('should return all supported apps for Linux', () => {
+      const apps = registry.getSupportedApps('linux')
+      
+      assert.ok(apps.includes('claude'))
+      assert.ok(apps.includes('vscode'))
+      assert.ok(apps.includes('cursor'))
+      assert.ok(apps.includes('cline'))
+      assert.ok(apps.includes('windsurf'))
+      assert.ok(apps.includes('roo'))
+      assert.ok(apps.includes('intellij-github-copilot'))
+      assert.ok(apps.includes('junie'))
+      assert.ok(apps.includes('zed'))
+      assert.ok(apps.includes('gemini'))
+    })
   })
 
   describe('getSupportedOperatingSystems', () => {
     test('should return supported operating systems', () => {
       const osList = registry.getSupportedOperatingSystems()
       
-      assert.strictEqual(osList.length, 2)
+      assert.strictEqual(osList.length, 3)
       assert.ok(osList.includes('win32'))
       assert.ok(osList.includes('darwin'))
+      assert.ok(osList.includes('linux'))
     })
   })
 
@@ -148,6 +184,20 @@ describe('MCPPathRegistry', () => {
       assert.strictEqual(paths['custom-app'].length, 1)
       assert.strictEqual(paths['custom-app'][0].filePath, '/custom/darwin/config.json')
       assert.strictEqual(paths['custom-app'][0].type, 'local')
+    })
+
+    test('should register custom app for Linux', () => {
+      const customPaths = [
+        { filePath: '/custom/linux/config.json', type: 'global' as const }
+      ]
+      
+      registry.registerCustomApp('linux', 'custom-app', customPaths)
+      const paths = registry.getPathsForOSWithCustom('linux')
+      
+      assert.ok(paths['custom-app'])
+      assert.strictEqual(paths['custom-app'].length, 1)
+      assert.strictEqual(paths['custom-app'][0].filePath, '/custom/linux/config.json')
+      assert.strictEqual(paths['custom-app'][0].type, 'global')
     })
   })
 
