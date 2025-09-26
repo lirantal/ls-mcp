@@ -4,51 +4,19 @@ export class CredentialDetectionService {
    */
   private static readonly CREDENTIAL_PATTERNS = {
     high: [
-      // API Keys and Tokens
-      /api[_-]?key/i,
-      /api[_-]?token/i,
-      /access[_-]?token/i,
-      /secret[_-]?key/i,
-      /private[_-]?key/i,
-
-      // Authentication Tokens
-      /auth[_-]?token/i,
-      /bearer[_-]?token/i,
-      /jwt[_-]?token/i,
-      /oauth[_-]?token/i,
+      // Generic Key and Token patterns (broad matching)
+      /.*key.*/i,
+      /.*token.*/i,
 
       // Passwords
-      /password/i,
-      /passwd/i,
-      /pwd/i,
+      /.*password.*/i,
+      /.*passwd.*/i,
+      /.*pwd.*/i,
 
-      // Credentials
-      /credential/i,
-      /creds/i,
-
-      // Specific service patterns
-      /openai[_-]?api[_-]?key/i,
-      /anthropic[_-]?api[_-]?key/i,
-      /firecrawl[_-]?api[_-]?key/i,
-      /github[_-]?token/i,
-      /gitlab[_-]?token/i,
-      /bitbucket[_-]?token/i,
-
-      // Database passwords
-      /db[_-]?password/i,
-      /database[_-]?password/i,
-      /redis[_-]?password/i,
-      /postgres[_-]?password/i,
-      /mysql[_-]?password/i,
-
-      // Cloud services
-      /aws[_-]?secret[_-]?access[_-]?key/i,
-      /aws[_-]?access[_-]?key[_-]?id/i,
-      /azure[_-]?key/i,
-      /gcp[_-]?key/i,
-      /google[_-]?api[_-]?key/i,
-      /gemini[_-]?api[_-]?key/i,
-      /claude[_-]?api[_-]?key/i
+      // Credentials and Secrets
+      /.*credential.*/i,
+      /.*creds.*/i,
+      /.*secret.*/i
     ],
     low: [
       // Organization and Account IDs

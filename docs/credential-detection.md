@@ -21,13 +21,12 @@ The feature detects environment variables in MCP server configurations that migh
 
 The credential patterns are organized by risk level for easier maintenance:
 
-**High Risk Patterns** (API keys, tokens, passwords, secrets):
-- `API_KEY`, `api_key`, `API-KEY`, `OPENAI_API_KEY`, `FIRECRAWL_API_KEY`
-- `API_TOKEN`, `ACCESS_TOKEN`, `AUTH_TOKEN`, `GITHUB_TOKEN`
-- `PASSWORD`, `DB_PASSWORD`, `REDIS_PASSWORD`
-- `CREDENTIAL`, `CREDS`
-- Database passwords: `POSTGRES_PASSWORD`, `MYSQL_PASSWORD`
-- Cloud services: AWS, Azure, GCP credentials
+**High Risk Patterns** (broad matching for any variable containing these terms):
+- `.*key.*` - Matches any variable containing "key" (e.g., `VERCEL_KEY`, `AWS_KEY`, `MY_APP_KEY`)
+- `.*token.*` - Matches any variable containing "token" (e.g., `VERCEL_TOKEN`, `SERVICE_TOKEN`, `ACCESS_TOKEN`)
+- `.*password.*`, `.*passwd.*`, `.*pwd.*` - Password-related variables
+- `.*credential.*`, `.*creds.*` - General credential variables
+- `.*secret.*` - Secret-related variables
 
 **Low Risk Patterns** (Organization IDs, account identifiers):
 - `ORG_ID`, `ORGANIZATION_ID`, `ACCOUNT_ID`, `USER_ID`
@@ -115,22 +114,27 @@ STATUS  NAME           SOURCE  TRANSPORT  CREDENTIALS
 
 ## Pattern Maintenance
 
-The new structure makes it easy to add or modify credential patterns:
+The new broad pattern structure makes it extremely easy to catch credential variables without needing specific service patterns:
 
 ```typescript
 private static readonly CREDENTIAL_PATTERNS = {
   high: [
-    // Add new high-risk patterns here
-    /new[_-]?secret[_-]?pattern/i,
+    // Broad patterns that catch any variable containing these terms
+    /.*key.*/i,      // Catches VERCEL_KEY, AWS_KEY, MY_APP_KEY, etc.
+    /.*token.*/i,    // Catches VERCEL_TOKEN, SERVICE_TOKEN, etc.
+    /.*password.*/i, // Catches any password variable
+    /.*secret.*/i,   // Catches any secret variable
+    /.*credential.*/i // Catches any credential variable
   ],
   low: [
-    // Add new low-risk patterns here
-    /new[_-]?id[_-]?pattern/i,
+    // More specific patterns for lower-risk identifiers
+    /.*org[_-]?id.*/i,
+    /.*account[_-]?id.*/i,
   ]
 }
 ```
 
-This organization eliminates the need to modify conditional logic when adding new patterns - simply add them to the appropriate risk level array.
+This approach eliminates the need to add specific patterns for each service (like `OPENAI_API_KEY`, `GITHUB_TOKEN`, etc.) since the broad patterns will catch them all. Adding support for new services no longer requires code changes - any variable with "KEY", "TOKEN", "PASSWORD", "SECRET", or "CREDENTIAL" in the name will be automatically detected.
 
 ## Testing
 

@@ -12,6 +12,15 @@ describe('CredentialDetectionService', () => {
       assert.strictEqual(CredentialDetectionService.isPotentialCredential('FIRECRAWL_API_KEY'), true)
     })
 
+    it('should detect generic key and token patterns', () => {
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('VERCEL_TOKEN'), true)
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('AWS_KEY'), true)
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('MY_APP_KEY'), true)
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('SERVICE_TOKEN'), true)
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('RANDOM_SECRET_KEY'), true)
+      assert.strictEqual(CredentialDetectionService.isPotentialCredential('CUSTOM_ACCESS_TOKEN'), true)
+    })
+
     it('should detect tokens', () => {
       assert.strictEqual(CredentialDetectionService.isPotentialCredential('API_TOKEN'), true)
       assert.strictEqual(CredentialDetectionService.isPotentialCredential('ACCESS_TOKEN'), true)
