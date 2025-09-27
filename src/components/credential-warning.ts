@@ -53,7 +53,7 @@ export default function CredentialWarningComponent (credentials: CredentialAnaly
 /**
  * Get an icon/symbol for different credential sources
  */
-function getSourceIcon(source: string): string {
+function getSourceIcon (source: string): string {
   switch (source) {
     case 'env':
       return '🌱 ' // Environment variable

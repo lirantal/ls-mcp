@@ -37,22 +37,22 @@ export class CredentialDetectionService {
       /--api-key/i,
       /--apikey/i,
       /--key/i,
-      
+
       // Token arguments
       /--token/i,
       /--access-token/i,
       /--auth-token/i,
       /--bearer-token/i,
-      
+
       // Password arguments
       /--password/i,
       /--passwd/i,
       /--pwd/i,
-      
+
       // Secret arguments
       /--secret/i,
       /--client-secret/i,
-      
+
       // Authentication arguments
       /--auth/i,
       /--authorization/i,
@@ -76,24 +76,24 @@ export class CredentialDetectionService {
       // Authorization headers
       /authorization/i,
       /auth/i,
-      
+
       // API key headers
       /x-api-key/i,
       /api-key/i,
       /apikey/i,
-      
+
       // Token headers
       /x-access-token/i,
       /access-token/i,
       /bearer-token/i,
       /x-auth-token/i,
       /auth-token/i,
-      
+
       // Custom authentication headers
       /x-.*-key/i,
       /x-.*-token/i,
       /x-.*-secret/i,
-      
+
       // Service-specific patterns
       /x-github-token/i,
       /x-openai-key/i,
@@ -116,14 +116,14 @@ export class CredentialDetectionService {
   /**
    * Check if a value is a variable substitution pattern (e.g., ${input:token})
    */
-  static isVariableSubstitution(value: string): boolean {
+  static isVariableSubstitution (value: string): boolean {
     return this.VARIABLE_SUBSTITUTION_PATTERN.test(value)
   }
 
   /**
    * Analyze command-line arguments for potential credentials
    */
-  static analyzeArguments(args: string[] | undefined): CredentialAnalysisResult {
+  static analyzeArguments (args: string[] | undefined): CredentialAnalysisResult {
     if (!args || !Array.isArray(args) || args.length === 0) {
       return {
         hasCredentials: false,
@@ -170,7 +170,7 @@ export class CredentialDetectionService {
   /**
    * Analyze HTTP headers for potential credentials
    */
-  static analyzeHeaders(headers: Record<string, string> | undefined): CredentialAnalysisResult {
+  static analyzeHeaders (headers: Record<string, string> | undefined): CredentialAnalysisResult {
     if (!headers || typeof headers !== 'object') {
       return {
         hasCredentials: false,
@@ -213,7 +213,7 @@ export class CredentialDetectionService {
   /**
    * Comprehensive analysis of server configuration for credentials
    */
-  static analyzeServerConfig(config: {
+  static analyzeServerConfig (config: {
     env?: Record<string, string>
     args?: string[]
     headers?: Record<string, string>
