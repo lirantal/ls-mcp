@@ -272,8 +272,13 @@ export class MCPConfigService {
           type: serverConfig.type,
           source,
           env: serverConfig.env,
+          headers: serverConfig.headers,
           status: 'stopped', // Default status, will be updated by server manager
-          credentials: CredentialDetectionService.analyzeEnvironmentVariables(serverConfig.env)
+          credentials: CredentialDetectionService.analyzeServerConfig({
+            env: serverConfig.env,
+            args: serverConfig.args,
+            headers: serverConfig.headers
+          })
         })
       }
     }

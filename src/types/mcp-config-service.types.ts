@@ -13,6 +13,7 @@ export interface MCPServerConfig {
   type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
   url?: string
   env?: Record<string, string>
+  headers?: Record<string, string>
 }
 
 export interface MCPAppMetadata {
@@ -36,6 +37,7 @@ export interface MCPServerInfo {
   type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
   source?: string
   env?: Record<string, string>
+  headers?: Record<string, string>
   status?: 'running' | 'stopped'
   credentials?: CredentialAnalysisResult
 }
@@ -67,6 +69,7 @@ export interface CredentialVariable {
   name: string
   value: string
   riskLevel: 'low' | 'high'
+  source?: 'env' | 'args' | 'headers'
 }
 
 export interface CredentialAnalysisResult {
