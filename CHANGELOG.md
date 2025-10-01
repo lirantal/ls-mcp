@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.13.0
+
+### Minor Changes
+
+- [`bc64f95`](https://github.com/lirantal/ls-mcp/commit/bc64f9580576f53c340b2b9325e7818ea27725c6) Thanks [@lirantal](https://github.com/lirantal)! - feat: support for detecting pinned versions in python MCP servers
+
 ## 1.12.0
 
 ### Minor Changes
