@@ -410,12 +410,27 @@ describe('MCPConfigService', () => {
           assert.ok(server.name, 'Server should have a name')
           assert.ok(server.command !== undefined, 'Server should have a command')
           
-          // Version info should be added for npx commands
+          // Version info should be added for supported package manager commands
           const npxServers = servers.filter(s => s.command === 'npx')
+          const uvxServers = servers.filter(s => s.command === 'uvx') 
+          const uvServers = servers.filter(s => s.command === 'uv')
+          
           if (npxServers.length > 0) {
             // At least one npx server should have version info
             const hasVersionInfo = npxServers.some(s => s.versionInfo !== undefined)
             assert.ok(hasVersionInfo, 'At least one npx server should have version info')
+          }
+          
+          if (uvxServers.length > 0) {
+            // At least one uvx server should have version info
+            const hasVersionInfo = uvxServers.some(s => s.versionInfo !== undefined)
+            assert.ok(hasVersionInfo, 'At least one uvx server should have version info')
+          }
+          
+          if (uvServers.length > 0) {
+            // At least one uv server should have version info
+            const hasVersionInfo = uvServers.some(s => s.versionInfo !== undefined)
+            assert.ok(hasVersionInfo, 'At least one uv server should have version info')
           }
         }
       } catch (error) {
@@ -436,5 +451,7 @@ describe('MCPConfigService', () => {
       // This is validated by the fact that no errors were thrown during construction
       assert.ok(true, 'Version detection service is properly instantiated')
     })
+
+
   })
 })

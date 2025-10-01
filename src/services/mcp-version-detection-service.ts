@@ -13,8 +13,8 @@ export class MCPVersionDetectionService {
    * @returns PackageVersionInfo if analysis is possible, null otherwise
    */
   analyzeServerVersion (command: string, args?: string[]): PackageVersionInfo | null {
-    // Only analyze npx commands
-    if (command !== 'npx') {
+    // Only analyze supported package manager commands
+    if (!['npx', 'uvx', 'uv'].includes(command)) {
       return null
     }
 
@@ -23,7 +23,7 @@ export class MCPVersionDetectionService {
       return null
     }
 
-    const packageName = this.extractPackageName(args)
+    const packageName = this.extractPackageName(command, args)
     if (!packageName) {
       return null
     }
@@ -40,11 +40,30 @@ export class MCPVersionDetectionService {
   }
 
   /**
+   * Extract the package name based on the command type
+   * @param command - The command used to run the server
+   * @param args - Array of arguments passed to the command
+   * @returns The package name/spec or null if not found
+   */
+  extractPackageName (command: string, args: string[]): string | null {
+    switch (command) {
+      case 'npx':
+        return this.extractNpxPackageName(args)
+      case 'uvx':
+        return this.extractUvxPackageName(args)
+      case 'uv':
+        return this.extractUvPackageName(args)
+      default:
+        return null
+    }
+  }
+
+  /**
    * Extract the package name from npx arguments
    * @param args - Array of arguments passed to npx
    * @returns The package name/spec or null if not found
    */
-  extractPackageName (args: string[]): string | null {
+  extractNpxPackageName (args: string[]): string | null {
     if (!args || args.length === 0) {
       return null
     }
@@ -76,6 +95,39 @@ export class MCPVersionDetectionService {
         }
         return arg
       }
+    }
+
+    return null
+  }
+
+  /**
+   * Extract the package name from uvx arguments
+   * @param args - Array of arguments passed to uvx
+   * @returns The package name/spec or null if not found
+   */
+  extractUvxPackageName (args: string[]): string | null {
+    if (!args || args.length === 0) {
+      return null
+    }
+
+    // For uvx, the first argument is always the package name
+    return args[0]
+  }
+
+  /**
+   * Extract the package name from uv arguments
+   * @param args - Array of arguments passed to uv
+   * @returns The package name/spec or null if not found
+   */
+  extractUvPackageName (args: string[]): string | null {
+    if (!args || args.length === 0) {
+      return null
+    }
+
+    // Find the 'run' argument and get the next one
+    const runIndex = args.indexOf('run')
+    if (runIndex !== -1 && runIndex + 1 < args.length) {
+      return args[runIndex + 1]
     }
 
     return null
