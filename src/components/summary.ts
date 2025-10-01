@@ -4,6 +4,7 @@ interface SummaryStats {
   totalServers: number
   runningServers: number
   highRiskCredentials: number
+  implicitLatestVersions: number
   transportBreakdown: {
     stdio: number
     sse: number
@@ -12,11 +13,12 @@ interface SummaryStats {
 }
 
 export default function SummaryComponent (stats: SummaryStats): string {
-  const { totalServers, runningServers, highRiskCredentials, transportBreakdown } = stats
+  const { totalServers, runningServers, highRiskCredentials, implicitLatestVersions, transportBreakdown } = stats
 
   // Create progress bars (20 characters wide, following existing convention)
   const runningBar = createProgressBar(runningServers, totalServers, 20, 'green')
   const securityBar = createProgressBar(highRiskCredentials, totalServers, 20, 'red')
+  const versionBar = createProgressBar(implicitLatestVersions, totalServers, 20, 'red')
 
   // Format transport breakdown
   const transportText = `stdio: ${transportBreakdown.stdio} | SSE: ${transportBreakdown.sse} | HTTP: ${transportBreakdown.http}`
@@ -26,6 +28,7 @@ export default function SummaryComponent (stats: SummaryStats): string {
     'SUMMARY',
     `      SERVERS     ${runningBar} ${runningServers} / ${totalServers} Running`,
     `      SECURITY    ${securityBar} ${highRiskCredentials} / ${totalServers} High Risk Credentials`,
+    `      VERSION     ${versionBar} ${implicitLatestVersions} / ${totalServers} Implicit Latest`,
     `      TRANSPORT   ${transportText}`
   ]
 
