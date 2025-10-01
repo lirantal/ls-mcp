@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.13.1
+
+### Patch Changes
+
+- [`81a7d48`](https://github.com/lirantal/ls-mcp/commit/81a7d48ccfa47080d3c0126e38f6fc5250dc4720) Thanks [@lirantal](https://github.com/lirantal)! - fix: clean up progress bar to green if no security issues detected
+
 ## 1.13.0
 
 ### Minor Changes
