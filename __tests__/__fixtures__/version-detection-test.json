@@ -23,6 +23,74 @@
     "explicit-latest": {
       "command": "npx",
       "args": ["package@latest"]
+    },
+    "sqlite-pinned-uvx": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-sqlite@0.1.0",
+        "--db-path",
+        "/tmp/test.db"
+      ]
+    },
+    "sqlite-latest-uvx": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-sqlite",
+        "--db-path",
+        "/tmp/test.db"
+      ]
+    },
+    "sqlite-pinned-uv": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "parent_of_servers_repo/servers/src/sqlite",
+        "run",
+        "mcp-server-sqlite@2.1.0",
+        "--db-path",
+        "~/test.db"
+      ]
+    },
+    "sqlite-latest-uv": {
+      "command": "uv",
+      "args": [
+        "--directory",
+        "parent_of_servers_repo/servers/src/sqlite",
+        "run",
+        "mcp-server-sqlite",
+        "--db-path",
+        "~/test.db"
+      ]
+    },
+    "explicit-latest-uvx": {
+      "command": "uvx",
+      "args": [
+        "mcp-server-sqlite@latest",
+        "--db-path",
+        "/tmp/test.db"
+      ]
+    },
+    "ruff-beta-uvx": {
+      "command": "uvx",
+      "args": [
+        "ruff@0.2.0-beta.1",
+        "--check",
+        "."
+      ]
+    },
+    "simple-uv-run": {
+      "command": "uv",
+      "args": [
+        "run",
+        "mcp-server-sqlite@1.5.0"
+      ]
+    },
+    "regular-npx-for-comparison": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-server-nodejs-api-docs@1.1.3"
+      ]
     }
   }
 }

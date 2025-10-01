@@ -4,6 +4,80 @@
 
 This feature adds the capability to detect whether MCP servers configured with STDIO transport are using pinned versions or implicit latest versions. This information is crucial for understanding dependency management and stability of MCP server configurations.
 
+The feature supports multiple package managers:
+- **NPX**: Node.js package runner for JavaScript/TypeScript MCP servers
+- **UVX**: Python package runner for single-file execution
+- **UV**: Python package and project manager with `run` command
+
+## Configuration Examples
+
+### NPX Examples
+```json
+// Pinned version
+"nodejs-api-docs": {
+  "command": "npx",
+  "args": ["-y", "mcp-server-nodejs-api-docs@1.1.3"]
+}
+
+// Latest version
+"nodejs-api-docs": {
+  "command": "npx", 
+  "args": ["-y", "mcp-server-nodejs-api-docs"]
+}
+```
+
+### UVX Examples  
+```json
+// Pinned version
+"sqlite": {
+  "command": "uvx",
+  "args": [
+    "mcp-server-sqlite@0.1.0",
+    "--db-path",
+    "${input:db_path}"
+  ]
+}
+
+// Latest version
+"sqlite": {
+  "command": "uvx",
+  "args": [
+    "mcp-server-sqlite",
+    "--db-path", 
+    "${input:db_path}"
+  ]
+}
+```
+
+### UV Examples
+```json
+// Pinned version
+"sqlite": {
+  "command": "uv",
+  "args": [
+    "--directory",
+    "parent_of_servers_repo/servers/src/sqlite", 
+    "run",
+    "mcp-server-sqlite@0.1.0",
+    "--db-path",
+    "~/test.db"
+  ]
+}
+
+// Latest version
+"sqlite": {
+  "command": "uv",
+  "args": [
+    "--directory",
+    "parent_of_servers_repo/servers/src/sqlite",
+    "run", 
+    "mcp-server-sqlite",
+    "--db-path",
+    "~/test.db"
+  ]
+}
+```
+
 ## Feature Requirements
 
 ### Definitions
@@ -13,10 +87,28 @@ This feature adds the capability to detect whether MCP servers configured with S
 
 ### Detection Rules
 
-1. **Command Detection**: Only applicable to servers with `command: "npx"`
+#### NPX Command Detection
+1. **Command Detection**: Applicable to servers with `command: "npx"`
 2. **Package Name Extraction**:
    - If args contain `-y` flag: the next element after `-y` is the package name
    - If no `-y` flag: the first element in args (unless it starts with `-`, indicating another npx option)
+3. **Version Classification**:
+   - **Pinned**: Package name contains `@` followed by a specific version (not `latest`)
+   - **Latest**: Package name has no `@` or ends with `@latest`
+
+#### UVX Command Detection
+1. **Command Detection**: Applicable to servers with `command: "uvx"`
+2. **Package Name Extraction**:
+   - The first element in args array is always the package name (no flags processing needed)
+3. **Version Classification**:
+   - **Pinned**: Package name contains `@` followed by a specific version (not `latest`)
+   - **Latest**: Package name has no `@` or ends with `@latest`
+
+#### UV Command Detection
+1. **Command Detection**: Applicable to servers with `command: "uv"`
+2. **Package Name Extraction**:
+   - Find the `run` argument in the args array
+   - The next element after `run` is the package name
 3. **Version Classification**:
    - **Pinned**: Package name contains `@` followed by a specific version (not `latest`)
    - **Latest**: Package name has no `@` or ends with `@latest`
@@ -53,7 +145,10 @@ interface PackageVersionInfo {
 
 interface MCPVersionDetectionService {
   analyzeServerVersion(command: string, args?: string[]): PackageVersionInfo | null
-  extractPackageName(args: string[]): string | null
+  extractPackageName(command: string, args: string[]): string | null
+  extractNpxPackageName(args: string[]): string | null
+  extractUvxPackageName(args: string[]): string | null
+  extractUvPackageName(args: string[]): string | null
   parsePackageVersion(packageSpec: string): { name: string; version?: string }
   isPinnedVersion(version?: string): boolean
 }
@@ -118,19 +213,53 @@ MCPVersionDetectionService.analyzeServerVersion() → Enhanced MCPServerInfo
 ```typescript
 describe('MCPVersionDetectionService', () => {
   describe('analyzeServerVersion', () => {
-    it('should detect pinned version with -y flag')
-    it('should detect latest version with -y flag')
-    it('should detect pinned version without -y flag')
-    it('should detect latest version without -y flag')
-    it('should return null for non-npx commands')
-    it('should handle empty args array')
-    it('should ignore npx options starting with -')
+    describe('NPX support', () => {
+      it('should detect pinned version with -y flag')
+      it('should detect latest version with -y flag')
+      it('should detect pinned version without -y flag')
+      it('should detect latest version without -y flag')
+      it('should ignore npx options starting with -')
+    })
+    
+    describe('UVX support', () => {
+      it('should detect pinned version from first argument')
+      it('should detect latest version from first argument')
+      it('should handle complex argument patterns')
+    })
+    
+    describe('UV support', () => {
+      it('should detect pinned version after run argument')
+      it('should detect latest version after run argument')
+      it('should handle arguments before run command')
+      it('should return null when run argument not found')
+    })
+    
+    describe('Common behavior', () => {
+      it('should return null for unsupported commands')
+      it('should handle empty args array')
+    })
   })
 
   describe('extractPackageName', () => {
+    it('should route to correct extractor based on command')
+    it('should handle npx, uvx, and uv commands')
+  })
+
+  describe('extractNpxPackageName', () => {
     it('should extract package after -y flag')
     it('should extract first non-option argument')
     it('should return null for invalid args')
+  })
+  
+  describe('extractUvxPackageName', () => {
+    it('should extract first argument as package name')
+    it('should return null for empty args')
+  })
+  
+  describe('extractUvPackageName', () => {
+    it('should extract package name after run argument')
+    it('should return null when run not found')
+    it('should handle complex directory arguments')
   })
 
   describe('parsePackageVersion', () => {
