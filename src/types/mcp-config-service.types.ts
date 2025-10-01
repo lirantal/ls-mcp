@@ -29,6 +29,13 @@ export interface MCPFilePath {
   servers?: MCPServerInfo[]
 }
 
+export interface PackageVersionInfo {
+  packageName: string
+  version?: string
+  isPinned: boolean
+  isLatest: boolean
+}
+
 export interface MCPServerInfo {
   name: string
   command: string
@@ -39,6 +46,7 @@ export interface MCPServerInfo {
   env?: Record<string, string>
   headers?: Record<string, string>
   status?: 'running' | 'stopped'
+  versionInfo?: PackageVersionInfo
   credentials?: CredentialAnalysisResult
 }
 

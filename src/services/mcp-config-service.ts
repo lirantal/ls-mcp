@@ -6,6 +6,7 @@ import { MCPPathRegistry } from './mcp-path-registry.js'
 import { MCPConfigParser } from './mcp-config-parser.js'
 import { CredentialDetectionService } from './credential-detection-service.js'
 import { DirectoryBubbleService } from './directory-bubble-service.js'
+import { MCPVersionDetectionService } from './mcp-version-detection-service.js'
 import { extractHostname } from '../utils/url-utils.js'
 import {
   type MCPAppPathsRecord,
@@ -24,6 +25,7 @@ export class MCPConfigService {
   private currentOS: string
   private debug: util.DebugLogger
   private directoryBubbleService: DirectoryBubbleService
+  private versionDetectionService: MCPVersionDetectionService
   private enableDirectoryBubbling: boolean
 
   constructor (options: MCPConfigServiceOptions = {}) {
@@ -31,6 +33,7 @@ export class MCPConfigService {
     this.currentOS = platform()
     this.debug = util.debuglog('ls-mcp')
     this.directoryBubbleService = new DirectoryBubbleService()
+    this.versionDetectionService = new MCPVersionDetectionService()
     this.enableDirectoryBubbling = options.enableDirectoryBubbling ?? false
   }
 
@@ -264,6 +267,12 @@ export class MCPConfigService {
           source = serverConfig.command || ''
         }
 
+        // Analyze version information for stdio servers
+        const versionInfo = this.versionDetectionService.analyzeServerVersion(
+          serverConfig.command || '',
+          Array.isArray(serverConfig.args) ? serverConfig.args : undefined
+        )
+
         serverInfos.push({
           name: serverName,
           command: serverConfig.command || '',
@@ -274,6 +283,7 @@ export class MCPConfigService {
           env: serverConfig.env,
           headers: serverConfig.headers,
           status: 'stopped', // Default status, will be updated by server manager
+          versionInfo: versionInfo || undefined,
           credentials: CredentialDetectionService.analyzeServerConfig({
             env: serverConfig.env,
             args: serverConfig.args,
