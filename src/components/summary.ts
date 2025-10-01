@@ -16,9 +16,9 @@ export default function SummaryComponent (stats: SummaryStats): string {
   const { totalServers, runningServers, highRiskCredentials, implicitLatestVersions, transportBreakdown } = stats
 
   // Create progress bars (20 characters wide, following existing convention)
-  const runningBar = createProgressBar(runningServers, totalServers, 20, 'green')
-  const securityBar = createProgressBar(highRiskCredentials, totalServers, 20, 'red')
-  const versionBar = createProgressBar(implicitLatestVersions, totalServers, 20, 'red')
+  const runningBar = createProgressBar(runningServers, totalServers, 20, 'green', false)
+  const securityBar = createProgressBar(highRiskCredentials, totalServers, 20, 'red', true)
+  const versionBar = createProgressBar(implicitLatestVersions, totalServers, 20, 'red', true)
 
   // Format transport breakdown
   const transportText = `stdio: ${transportBreakdown.stdio} | SSE: ${transportBreakdown.sse} | HTTP: ${transportBreakdown.http}`
@@ -35,7 +35,7 @@ export default function SummaryComponent (stats: SummaryStats): string {
   return lines.join('\n')
 }
 
-function createProgressBar (count: number, total: number, width: number, color: 'green' | 'red'): string {
+function createProgressBar (count: number, total: number, width: number, color: 'green' | 'red', emptyIsGood: boolean = false): string {
   if (total === 0) {
     const emptyBar = '░'.repeat(width)
     return emptyBar
@@ -53,7 +53,12 @@ function createProgressBar (count: number, total: number, width: number, color: 
     empty = styleText(['green'], '░'.repeat(emptyWidth))
   } else { // red
     filled = styleText(['redBright'], '█'.repeat(filledWidth))
-    empty = styleText(['red'], '░'.repeat(emptyWidth))
+    // If count is 0 and emptyIsGood is true, use green for empty sections (0 issues is good)
+    if (count === 0 && emptyIsGood) {
+      empty = styleText(['green'], '░'.repeat(emptyWidth))
+    } else {
+      empty = styleText(['red'], '░'.repeat(emptyWidth))
+    }
   }
 
   return `${filled}${empty}`
