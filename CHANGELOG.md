@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.12.0
+
+### Minor Changes
+
+- [`7ce808b`](https://github.com/lirantal/ls-mcp/commit/7ce808bcd5d69175f5d894a7f09ce9a43aada683) Thanks [@lirantal](https://github.com/lirantal)! - feat: better credentials and linux OS support
+
 ## 1.11.0
 
 ### Minor Changes
