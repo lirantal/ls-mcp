@@ -191,6 +191,77 @@ describe('MCPConfigService Integration', () => {
 - Existing functionality remains unchanged
 - No breaking changes to public APIs
 
+## Visual Component Implementation
+
+### UI/UX Enhancement Phase
+
+Following the successful implementation of the core version detection service, we now add visual components to display version information in the CLI interface.
+
+#### **New VERSION Column**
+
+**Requirements:**
+- Column name: "VERSION" 
+- Position: After the "NAME" column in the table layout
+- Display format:
+  - Pinned versions: `● 1.2.3` (green circle prefix)
+  - Latest versions: `● LATEST` (red circle prefix)
+  - No version info: Empty cell
+
+**Visual Indicators:**
+- **Green Circle (●)**: Indicates a pinned/stable version - lower risk
+- **Red Circle (●)**: Indicates implicit latest version - higher risk due to unpredictability
+
+#### **Enhanced Summary Section**
+
+**New Security Metric:**
+- Add "VERSION SECURITY" progress bar to the summary block
+- Track ratio of pinned vs latest versions
+- Display as: `VERSION ████░░░░░░░░░░░░░░░░ X / Y Implicit Latest`
+- Color coding: Green for pinned, Red for latest versions
+
+#### **Implementation Plan**
+
+**Phase 4: Visual Components**
+
+1. **Create Version Display Component**
+   - `src/components/mcp-server-version.ts`
+   - Handle version formatting and color coding
+   - Support empty state for non-npx servers
+
+2. **Update Table Layout**
+   - Modify render service to include VERSION column
+   - Adjust column positioning and width
+   - Ensure responsive layout
+
+3. **Enhance Summary Component**
+   - Add version security calculations
+   - Create progress bar for version risk assessment
+   - Update summary statistics
+
+4. **Update Rendering Logic**
+   - Integrate version component into server table rendering
+   - Maintain backward compatibility with existing display
+
+**Component Architecture:**
+```
+src/components/
+├── mcp-server-version.ts        (NEW)
+├── summary.ts                   (MODIFIED)
+└── ...
+
+src/services/
+├── render-service.ts            (MODIFIED)
+└── ...
+```
+
+**Data Flow Enhancement:**
+```
+MCPServerInfo (with versionInfo) → 
+Version Component → 
+Table Renderer → 
+Enhanced CLI Display
+```
+
 ## Future Enhancements
 
 ### Potential Extensions
@@ -199,12 +270,15 @@ describe('MCPConfigService Integration', () => {
 2. **Security Advisories**: Check for known vulnerabilities in pinned versions
 3. **Update Recommendations**: Suggest version updates
 4. **Package Registry Integration**: Fetch real-time version information
+5. **Interactive Version Management**: Allow users to update versions from CLI
+6. **Version Health Dashboard**: Comprehensive view of version security across all servers
 
 ### Monitoring & Analytics
 
 - Track version pinning patterns across configurations
 - Identify commonly used packages and versions
 - Provide insights on configuration health
+- Generate version security reports
 
 ## Migration Strategy
 
@@ -216,12 +290,21 @@ This is a non-breaking additive feature:
 
 ## Success Criteria
 
-- [ ] Accurately detects pinned vs latest versions for npx commands
-- [ ] Handles all edge cases without breaking existing functionality
-- [ ] Maintains high test coverage (>90%)
-- [ ] Performance impact < 5ms per server configuration
-- [ ] Zero breaking changes to existing APIs
-- [ ] Comprehensive documentation and examples
+### Core Detection Service ✅
+- [x] Accurately detects pinned vs latest versions for npx commands
+- [x] Handles all edge cases without breaking existing functionality
+- [x] Maintains high test coverage (>90%)
+- [x] Performance impact < 5ms per server configuration
+- [x] Zero breaking changes to existing APIs
+- [x] Comprehensive documentation and examples
+
+### Visual Component Enhancement
+- [ ] VERSION column displays correctly in table layout
+- [ ] Visual indicators (green/red circles) work properly
+- [ ] Version values show actual version numbers or "LATEST"
+- [ ] Summary section includes version security progress bar
+- [ ] Maintains responsive layout and column alignment
+- [ ] Comprehensive testing of visual components
 
 ## Risk Assessment
 

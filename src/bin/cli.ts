@@ -32,6 +32,7 @@ async function init () {
   let totalServers = 0
   let totalRunning = 0
   let totalHighRiskCredentials = 0
+  let totalImplicitLatestVersions = 0
   const transportCounts = { stdio: 0, sse: 0, http: 0 }
 
   for (const groupName of Object.keys(mcpFilesList)) {
@@ -68,6 +69,11 @@ async function init () {
           if (server.credentials?.hasCredentials && server.credentials?.riskLevel === 'high') {
             totalHighRiskCredentials++
           }
+
+          // Count implicit latest versions
+          if (server.versionInfo?.isLatest) {
+            totalImplicitLatestVersions++
+          }
         }
 
         const mcpGroupData = [
@@ -97,6 +103,7 @@ async function init () {
     totalServers,
     runningServers: totalRunning,
     highRiskCredentials: totalHighRiskCredentials,
+    implicitLatestVersions: totalImplicitLatestVersions,
     transportBreakdown: transportCounts
   }
 

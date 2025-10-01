@@ -4,6 +4,7 @@ import ColumnNameComponent from '../components/column-name.js'
 import MCPServerStatusComponent from '../components/mcp-server-status.js'
 import MCPServerNameComponent from '../components/mcp-server-name.js'
 import MCPServerSourceComponent from '../components/mcp-server-source.js'
+import MCPServerVersionComponent from '../components/mcp-server-version.js'
 import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 import CredentialWarningComponent from '../components/credential-warning.js'
@@ -18,6 +19,7 @@ interface SummaryStats {
   totalServers: number
   runningServers: number
   highRiskCredentials: number
+  implicitLatestVersions: number
   transportBreakdown: {
     stdio: number
     sse: number
@@ -41,9 +43,9 @@ export class RenderService {
   static printMcpServers (data: any[]) {
     if (data.length === 0) return
 
-    const headers = ['STATUS', 'NAME', 'SOURCE', 'TRANSPORT', 'CREDENTIALS']
-    const keys = ['status', 'name', 'source', 'transport', 'credentials']
-    const centerColumns = [0, 2, 3] // STATUS and TRANSPORT column indices
+    const headers = ['STATUS', 'NAME', 'VERSION', 'SOURCE', 'TRANSPORT', 'CREDENTIALS']
+    const keys = ['status', 'name', 'versionInfo', 'source', 'transport', 'credentials']
+    const centerColumns = [0, 3, 4] // STATUS, SOURCE and TRANSPORT column indices
     const leftPadding = '      ' // 6 characters
 
     // Calculate column widths accounting for styled text
@@ -67,6 +69,10 @@ export class RenderService {
 
         if (keys[index] === 'name') {
           text = MCPServerNameComponent(text)
+        }
+
+        if (keys[index] === 'versionInfo') {
+          text = MCPServerVersionComponent(row[keys[index]])
         }
 
         if (keys[index] === 'credentials') {
@@ -134,6 +140,10 @@ export class RenderService {
 
         if (key === 'name') {
           text = MCPServerNameComponent(text)
+        }
+
+        if (key === 'versionInfo') {
+          text = MCPServerVersionComponent(row[key])
         }
 
         if (key === 'credentials') {
