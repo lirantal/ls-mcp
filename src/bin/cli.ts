@@ -16,10 +16,16 @@ interface MCPServerInfo {
   credentials?: any
 }
 
+// Parse command-line arguments
+const args = process.argv.slice(2)
+const jsonOutput = args.includes('--json')
+
 async function init () {
-  // Start the CLI with a new line for better readability
-  console.log()
-  console.log('[+] Detecting MCP Server configurations...')
+  // Start the CLI with a new line for better readability (only in non-JSON mode)
+  if (!jsonOutput) {
+    console.log()
+    console.log('[+] Detecting MCP Server configurations...')
+  }
 
   const mcpFilesManager = new MCPFiles()
   const mcpFilesList = await mcpFilesManager.findFiles()
@@ -76,20 +82,23 @@ async function init () {
           }
         }
 
-        const mcpGroupData = [
-          { key: 'PROVIDER', value: group.friendlyName },
-          { key: 'FILE', value: filePath },
-          { key: 'TYPE', value: filePathDataType },
-          { key: 'PARSABLE', value: filePathValid },
-        ]
+        // Only render in non-JSON mode
+        if (!jsonOutput) {
+          const mcpGroupData = [
+            { key: 'PROVIDER', value: group.friendlyName },
+            { key: 'FILE', value: filePath },
+            { key: 'TYPE', value: filePathDataType },
+            { key: 'PARSABLE', value: filePathValid },
+          ]
 
-        const groupMetadata = {
-          mcpServersTotal: totalMCPServers,
-          mcpServersRunning: totalMCPServersRunning,
+          const groupMetadata = {
+            mcpServersTotal: totalMCPServers,
+            mcpServersRunning: totalMCPServersRunning,
+          }
+
+          RenderService.printMcpGroup(pathIndex, mcpGroupData, groupMetadata)
+          RenderService.printMcpServers(mcpServers)
         }
-
-        RenderService.printMcpGroup(pathIndex, mcpGroupData, groupMetadata)
-        RenderService.printMcpServers(mcpServers)
       }
     }
   }
@@ -98,7 +107,7 @@ async function init () {
     exitWithError('No MCP servers found in known configuration files.')
   }
 
-  // Display summary statistics
+  // Prepare summary statistics
   const summaryStats = {
     totalServers,
     runningServers: totalRunning,
@@ -107,7 +116,21 @@ async function init () {
     transportBreakdown: transportCounts
   }
 
-  RenderService.printSummary(summaryStats)
+  // Output based on mode
+  if (jsonOutput) {
+    // Filter out providers with empty paths
+    const filteredMcpFiles = Object.fromEntries(
+      Object.entries(mcpFilesList).filter(([, group]) => group.paths.length > 0)
+    )
+    
+    const output = {
+      mcpFiles: filteredMcpFiles,
+      summary: summaryStats
+    }
+    console.log(JSON.stringify(output, null, 2))
+  } else {
+    RenderService.printSummary(summaryStats)
+  }
 }
 
 init().then(() => {
