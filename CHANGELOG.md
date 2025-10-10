@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.13.2
+
+### Patch Changes
+
+- [`0adda16`](https://github.com/lirantal/ls-mcp/commit/0adda16eb3bfb560ea6cb9a216394fe99776553d) Thanks [@lirantal](https://github.com/lirantal)! - feat: add --json flag
+
 ## 1.13.1
 
 ### Patch Changes
