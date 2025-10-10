@@ -35,6 +35,18 @@
 npx ls-mcp
 ```
 
+### JSON Output
+
+To output results in JSON format (useful for programmatic consumption):
+
+```bash
+npx ls-mcp --json
+```
+
+This will return a structured JSON object containing:
+- `mcpFiles`: Complete MCP server configurations organized by provider (only includes providers with configured servers)
+- `summary`: Statistics including total servers, running servers, credential warnings, and transport breakdown
+
 ### Debug Mode
 
 To enable verbose debugging output, set the `NODE_DEBUG` environment variable:
