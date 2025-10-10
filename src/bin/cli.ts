@@ -122,7 +122,7 @@ async function init () {
     const filteredMcpFiles = Object.fromEntries(
       Object.entries(mcpFilesList).filter(([, group]) => group.paths.length > 0)
     )
-    
+
     const output = {
       mcpFiles: filteredMcpFiles,
       summary: summaryStats
