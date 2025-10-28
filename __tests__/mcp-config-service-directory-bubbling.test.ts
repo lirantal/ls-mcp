@@ -2,7 +2,7 @@ import { test, describe, mock } from 'node:test'
 import assert from 'node:assert'
 import path from 'node:path'
 import { MCPConfigService } from '../src/services/mcp-config-service.js'
-import { DirectoryBubbleService } from '../src/services/directory-bubble-service.js'
+import { DirectoryBubbleService } from 'agent-files'
 
 describe('MCPConfigService Directory Bubbling Integration', () => {
   let mockDirectoryBubbleService: any

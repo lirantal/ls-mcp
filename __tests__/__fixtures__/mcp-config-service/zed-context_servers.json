@@ -1,9 +1,0 @@
-{
-  "context_servers": {
-    "zed-server": {
-      "command": "npx",
-      "args": ["zed-mcp-server"],
-      "type": "stdio"
-    }
-  }
-}

@@ -1,20 +1,4 @@
-export interface MCPConfigData {
-  raw: any
-  parsed: boolean
-  valid: boolean
-  servers: Record<string, MCPServerConfig>
-}
-
-export interface MCPServerConfig {
-  name: string
-  command: string
-  args?: string[]
-  transport?: 'stdio' | 'sse' | 'http'
-  type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
-  url?: string
-  env?: Record<string, string>
-  headers?: Record<string, string>
-}
+import type { MCPFilePath as AgentFilePath } from 'agent-files'
 
 export interface MCPAppMetadata {
   name: string
@@ -22,9 +6,7 @@ export interface MCPAppMetadata {
   paths: MCPFilePath[]
 }
 
-export interface MCPFilePath {
-  filePath: string
-  type: 'local' | 'global'
+export interface MCPFilePath extends AgentFilePath {
   parsable?: boolean
   servers?: MCPServerInfo[]
 }
