@@ -1,6 +1,8 @@
 import { test, describe, mock } from 'node:test'
 import assert from 'node:assert'
 import path from 'node:path'
+import fs from 'fs'
+import os from 'os'
 import { MCPConfigService } from '../src/services/mcp-config-service.js'
 
 describe('MCPConfigService', () => {
@@ -254,116 +256,162 @@ describe('MCPConfigService', () => {
     })
   })
 
-  describe('transport type mapping', () => {
-    test('should correctly map streamable-http to http transport', async () => {
-      const mockPathRegistry = {
-        getPathsForOS: mock.fn(() => ({
-          test: [{ filePath: '__tests__/__fixtures__/mcp-config-service/mixed-transport-types.json', type: 'local' as const }]
-        })),
-        getSupportedApps: mock.fn(() => ['test'])
-      }
-      
-      const service = new MCPConfigService()
-      // @ts-ignore - Mocking private property for testing
-      service.pathRegistry = mockPathRegistry
-      
-      const result = await service.getMCPFileGroups()
-      
-      assert.ok(result.test)
-      assert.strictEqual(result.test.paths.length, 1)
-      assert.strictEqual(result.test.paths[0].parsable, true)
-      assert.ok(result.test.paths[0].servers)
-      
-      // Find the streamable-http server
-      const streamableHttpServer = result.test.paths[0].servers?.find(s => s.name === 'streamable-http-server')
-      assert.ok(streamableHttpServer, 'Should find streamable-http server')
-      assert.strictEqual(streamableHttpServer.type, 'streamable-http')
-      assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http should be mapped to http transport')
-      
-      // Verify other transport types are mapped correctly
-      const stdioServer = result.test.paths[0].servers?.find(s => s.name === 'stdio-server')
-      assert.ok(stdioServer)
-      assert.strictEqual(stdioServer.transport, 'stdio')
-      
-      const httpServer = result.test.paths[0].servers?.find(s => s.name === 'http-server')
-      assert.ok(httpServer)
-      assert.strictEqual(httpServer.transport, 'http')
+  describe('MCPConfigService with temp files', () => {
+    let service: MCPConfigService
+    let tempDir: string
+    let getAllConfigFilesMock: any
+    let mockConfigFiles: any
+
+    test.beforeEach(() => {
+      service = new MCPConfigService()
+      tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ls-mcp-test-'))
+      mockConfigFiles = {}
+      // Mock getAllConfigFiles to return our custom object
+      getAllConfigFilesMock = mock.method(service, 'getAllConfigFiles', () => mockConfigFiles)
     })
 
-    test('should correctly map inferred transport types to transport field', async () => {
-      const mockPathRegistry = {
-        getPathsForOS: mock.fn(() => ({
-          test: [{ filePath: '__tests__/__fixtures__/mcp-config-service/mixed-transport-types.json', type: 'local' as const }]
-        })),
-        getSupportedApps: mock.fn(() => ['test'])
-      }
-      
-      const service = new MCPConfigService()
-      // @ts-ignore - Mocking private property for testing
-      service.pathRegistry = mockPathRegistry
-      
-      const result = await service.getMCPFileGroups()
-      
-      assert.ok(result.test)
-      assert.strictEqual(result.test.paths.length, 1)
-      assert.strictEqual(result.test.paths[0].parsable, true)
-      assert.ok(result.test.paths[0].servers)
-      
-      // Test transport mapping for servers with explicit types
-      const stdioServer = result.test.paths[0].servers?.find(s => s.name === 'stdio-server')
-      assert.ok(stdioServer, 'Should find stdio server')
-      assert.strictEqual(stdioServer.type, 'stdio')
-      assert.strictEqual(stdioServer.transport, 'stdio', 'stdio type should map to stdio transport')
-      
-      const httpServer = result.test.paths[0].servers?.find(s => s.name === 'http-server')
-      assert.ok(httpServer, 'Should find http server')
-      assert.strictEqual(httpServer.type, 'http')
-      assert.strictEqual(httpServer.transport, 'http', 'http type should map to http transport')
-      
-      const streamableHttpServer = result.test.paths[0].servers?.find(s => s.name === 'streamable-http-server')
-      assert.ok(streamableHttpServer, 'Should find streamable-http server')
-      assert.strictEqual(streamableHttpServer.type, 'streamable-http')
-      assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http type should map to http transport')
+    test.afterEach(() => {
+      fs.rmSync(tempDir, { recursive: true, force: true })
+      getAllConfigFilesMock.mock.restore()
     })
-  })
 
-  describe('hostname extraction from URLs', () => {
-    test('should extract hostname from URL-based server configs', async () => {
-      const mockPathRegistry = {
-        getPathsForOS: mock.fn(() => ({
-          test: [{ filePath: '__tests__/__fixtures__/mcp-config-service/url-based-servers.json', type: 'local' as const }]
-        })),
-        getSupportedApps: mock.fn(() => ['test'])
-      }
-      
-      const service = new MCPConfigService()
-      // @ts-ignore - Mocking private property for testing
-      service.pathRegistry = mockPathRegistry
-      
-      const result = await service.getMCPFileGroups()
-      
-      assert.ok(result.test)
-      assert.strictEqual(result.test.paths.length, 1)
-      assert.strictEqual(result.test.paths[0].parsable, true)
-      assert.ok(result.test.paths[0].servers)
-      
-      // Test hostname extraction for URL-based servers
-      const localhostServer = result.test.paths[0].servers?.find(s => s.name === 'localhost-server')
-      assert.ok(localhostServer, 'Should find localhost server')
-      assert.strictEqual(localhostServer.source, 'localhost', 'Should extract hostname from localhost URL')
-      
-      const apiServer = result.test.paths[0].servers?.find(s => s.name === 'api-server')
-      assert.ok(apiServer, 'Should find API server')
-      assert.strictEqual(apiServer.source, 'api.example.com', 'Should extract hostname from API URL')
-      
-      const ipServer = result.test.paths[0].servers?.find(s => s.name === 'ip-server')
-      assert.ok(ipServer, 'Should find IP server')
-      assert.strictEqual(ipServer.source, '192.168.1.100', 'Should extract hostname from IP URL')
-      
-      // Test that command-based servers still work as before
-      const commandServer = result.test.paths[0].servers?.find(s => s.name === 'command-server')
-      assert.ok(commandServer, 'Should find command server')
-      assert.strictEqual(commandServer.source, 'npx', 'Should use command for non-URL servers')
+    describe('transport type mapping', () => {
+      test('should correctly map streamable-http to http transport', async () => {
+        const config = {
+          servers: {
+            'streamable-http-server': {
+              type: 'streamable-http'
+            },
+            'stdio-server': {
+              type: 'stdio'
+            },
+            'http-server': {
+              type: 'http'
+            }
+          }
+        }
+        const configPath = path.join(tempDir, 'mcp.json')
+        fs.writeFileSync(configPath, JSON.stringify(config))
+
+        mockConfigFiles['test-app'] = [{ filePath: configPath, type: 'local' }]
+
+        const result = await service.getMCPFileGroups()
+
+        assert.ok(result['test-app'])
+        const appGroup = result['test-app']
+        assert.strictEqual(appGroup.paths.length, 1)
+        const mcpFile = appGroup.paths[0]
+        assert.strictEqual(mcpFile.parsable, true)
+        assert.ok(mcpFile.servers)
+
+        const streamableHttpServer = mcpFile.servers.find(s => s.name === 'streamable-http-server')
+        assert.ok(streamableHttpServer, 'Should find streamable-http server')
+        assert.strictEqual(streamableHttpServer.type, 'streamable-http')
+        assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http should be mapped to http transport')
+
+        const stdioServer = mcpFile.servers.find(s => s.name === 'stdio-server')
+        assert.ok(stdioServer)
+        assert.strictEqual(stdioServer.transport, 'stdio')
+
+        const httpServer = mcpFile.servers.find(s => s.name === 'http-server')
+        assert.ok(httpServer)
+        assert.strictEqual(httpServer.transport, 'http')
+      })
+
+      test('should correctly map inferred transport types to transport field', async () => {
+        const config = {
+          servers: {
+            'stdio-server': {
+              type: 'stdio'
+            },
+            'http-server': {
+              type: 'http'
+            },
+            'streamable-http-server': {
+              type: 'streamable-http'
+            }
+          }
+        }
+        const configPath = path.join(tempDir, 'mcp.json')
+        fs.writeFileSync(configPath, JSON.stringify(config))
+
+        mockConfigFiles['test-app'] = [{ filePath: configPath, type: 'local' }]
+
+        const result = await service.getMCPFileGroups()
+
+        assert.ok(result['test-app'])
+        const appGroup = result['test-app']
+        assert.strictEqual(appGroup.paths.length, 1)
+        const mcpFile = appGroup.paths[0]
+        assert.strictEqual(mcpFile.parsable, true)
+        assert.ok(mcpFile.servers)
+
+        const stdioServer = mcpFile.servers.find(s => s.name === 'stdio-server')
+        assert.ok(stdioServer, 'Should find stdio server')
+        assert.strictEqual(stdioServer.type, 'stdio')
+        assert.strictEqual(stdioServer.transport, 'stdio', 'stdio type should map to stdio transport')
+
+        const httpServer = mcpFile.servers.find(s => s.name === 'http-server')
+        assert.ok(httpServer, 'Should find http server')
+        assert.strictEqual(httpServer.type, 'http')
+        assert.strictEqual(httpServer.transport, 'http', 'http type should map to http transport')
+
+        const streamableHttpServer = mcpFile.servers.find(s => s.name === 'streamable-http-server')
+        assert.ok(streamableHttpServer, 'Should find streamable-http server')
+        assert.strictEqual(streamableHttpServer.type, 'streamable-http')
+        assert.strictEqual(streamableHttpServer.transport, 'http', 'streamable-http type should map to http transport')
+      })
+    })
+
+    describe('hostname extraction from URLs', () => {
+      test('should extract hostname from URL-based server configs', async () => {
+        const config = {
+          servers: {
+            'localhost-server': {
+              url: 'http://localhost:8080'
+            },
+            'api-server': {
+              url: 'https://api.example.com/v1'
+            },
+            'ip-server': {
+              url: 'http://192.168.1.100'
+            },
+            'command-server': {
+              command: 'npx',
+              args: ['my-cli']
+            }
+          }
+        }
+        const configPath = path.join(tempDir, 'mcp.json')
+        fs.writeFileSync(configPath, JSON.stringify(config))
+
+        mockConfigFiles['test-app'] = [{ filePath: configPath, type: 'local' }]
+
+        const result = await service.getMCPFileGroups()
+
+        assert.ok(result['test-app'])
+        const appGroup = result['test-app']
+        assert.strictEqual(appGroup.paths.length, 1)
+        const mcpFile = appGroup.paths[0]
+        assert.strictEqual(mcpFile.parsable, true)
+        assert.ok(mcpFile.servers)
+
+        const localhostServer = mcpFile.servers.find(s => s.name === 'localhost-server')
+        assert.ok(localhostServer, 'Should find localhost server')
+        assert.strictEqual(localhostServer.source, 'localhost', 'Should extract hostname from localhost URL')
+
+        const apiServer = mcpFile.servers.find(s => s.name === 'api-server')
+        assert.ok(apiServer, 'Should find API server')
+        assert.strictEqual(apiServer.source, 'api.example.com', 'Should extract hostname from API URL')
+
+        const ipServer = mcpFile.servers.find(s => s.name === 'ip-server')
+        assert.ok(ipServer, 'Should find IP server')
+        assert.strictEqual(ipServer.source, '192.168.1.100', 'Should extract hostname from IP URL')
+
+        const commandServer = mcpFile.servers.find(s => s.name === 'command-server')
+        assert.ok(commandServer, 'Should find command server')
+        assert.strictEqual(commandServer.source, 'npx', 'Should use command for non-URL servers')
+      })
     })
   })
 

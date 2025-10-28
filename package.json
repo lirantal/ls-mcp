@@ -75,6 +75,7 @@
     "url": "https://github.com/lirantal/ls-mcp.git"
   },
   "dependencies": {
+    "agent-files": "^1.0.1",
     "jsonc-parser": "^3.3.1"
   },
   "devDependencies": {

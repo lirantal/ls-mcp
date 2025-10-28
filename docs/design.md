@@ -6,38 +6,17 @@ The `ls-mcp` project is designed as a modular, service-oriented architecture for
 
 ## Architecture Overview
 
-```
-┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│      CLI        │    │    Main.ts       │    │   Services      │
-│   (bin/cli.ts)  │───▶│  (MCPFiles)      │───▶│   Layer        │
-└─────────────────┘    └──────────────────┘    └─────────────────┘
-                                │                        │
-                                ▼                        ▼
-                       ┌──────────────────┐    ┌─────────────────┐
-                       │  MCPConfigService│    │  MCPPathRegistry│
-                       │                  │    │                 │
-                       │  ┌─────────────┐ │    │  ┌─────────────┐ │
-                       │  │MCPConfig    │ │    │  │OS Path      │ │
-                       │  │Parser       │ │    │  │Resolution   │ │
-                       │  └─────────────┘ │    │  └─────────────┘ │
-                       │  ┌─────────────┐ │    └─────────────────┘
-                       │  │Directory    │ │
-                       │  │Bubble       │ │
-                       │  │Service      │ │
-                       │  └─────────────┘ │
-                       └──────────────────┘
-                                │
-                                ▼
-                       ┌──────────────────┐    ┌─────────────────┐
-                       │MCPServerManager │    │  RenderService  │
-                       │Service          │    │                 │
-                       └──────────────────┘    └─────────────────┘
-```
+The project is composed of the main `ls-mcp` application and a new, separate package called `agent-files`.
 
-## Directory Bubbling Service (`src/services/directory-bubble-service.ts`)
+*   **`ls-mcp`**: The main application that provides the CLI, orchestrates the discovery process, and handles features like process detection and output rendering.
+*   **`agent-files`**: A dedicated package that contains the logic for discovering, parsing, and handling MCP configuration file paths.
+
+The `ls-mcp` application depends on the `agent-files` package to handle the low-level details of file discovery and parsing.
+
+## Directory Bubbling Service
 
 ### Purpose
-The DirectoryBubbleService provides intelligent directory traversal capabilities to enhance the discovery of local MCP configuration files. It automatically searches parent directories when local configs are not found in the current directory, improving Developer Experience.
+The DirectoryBubbleService provides intelligent directory traversal capabilities to enhance the discovery of local MCP configuration files. It automatically searches parent directories when local configs are not found in the current directory, improving Developer Experience. This service is part of the `agent-files` package.
 
 ### Design Principles
 - **Intelligent Traversal**: Automatically bubbles up directory tree until finding config files or reaching boundaries
@@ -71,9 +50,9 @@ Checks if a specific configuration file exists in a given directory.
 Safely gets the parent directory path, handling edge cases like root directory.
 
 ### Integration with MCPConfigService
-- **Optional Feature**: Directory bubbling is controlled by constructor options
-- **Local Paths Only**: Only applies to paths marked as `'local'` type
-- **Seamless Integration**: Works transparently with existing configuration discovery logic
+- **Optional Feature**: Directory bubbling is controlled by constructor options in `MCPConfigService`.
+- **Local Paths Only**: Only applies to paths marked as `'local'` type.
+- **Seamless Integration**: Works transparently with existing configuration discovery logic.
 
 ### Example Usage
 ```typescript
@@ -127,10 +106,10 @@ The main application file serves as the orchestrator, coordinating between diffe
 ### MCPFiles Class
 
 #### Responsibilities
-- **Service Coordination**: Orchestrates interactions between different services
-- **Error Handling**: Provides unified error handling and reporting
-- **Data Transformation**: Converts service outputs into the expected format
-- **Process Detection**: Integrates with MCPServerManagerService for server status
+- **Service Coordination**: Orchestrates interactions between different services.
+- **Error Handling**: Provides unified error handling and reporting.
+- **Data Transformation**: Converts service outputs into the expected format.
+- **Process Detection**: Integrates with MCPServerManagerService for server status.
 
 #### Key Methods
 
@@ -142,117 +121,85 @@ async findFiles(): Promise<MCPFileGroupsResultRecord>
 ```
 
 **Flow:**
-1. Get MCP file groups from MCPConfigService
-2. For each group, process configuration files
-3. Extract server information from each file
-4. Detect running processes for each server
-5. Update server status (running/stopped)
-6. Return structured results
+1. Get MCP file groups from `MCPConfigService`.
+2. For each group, process configuration files.
+3. Extract server information from each file.
+4. Detect running processes for each server.
+5. Update server status (running/stopped).
+6. Return structured results.
 
 ##### `getMCPConfigService()`
-Provides access to the underlying MCPConfigService for advanced usage.
+Provides access to the underlying `MCPConfigService` for advanced usage.
 
 ```typescript
 getMCPConfigService(): MCPConfigService
 ```
 
 #### Design Patterns
-- **Facade Pattern**: Simplifies complex service interactions
-- **Dependency Injection**: Services are injected and can be mocked for testing
-- **Error Aggregation**: Collects errors from multiple services and provides unified reporting
+- **Facade Pattern**: Simplifies complex service interactions.
+- **Dependency Injection**: Services are injected and can be mocked for testing.
+- **Error Aggregation**: Collects errors from multiple services and provides unified reporting.
 
 ## Service Layer Architecture
 
 ### 1. MCPConfigService
 
 #### Purpose
-Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing. Now includes optional directory bubbling functionality for enhanced local configuration file discovery.
+Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing. It consumes the `agent-files` package for low-level file operations.
 
 #### Key Responsibilities
-- **Path Resolution**: Coordinates with MCPPathRegistry for OS-specific paths
-- **File Parsing**: Coordinates with MCPConfigParser for configuration parsing
-- **Data Aggregation**: Combines results from multiple sources
-- **Error Handling**: Provides meaningful error messages for different failure scenarios
-- **Directory Bubbling**: Intelligently traverses parent directories to find local MCP configuration files
+- **Path Resolution**: Coordinates with `MCPPathRegistry` (from `agent-files`) for OS-specific paths.
+- **File Parsing**: Coordinates with `MCPConfigParser` (from `agent-files`) for configuration parsing.
+- **Data Aggregation**: Combines results from multiple sources.
+- **Error Handling**: Provides meaningful error messages for different failure scenarios.
+- **Directory Bubbling**: Uses the `DirectoryBubbleService` (from `agent-files`) to intelligently traverse parent directories.
 
-#### Public API
-```typescript
-class MCPConfigService {
-  getConfigFilesPerApp(appName: string): MCPFilePath[]
-  getAllConfigFiles(): MCPAppPathsRecord
-  getMCPServersPerApp(appName: string): Promise<MCPServerInfo[]>
-  getAllMCPServers(): Promise<Record<string, MCPServerInfo[]>>
-  getSupportedApps(): MCPAppMetadata[]
-  getSupportedOperatingSystems(): string[]
-  validateConfigFile(filePath: string): Promise<boolean>
-  getMCPFileGroups(): Promise<MCPFileGroupsResultRecord>
-  registerCustomApp(appName: string, paths: MCPFilePath[]): void
-}
-```
+### 2. `agent-files` Package
 
-### 2. MCPPathRegistry
+This package contains the core logic for file discovery and parsing.
 
-#### Purpose
-Handles OS-specific path resolution for MCP configuration files across different AI applications.
+#### MCPPathRegistry
+- **Purpose**: Handles OS-specific path resolution for MCP configuration files across different AI applications.
+- **Design**: Static configuration for paths, platform detection, and support for custom app registration.
 
-#### Design
-- **Static Configuration**: OS-specific paths are defined as static constants
-- **Platform Detection**: Automatically detects current operating system
-- **Extensible**: Supports custom application registration
-- **Error Handling**: Provides clear error messages for unsupported OS
+#### MCPConfigParser
+- **Purpose**: Handles parsing and validation of MCP configuration files in various formats (JSON, JSONC).
+- **Features**: Supports multiple configuration key names (`servers`, `mcpServers`, etc.).
 
-#### Supported Operating Systems
-- **Windows** (`win32`): Uses Windows-specific paths
-- **macOS** (`darwin`): Uses macOS-specific paths
-- **Linux**: Currently unsupported (gracefully handled)
+#### DirectoryBubbleService
+- **Purpose**: Handles intelligent directory traversal to find local MCP config files in parent directories.
 
-### 3. MCPConfigParser
-
-#### Purpose
-Handles parsing and validation of MCP configuration files in various formats.
-
-#### Supported Formats
-- **JSON**: Standard JSON files
-- **JSONC**: JSON with comments (using `jsonc-parser`)
-- **Multiple Keys**: Supports various configuration key names
-
-#### Configuration Keys
-- `servers`: Standard MCP server configuration
-- `mcpServers`: Alternative key name used by some applications
-- `context_servers`: Context-specific server configuration
-- `mcp.servers`: Nested configuration structure
-
-### 4. MCPServerManagerService
+### 3. MCPServerManagerService
 
 #### Purpose
 Manages MCP server process detection and status reporting.
 
 #### Capabilities
-- **Process Detection**: Identifies running MCP server processes
-- **Status Reporting**: Provides running/stopped status for each server
-- **Transport Support**: Maps MCP config `type` field to internal `transport` field for consistent UI display
-- **Error Handling**: Gracefully handles process detection failures
+- **Process Detection**: Identifies running MCP server processes.
+- **Status Reporting**: Provides running/stopped status for each server.
+- **Transport Support**: Maps MCP config `type` field to internal `transport` field for consistent UI display.
+- **Error Handling**: Gracefully handles process detection failures.
 
-### 5. RenderService
+### 4. RenderService
 
 #### Purpose
 Handles output formatting and display of MCP configuration information.
 
 #### Output Formats
-- **Human-Readable**: Formatted tables and summaries
-- **JSON**: Structured data output
-- **Custom**: Extensible formatting options
+- **Human-Readable**: Formatted tables and summaries.
+- **JSON**: Structured data output.
+- **Custom**: Extensible formatting options.
 
 ## Data Flow
 
 ### 1. Configuration Discovery
 ```
-CLI → Main.ts → MCPConfigService → MCPPathRegistry → File System
+CLI → Main.ts → MCPConfigService → agent-files (MCPPathRegistry) → File System
 ```
 
 ### 2. Configuration Parsing
 ```
-File System → MCPConfigParser → MCPConfigService → Main.ts → CLI
+File System → agent-files (MCPConfigParser) → MCPConfigService → Main.ts → CLI
 ```
 
 ### 3. Process Detection

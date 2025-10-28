@@ -27,18 +27,22 @@ The project is a TypeScript-based Node.js application with a clear, modular, ser
 *   `src/bin/cli.ts`: The entry point for the command-line interface. It handles argument parsing and delegates all business logic to the main application layer.
 
 ### Service Layer
-The project has been refactored into a modular service architecture for better separation of concerns and testability:
+The project has been refactored into a modular service architecture. The core logic for file discovery and parsing has been extracted into a separate `agent-files` package.
 
-*   `src/services/mcp-config-service.ts`: Central orchestrator for MCP configuration operations, providing a unified interface for configuration discovery and parsing. Includes optional directory bubbling functionality for enhanced local config file discovery.
-*   `src/services/mcp-path-registry.ts`: Handles OS-specific path resolution for MCP configuration files across different AI applications.
-*   `src/services/mcp-config-parser.ts`: Handles parsing and validation of MCP configuration files in various formats (JSON, JSONC).
-*   `src/services/mcp-server-manager-service.ts`: Manages MCP server process detection and status reporting.
-*   `src/services/render-service.ts`: Handles output formatting and display of MCP configuration information.
-*   `src/services/mcp-config-linter-service.ts`: Legacy service that now delegates to the new MCPConfigParser for backward compatibility.
-*   `src/services/directory-bubble-service.ts`: Handles intelligent directory traversal to find local MCP config files in parent directories, improving Developer Experience when running from nested project subdirectories.
+*   `agent-files` package: This package is responsible for path resolution, configuration parsing, and directory bubbling.
+    *   `MCPPathRegistry`: Handles OS-specific path resolution for MCP configuration files.
+    *   `MCPConfigParser`: Handles parsing and validation of MCP configuration files.
+    *   `DirectoryBubbleService`: Handles intelligent directory traversal to find local MCP config files.
+    *   `MCPConfigLinterService`: A legacy service that delegates to the new `MCPConfigParser`.
+
+*   `ls-mcp` services:
+    *   `src/services/mcp-config-service.ts`: Central orchestrator for MCP configuration operations, consuming the `agent-files` package.
+    *   `src/services/mcp-server-manager-service.ts`: Manages MCP server process detection and status reporting.
+    *   `src/services/render-service.ts`: Handles output formatting and display of MCP configuration information.
 
 ### Type Definitions
-*   `src/types/mcp-config-service.types.ts`: Comprehensive type definitions for all MCP configuration services, designed for future extraction to separate npm packages.
+*   `src/types/mcp-config-service.types.ts`: Comprehensive type definitions for all MCP configuration services.
+*   `agent-files/src/types/mcp-config-service.types.ts`: Type definitions for the `agent-files` package.
 
 ### Data Model Architecture
 The project maintains a clean separation between external MCP configuration files and internal application data:
@@ -176,8 +180,8 @@ ls-mcp  # ✅ Detects the closer .mcp.json file in backend directory
 
 To add support for a new application that uses MCP, you will need to:
 
-1.  **Add the configuration file path:** In `src/services/mcp-path-registry.ts`, add the path to the application's MCP configuration file to the appropriate OS-specific paths object.
-2.  **Update the server key (if necessary):** If the new application uses a different key in its configuration file to list the MCP servers, the `MCPConfigParser` already supports multiple keys and can be extended if needed.
+1.  **Add the configuration file path:** In the `agent-files` package, specifically in `src/services/mcp-path-registry.ts`, add the path to the application's MCP configuration file to the appropriate OS-specific paths object.
+2.  **Update the server key (if necessary):** If the new application uses a different key in its configuration file to list the MCP servers, the `MCPConfigParser` in the `agent-files` package already supports multiple keys and can be extended if needed.
 
 ### Adding New Features
 

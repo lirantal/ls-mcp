@@ -2,10 +2,8 @@ import { platform } from 'node:os'
 import path from 'node:path'
 import fs from 'node:fs/promises'
 import util from 'node:util'
-import { MCPPathRegistry } from './mcp-path-registry.js'
-import { MCPConfigParser } from './mcp-config-parser.js'
+import { MCPPathRegistry, MCPConfigParser, DirectoryBubbleService } from 'agent-files'
 import { CredentialDetectionService } from './credential-detection-service.js'
-import { DirectoryBubbleService } from './directory-bubble-service.js'
 import { MCPVersionDetectionService } from './mcp-version-detection-service.js'
 import { extractHostname } from '../utils/url-utils.js'
 import {
@@ -42,7 +40,7 @@ export class MCPConfigService {
    */
   getConfigFilesPerApp (appName: string): MCPFilePath[] {
     try {
-      return this.pathRegistry.getPathsForApp(this.currentOS, appName)
+      return this.pathRegistry.getPathsForApp(this.currentOS, appName) as MCPFilePath[]
     } catch (error) {
       throw new Error(`Failed to get config files for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
@@ -53,7 +51,7 @@ export class MCPConfigService {
    */
   getAllConfigFiles (): MCPAppPathsRecord {
     try {
-      return this.pathRegistry.getPathsForOS(this.currentOS)
+      return this.pathRegistry.getPathsForOS(this.currentOS) as MCPAppPathsRecord
     } catch (error) {
       throw new Error(`Failed to get all config files: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
@@ -113,7 +111,7 @@ export class MCPConfigService {
       return appNames.map(appName => ({
         name: appName,
         friendlyName: this.getFriendlyName(appName),
-        paths: appPaths[appName] || []
+        paths: (appPaths as MCPAppPathsRecord)[appName] || []
       }))
     } catch (error) {
       throw new Error(`Failed to get supported apps: ${error instanceof Error ? error.message : 'Unknown error'}`)
@@ -155,7 +153,8 @@ export class MCPConfigService {
       const appPaths = this.getAllConfigFiles()
       const mcpFilesPathsData: MCPFileGroupsResultRecord = {}
 
-      for (const [groupName, paths] of Object.entries(appPaths)) {
+      for (const groupName of Object.keys(appPaths)) {
+        const paths = appPaths[groupName]
         mcpFilesPathsData[groupName] = {
           name: groupName,
           friendlyName: this.getFriendlyName(groupName),

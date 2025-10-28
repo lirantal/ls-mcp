@@ -107,21 +107,13 @@ ls-mcp
 ## Technical Implementation
 
 ### Architecture
-```
-MCPConfigService
-    │
-    ├── enableDirectoryBubbling: boolean
-    │
-    └── DirectoryBubbleService
-        ├── findLocalConfigInParentDirectories()
-        ├── checkDirectoryForConfig()
-        └── getParentDirectory()
-```
+
+The `DirectoryBubbleService` is part of the `agent-files` package and is consumed by the `MCPConfigService` in the main `ls-mcp` application.
 
 ### Key Components
 
 #### DirectoryBubbleService
-- **Purpose**: Handles intelligent directory traversal logic
+- **Purpose**: Handles intelligent directory traversal logic. This service is part of the `agent-files` package.
 - **Methods**: 
   - `findLocalConfigInParentDirectories(localPath, startDir)`
   - `checkDirectoryForConfig(dir, configPath)`
@@ -239,7 +231,7 @@ The directory bubbling tests have been significantly improved to address perform
 - ✅ Multiple config files at different levels
 
 ### Test Fixtures
-Located in `__tests__/__fixtures__/nested-directory-test/`:
+Located in the `agent-files` package, at `__tests__/__fixtures__/nested-directory-test/`:
 - Project root configurations
 - Backend-specific configurations
 - Service-level configurations
