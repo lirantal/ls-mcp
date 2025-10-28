@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.13.3
+
+### Patch Changes
+
+- [`15d2921`](https://github.com/lirantal/ls-mcp/commit/15d29212b86511b133aaefd582317ef565a1b700) Thanks [@lirantal](https://github.com/lirantal)! - refactor: adds agent-files as third-party dep
+
 ## 1.13.2
 
 ### Patch Changes
