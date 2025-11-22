@@ -21,7 +21,7 @@
         "source=${localEnv:HOME}/Documents/zscaler-root-ca.pem,target=/home/node/zscaler-root-ca.pem,type=bind,consistency=cached"
     ],
     // the initialize command should use the 1password cli "op read <vault-url-refercen" to populate the OP_CONNECT_HOST and OP_CONNECT_TOKEN as environment variables
-    "initializeCommand": "rm -f \"./.env.development\"; echo \"OP_CONNECT_TOKEN=\"$(op --account UKGDHLSTCVF5BFAGAXUAVVS3HM read 'op://LocalDev/1Password Connect Server Token/password')\"\" >> ${localWorkspaceFolder}/.env.development",
+    "initializeCommand": "git config --global http.sslCAInfo \"/home/node/zscaler-root-ca.pem\" && rm -f \"./.env.development\"; echo \"OP_CONNECT_TOKEN=\"$(op --account UKGDHLSTCVF5BFAGAXUAVVS3HM read 'op://LocalDev/1Password Connect Server Token/password')\"\" >> ${localWorkspaceFolder}/.env.development",
     // Once the container is created, the env is already set so we can remove the .env.development file that contains the token on-disk
     "postStartCommand": "if [ -n './.env.development' ]; then rm -f './.env.development'; fi;",
     "postCreateCommand": "if [ -n './.env.development' ]; then rm -f './.env.development'; fi;"
