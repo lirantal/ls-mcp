@@ -35,12 +35,36 @@
 npx ls-mcp
 ```
 
+### Analyze Specific Files
+
+To analyze specific MCP configuration files instead of using automatic discovery, use the `--files` flag. This flag **replaces** automatic discovery and only analyzes the files you specify:
+
+```bash
+# Single file
+npx ls-mcp --files ./mcp-config.json
+
+# Multiple files (comma-separated)
+npx ls-mcp --files ./config1.json,./config2.json
+
+# Multiple files (space-separated)
+npx ls-mcp --files ./config1.json ./config2.json
+```
+
+The `--files` flag automatically detects the configuration structure in your files, supporting various formats including:
+- `servers` - Standard MCP configuration key
+- `mcpServers` - Alternative MCP configuration key
+- `mcp.servers` - Nested configuration format
+- `context_servers` - Context-based configuration format
+
 ### JSON Output
 
 To output results in JSON format (useful for programmatic consumption):
 
 ```bash
 npx ls-mcp --json
+
+# Combine with --files flag
+npx ls-mcp --files ./config.json --json
 ```
 
 This will return a structured JSON object containing:
@@ -66,6 +90,7 @@ For detailed information about the project architecture and features:
 - **[Project Overview](./docs/project.md)**: Comprehensive project analysis and architecture
 - **[Design Documentation](./docs/design.md)**: Technical design decisions and implementation details
 - **[Requirements](./docs/requirements.md)**: Functional and non-functional requirements
+- **[Custom File Analysis](./docs/custom-files-analysis.md)**: Analyze specific MCP configuration files with the `--files` flag
 - **[Directory Bubbling](./docs/directory-bubbling.md)**: Intelligent directory traversal feature
 - **[URL Hostname Extraction](./docs/url-hostname-extraction.md)**: Clean display of hostnames for URL-based servers
 - **[Credential Detection](./docs/credential-detection.md)**: Security analysis features

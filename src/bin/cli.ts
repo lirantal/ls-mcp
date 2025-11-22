@@ -20,14 +20,37 @@ interface MCPServerInfo {
 const args = process.argv.slice(2)
 const jsonOutput = args.includes('--json')
 
+// Parse --files flag
+let customFiles: string[] | undefined
+const filesIndex = args.findIndex(arg => arg === '--files')
+if (filesIndex !== -1 && filesIndex < args.length - 1) {
+  // Get all arguments after --files until we hit another flag or end of args
+  const fileArgs: string[] = []
+  for (let i = filesIndex + 1; i < args.length; i++) {
+    if (args[i].startsWith('--')) {
+      break
+    }
+    fileArgs.push(args[i])
+  }
+
+  // Support both comma-separated and space-separated file paths
+  customFiles = fileArgs.flatMap(arg =>
+    arg.includes(',') ? arg.split(',').map(f => f.trim()) : [arg.trim()]
+  ).filter(f => f.length > 0)
+}
+
 async function init () {
   // Start the CLI with a new line for better readability (only in non-JSON mode)
   if (!jsonOutput) {
     console.log()
-    console.log('[+] Detecting MCP Server configurations...')
+    if (customFiles && customFiles.length > 0) {
+      console.log('[+] Analyzing specified MCP configuration files...')
+    } else {
+      console.log('[+] Detecting MCP Server configurations...')
+    }
   }
 
-  const mcpFilesManager = new MCPFiles()
+  const mcpFilesManager = new MCPFiles(customFiles)
   const mcpFilesList = await mcpFilesManager.findFiles()
 
   if (Object.keys(mcpFilesList).length === 0) {
