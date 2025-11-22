@@ -1,0 +1,38 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+    "name": "Node.js & TypeScript",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/typescript-node:4-24-bookworm",
+    "features": {
+        "ghcr.io/itsmechlark/features/1password:1.5.0": {}
+    },
+    "runArgs": [
+        "-e",
+        "OP_CONNECT_HOST=http://host.docker.internal:8082",
+        "--env-file",
+        "${localWorkspaceFolder}/.env.development"
+    ],
+    // required if you're using zscaler
+    "containerEnv": {
+        "NODE_EXTRA_CA_CERTS": "/home/node/zscaler-root-ca.pem"
+    },
+    "mounts": [
+        "source=${localEnv:HOME}/Documents/zscaler-root-ca.pem,target=/home/node/zscaler-root-ca.pem,type=bind,consistency=cached"
+    ],
+    // the initialize command should use the 1password cli "op read <vault-url-refercen" to populate the OP_CONNECT_HOST and OP_CONNECT_TOKEN as environment variables
+    "initializeCommand": "rm -f \"./.env.development\"; echo \"OP_CONNECT_TOKEN=\"$(op --account UKGDHLSTCVF5BFAGAXUAVVS3HM read 'op://LocalDev/1Password Connect Server Token/password')\"\" >> ${localWorkspaceFolder}/.env.development",
+    // Once the container is created, the env is already set so we can remove the .env.development file that contains the token on-disk
+    "postStartCommand": "if [ -n './.env.development' ]; then rm -f './.env.development'; fi;",
+    "postCreateCommand": "if [ -n './.env.development' ]; then rm -f './.env.development'; fi;"
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    // "features": {},
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // "forwardPorts": [8080, 8082]
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "yarn install",
+    // Configure tool-specific properties.
+    // "customizations": {},
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    // "remoteUser": "root"
+}
