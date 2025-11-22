@@ -32,9 +32,9 @@ if (filesIndex !== -1 && filesIndex < args.length - 1) {
     }
     fileArgs.push(args[i])
   }
-  
+
   // Support both comma-separated and space-separated file paths
-  customFiles = fileArgs.flatMap(arg => 
+  customFiles = fileArgs.flatMap(arg =>
     arg.includes(',') ? arg.split(',').map(f => f.trim()) : [arg.trim()]
   ).filter(f => f.length > 0)
 }

@@ -21,7 +21,7 @@ export class MCPFiles {
       // If custom files are specified, use them instead of automatic discovery
       if (this.customFiles && this.customFiles.length > 0) {
         const mcpFilesPathsData = await this.mcpConfigService.parseCustomFiles(this.customFiles)
-        
+
         // Process each group to add server status information
         for (const groupName of Object.keys(mcpFilesPathsData)) {
           const group = mcpFilesPathsData[groupName]

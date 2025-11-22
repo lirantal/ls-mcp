@@ -273,7 +273,7 @@ export class MCPConfigService {
         } catch (error) {
           // File does not exist or is not accessible
           this.debug(`Skipping file ${absolutePath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
-          
+
           // Still add to paths with parsable=false to show user it was attempted
           mcpFilesPathsData.custom.paths.push({
             filePath: absolutePath,
