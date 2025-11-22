@@ -1,6 +1,6 @@
 {
   "name": "ls-mcp",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "list and detect MCP servers and configurations",
   "types": "dist/main.d.ts",
   "type": "module",
