@@ -302,6 +302,7 @@ done
 - ✅ All file paths are resolved to absolute paths
 - ✅ Supports both relative and absolute file paths
 - ✅ Home directory expansion (`~`) is supported
+- ✅ **Always shows the "Custom Files" group**, even if it contains zero servers (since you explicitly requested to analyze those files)
 
 ### Without `--files` Flag (Default)
 
@@ -309,6 +310,24 @@ done
 - ✅ Scans multiple providers (Claude, Cursor, VS Code, Cline, etc.)
 - ✅ Groups files by application/provider
 - ✅ Supports directory bubbling for local configurations
+- ✅ **Hides providers with zero configured servers by default** (use `--all` or `-a` to show them)
+
+### Zero Servers Handling
+
+By default, `ls-mcp` optimizes output by hiding provider groups that have zero configured servers:
+
+```bash
+# Default behavior: hides empty providers
+npx ls-mcp
+
+# Show all providers including those with zero servers
+npx ls-mcp --all
+
+# Short form
+npx ls-mcp -a
+```
+
+**Important**: When using `--files`, the "Custom Files" group is always shown regardless of server count, since you explicitly requested to analyze specific files. This allows you to verify that your configuration files were processed correctly, even if they contain zero servers.
 
 ## Technical Details
 

@@ -56,6 +56,23 @@ The `--files` flag automatically detects the configuration structure in your fil
 - `mcp.servers` - Nested configuration format
 - `context_servers` - Context-based configuration format
 
+### Show All Providers
+
+By default, `ls-mcp` hides providers that have zero configured servers to reduce clutter. To show all providers including those with empty configurations, use the `--all` or `-a` flag:
+
+```bash
+# Show all providers including empty ones
+npx ls-mcp --all
+
+# Short form
+npx ls-mcp -a
+
+# Combine with JSON output
+npx ls-mcp --all --json
+```
+
+**Note**: When using `--files` to analyze specific configuration files, the custom group is always shown even if it contains zero servers, as you explicitly requested to analyze those files.
+
 ### JSON Output
 
 To output results in JSON format (useful for programmatic consumption):
@@ -68,7 +85,7 @@ npx ls-mcp --files ./config.json --json
 ```
 
 This will return a structured JSON object containing:
-- `mcpFiles`: Complete MCP server configurations organized by provider (only includes providers with configured servers)
+- `mcpFiles`: Complete MCP server configurations organized by provider (only includes providers with configured servers unless `--all` is specified)
 - `summary`: Statistics including total servers, running servers, credential warnings, and transport breakdown
 
 ### Debug Mode

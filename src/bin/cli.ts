@@ -19,6 +19,7 @@ interface MCPServerInfo {
 // Parse command-line arguments
 const args = process.argv.slice(2)
 const jsonOutput = args.includes('--json')
+const showAll = args.includes('--all') || args.includes('-a')
 
 // Parse --files flag
 let customFiles: string[] | undefined
@@ -66,6 +67,13 @@ async function init () {
 
   for (const groupName of Object.keys(mcpFilesList)) {
     const group = mcpFilesList[groupName]
+
+    // Skip groups with zero servers unless --all is specified or in --files mode
+    const isCustomFilesMode = customFiles && customFiles.length > 0
+    const shouldSkipGroup = !showAll && !isCustomFilesMode && (group.stats?.serversCount === 0)
+    if (shouldSkipGroup) {
+      continue
+    }
 
     if (group.paths.length > 0) {
       // handle file path list of MCP Servers
@@ -127,7 +135,12 @@ async function init () {
   }
 
   if (pathIndex === 0) {
-    exitWithError('No MCP servers found in known configuration files.')
+    const isCustomFilesMode = customFiles && customFiles.length > 0
+    if (isCustomFilesMode) {
+      exitWithError('No MCP servers found in specified configuration files.')
+    } else {
+      exitWithError('No MCP servers found in known configuration files.')
+    }
   }
 
   // Prepare summary statistics
@@ -141,9 +154,15 @@ async function init () {
 
   // Output based on mode
   if (jsonOutput) {
-    // Filter out providers with empty paths
+    // Filter out providers with zero servers unless --all is specified or in --files mode
+    const isCustomFilesMode = customFiles && customFiles.length > 0
     const filteredMcpFiles = Object.fromEntries(
-      Object.entries(mcpFilesList).filter(([, group]) => group.paths.length > 0)
+      Object.entries(mcpFilesList).filter(([, group]) => {
+        if (showAll || isCustomFilesMode) {
+          return group.paths.length > 0
+        }
+        return (group.stats?.serversCount ?? 0) > 0
+      })
     )
 
     const output = {
