@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.15.2
+
+### Patch Changes
+
+- [`d509e68`](https://github.com/lirantal/ls-mcp/commit/d509e68b225d92f77df0abe3f377901c337c6d7e) Thanks [@lirantal](https://github.com/lirantal)! - fix: output change related to group dividers
+
 ## 1.15.1
 
 ### Patch Changes
