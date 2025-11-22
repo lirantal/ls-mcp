@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.15.1
+
+### Patch Changes
+
+- [`5aadbe3`](https://github.com/lirantal/ls-mcp/commit/5aadbe3d896f2cff7b8df22ef8fc404f80774bb1) Thanks [@lirantal](https://github.com/lirantal)! - fix: default shouldnt show empty servers even from same group
+
 ## 1.15.0
 
 ### Minor Changes
