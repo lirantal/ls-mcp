@@ -78,6 +78,14 @@ async function init () {
     if (group.paths.length > 0) {
       // handle file path list of MCP Servers
       for (const filePathData of group.paths) {
+        const totalMCPServers = filePathData.servers ? filePathData.servers.length : 0
+
+        // Skip file paths with zero servers unless --all is specified or in --files mode
+        const shouldSkipFile = !showAll && !isCustomFilesMode && totalMCPServers === 0
+        if (shouldSkipFile) {
+          continue
+        }
+
         pathIndex++
 
         const filePath = filePathData.filePath.replace('~', process.env.HOME || '')
@@ -85,7 +93,6 @@ async function init () {
         const filePathDataType = filePathData.type.toUpperCase()
         const mcpServers = filePathData.servers || []
 
-        const totalMCPServers = filePathData.servers ? filePathData.servers.length : 0
         const totalMCPServersRunning = mcpServers.filter((server: MCPServerInfo) => server.status === 'running').length
 
         // Accumulate summary statistics
@@ -157,12 +164,24 @@ async function init () {
     // Filter out providers with zero servers unless --all is specified or in --files mode
     const isCustomFilesMode = customFiles && customFiles.length > 0
     const filteredMcpFiles = Object.fromEntries(
-      Object.entries(mcpFilesList).filter(([, group]) => {
-        if (showAll || isCustomFilesMode) {
+      Object.entries(mcpFilesList)
+        .map(([groupName, group]) => {
+          // Filter individual file paths with zero servers unless --all or --files mode
+          const filteredPaths = group.paths.filter(filePathData => {
+            const fileServerCount = filePathData.servers ? filePathData.servers.length : 0
+            if (showAll || isCustomFilesMode) {
+              return true  // Keep all files
+            }
+            return fileServerCount > 0  // Only keep files with servers
+          })
+
+          return [groupName, { ...group, paths: filteredPaths }] as const
+        })
+        .filter((entry): entry is [string, typeof entry[1]] => {
+          // After filtering file paths, remove groups with no remaining paths
+          const [, group] = entry
           return group.paths.length > 0
-        }
-        return (group.stats?.serversCount ?? 0) > 0
-      })
+        })
     )
 
     const output = {
