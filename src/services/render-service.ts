@@ -158,9 +158,6 @@ export class RenderService {
       }).join('  ')
       console.log(leftPadding + dataRow)
     }
-
-    console.log('\n')
-    console.log(`${leftPadding}▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄`)
   }
 
   // Example mocked data for rendering the group information
