@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "test-server-1": {
+      "command": "node",
+      "args": ["./server.js"],
+      "type": "stdio"
+    },
+    "test-server-2": {
+      "command": "python",
+      "args": ["-m", "mcp_server"],
+      "type": "stdio",
+      "env": {
+        "API_KEY": "test-key-123"
+      }
+    }
+  }
+}

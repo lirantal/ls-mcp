@@ -226,6 +226,75 @@ export class MCPConfigService {
   }
 
   /**
+   * Parse custom configuration files provided by the user
+   * This method processes files independently of standard app-based discovery
+   */
+  async parseCustomFiles (filePaths: string[]): Promise<MCPFileGroupsResultRecord> {
+    try {
+      const mcpFilesPathsData: MCPFileGroupsResultRecord = {
+        custom: {
+          name: 'custom',
+          friendlyName: 'Custom Files',
+          paths: [],
+          stats: { serversCount: 0 }
+        }
+      }
+
+      let totalServersCount = 0
+
+      for (const filePath of filePaths) {
+        const resolvedPath = filePath.replace('~', process.env.HOME || '')
+        const absolutePath = path.resolve(resolvedPath)
+
+        try {
+          // Check if file exists
+          await fs.access(absolutePath)
+
+          const parser = this.createParser(absolutePath)
+          const parsable = await parser.isValidSyntax()
+
+          const filePathData: MCPFilePath = {
+            filePath: absolutePath,
+            type: 'local',
+            parsable
+          }
+
+          if (parsable) {
+            const configData = await parser.parseConfigFile()
+            const servers = await this.convertToMCPServerInfo(configData.servers || {})
+            filePathData.servers = servers
+            totalServersCount += servers.length
+          } else {
+            this.debug(`File ${absolutePath} has invalid syntax`)
+            filePathData.servers = []
+          }
+
+          mcpFilesPathsData.custom.paths.push(filePathData)
+        } catch (error) {
+          // File does not exist or is not accessible
+          this.debug(`Skipping file ${absolutePath}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+          
+          // Still add to paths with parsable=false to show user it was attempted
+          mcpFilesPathsData.custom.paths.push({
+            filePath: absolutePath,
+            type: 'local',
+            parsable: false,
+            servers: []
+          })
+        }
+      }
+
+      if (mcpFilesPathsData.custom.stats) {
+        mcpFilesPathsData.custom.stats.serversCount = totalServersCount
+      }
+
+      return mcpFilesPathsData
+    } catch (error) {
+      throw new Error(`Failed to parse custom files: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  /**
    * Register a custom app with custom paths for the current OS
    */
   registerCustomApp (appName: string, paths: MCPFilePath[]): void {

@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "another-server": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "type": "stdio"
+    },
+    "http-server": {
+      "url": "https://api.example.com/mcp",
+      "type": "sse"
+    }
+  }
+}
