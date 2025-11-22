@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.14.0
+
+### Minor Changes
+
+- [`de16acf`](https://github.com/lirantal/ls-mcp/commit/de16acf45a7041d63d19bfec41b6ee3a6ce9c64b) Thanks [@lirantal](https://github.com/lirantal)! - feat: support --files arg
+
 ## 1.13.3
 
 ### Patch Changes
