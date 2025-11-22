@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.15.0
+
+### Minor Changes
+
+- [`bb365f8`](https://github.com/lirantal/ls-mcp/commit/bb365f8764678f6f2ee0e0636fe09c7adfaf078a) Thanks [@lirantal](https://github.com/lirantal)! - feat: new --all flag to list all servers including empty
+
 ## 1.14.0
 
 ### Minor Changes
