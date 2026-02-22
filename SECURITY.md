@@ -20,7 +20,7 @@ We consider the security of the project a top priority.
 If you discover a security vulnerability, please use one of the following
 means of communications to report it to us:
 
-- Report the security issue to the [Snyk Security Team](https://snyk.io/vulnerability-disclosure).
+- Report the security issue to the [Snyk Security Team](https://snyk.io/vulnerability-disclosure/).
 - They will help triage the security issue and work with all involved parties
 - to remediate and release a fix.
 
