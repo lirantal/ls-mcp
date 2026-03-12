@@ -2,7 +2,8 @@
 
 <p align="center"><h1 align="center">
   ls-mcp
-</h1>
+  </h1>
+</p>
 
 <p align="center">
   Detect Configured MCP (Model Context Protocol) in your local dev environment
