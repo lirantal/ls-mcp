@@ -16,6 +16,11 @@ updates:
       prefix: "chore"
     schedule:
       interval: "weekly"
+    cooldown:
+      default-days: 7
+      semver-major-days: 7
+      semver-minor-days: 7
+      semver-patch-days: 7
     open-pull-requests-limit: 10
     # Use the 'dependencies' default label and add
     # the 'automerge' one for automerge github action support
