@@ -8,6 +8,9 @@ updates:
       # Prefix all commit messages with "chore: "
       prefix: "chore"
     open-pull-requests-limit: 10
+    labels:
+      - "dependencies"
+      - "automerge"
 
   - package-ecosystem: "npm"
     directory: "/"
