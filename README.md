@@ -13,7 +13,7 @@
   <a href="https://www.npmjs.com/package/ls-mcp"><img src="https://badgen.net/npm/v/ls-mcp" alt="npm version"/></a>
   <a href="https://www.npmjs.com/package/ls-mcp"><img src="https://badgen.net/npm/license/ls-mcp" alt="license"/></a>
   <a href="https://www.npmjs.com/package/ls-mcp"><img src="https://badgen.net/npm/dt/ls-mcp" alt="downloads"/></a>
-  <a href="https://github.com/lirantal/ls-mcp/actions?workflow=CI"><img src="https://github.com/lirantal/ls-mcp/workflows/CI/badge.svg" alt="build"/></a>
+  <a href="https://github.com/lirantal/ls-mcp/actions/workflows/ci.yml"><img src="https://github.com/lirantal/ls-mcp/actions/workflows/ci.yml/badge.svg?branch=main" alt="build"/></a>
   <a href="https://app.codecov.io/gh/lirantal/ls-mcp"><img src="https://badgen.net/codecov/c/github/lirantal/ls-mcp" alt="codecov"/></a>
   <a href="./SECURITY.md"><img src="https://img.shields.io/badge/Security-Responsible%20Disclosure-yellow.svg" alt="Responsible Disclosure Policy" /></a>
 </p>
