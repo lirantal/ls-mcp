@@ -11,6 +11,7 @@
     "module": "NodeNext",
     "target": "ES2022",
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "noEmit": true,
     "rootDir": "./src",
     "declaration": true,
