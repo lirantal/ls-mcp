@@ -10,6 +10,7 @@
     "moduleResolution": "NodeNext",
     "module": "NodeNext",
     "target": "ES2022",
+    "types": ["node"],
     "baseUrl": ".",
     "ignoreDeprecations": "6.0",
     "noEmit": true,
