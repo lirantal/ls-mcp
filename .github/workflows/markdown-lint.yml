@@ -18,6 +18,8 @@ jobs:
         with:
           node-version: '22'
 
+      - name: Install dependencies
+        run: npm ci
+
       - name: Markdown Lint
-        run: |
-          npm run lint:markdown || npx -y markdownlint-cli@0.45.0 -c .github/.markdownlint.yml '**/**.md'
+        run: npm run lint:markdown
