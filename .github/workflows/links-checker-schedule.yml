@@ -6,8 +6,13 @@ on:
   schedule:
     - cron: "00 18 * * *"
 
+permissions: {}
+
 jobs:
   linkChecker:
+    permissions:
+      contents: read
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
