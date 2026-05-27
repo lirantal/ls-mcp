@@ -2,6 +2,8 @@ name: "Pull Request Labeler"
 
 on: pull_request
 
+permissions: {}
+
 jobs:
   label:
     permissions:
