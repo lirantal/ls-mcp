@@ -6,8 +6,12 @@ on:
       - main
   pull_request:
 
+permissions: {}
+
 jobs:
   markdown_lint:
+    permissions:
+      contents: read
     name: Lint Markdown files
     runs-on: ubuntu-latest
     steps:
