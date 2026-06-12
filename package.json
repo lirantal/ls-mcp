@@ -26,9 +26,9 @@
     }
   },
   "engines": {
-    "node": ">=20.13.0"
+    "npm": ">=11.10.0",
+    "node": ">=24.0.0"
   },
-  "packageManager": "npm@8.4.0",
   "files": [
     "dist",
     "src",
