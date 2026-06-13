@@ -9,6 +9,7 @@ import FilePathComponent from '../components/file-path.js'
 import MCPServersConfigParsableComponent from '../components/mcp-servers-config-parsable.js'
 import CredentialWarningComponent from '../components/credential-warning.js'
 import SummaryComponent from '../components/summary.js'
+import type { MCPServerInfo } from '../types/mcp-config-service.types.js'
 
 interface GroupMetadata {
   mcpServersRunning?: number
@@ -40,7 +41,7 @@ export class RenderService {
     return text.replace(/\u001b\[[0-9;]*m/g, '').length
   }
 
-  static printMcpServers (data: any[]) {
+  static printMcpServers (data: MCPServerInfo[]) {
     if (data.length === 0) return
 
     const headers = ['STATUS', 'NAME', 'VERSION', 'SOURCE', 'TRANSPORT', 'CREDENTIALS']
@@ -52,7 +53,7 @@ export class RenderService {
     const columnWidths = headers.map((header, index) => {
       const headerWidth = RenderService.getVisibleLength(ColumnNameComponent(header))
       const dataWidth = Math.max(...data.map(row => {
-        let text = String(row[keys[index]])
+        let text = String((row as unknown as Record<string, unknown>)[keys[index]])
 
         // Apply the same transformations used in rendering
         if (keys[index] === 'transport') {
@@ -72,11 +73,11 @@ export class RenderService {
         }
 
         if (keys[index] === 'versionInfo') {
-          text = MCPServerVersionComponent(row[keys[index]])
+          text = MCPServerVersionComponent(row.versionInfo)
         }
 
         if (keys[index] === 'credentials') {
-          text = CredentialWarningComponent(row[keys[index]])
+          text = CredentialWarningComponent(row.credentials)
         }
 
         return RenderService.getVisibleLength(text)
@@ -123,7 +124,7 @@ export class RenderService {
     // Print data rows
     for (const row of data) {
       const dataRow = keys.map((key, index) => {
-        let text = String(row[key])
+        let text = String((row as unknown as Record<string, unknown>)[key])
 
         // Apply styling transformations
         if (key === 'transport') {
@@ -143,11 +144,11 @@ export class RenderService {
         }
 
         if (key === 'versionInfo') {
-          text = MCPServerVersionComponent(row[key])
+          text = MCPServerVersionComponent(row.versionInfo)
         }
 
         if (key === 'credentials') {
-          text = CredentialWarningComponent(row[key])
+          text = CredentialWarningComponent(row.credentials)
         }
 
         // Apply alignment
@@ -167,7 +168,7 @@ export class RenderService {
   //   { key: 'STATUS', value: '[✓ VALID] [GLOBAL] [5 MCP SERVERS]' }
   // ]
 
-  static printMcpGroup (id: number, data: any[], groupMetadata: GroupMetadata = {}) {
+  static printMcpGroup (id: number, data: Array<Record<string, string>>, groupMetadata: GroupMetadata = {}) {
     if (data.length === 0) return
 
     console.log('\n')

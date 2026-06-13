@@ -140,7 +140,7 @@ export class MCPServerManagerService {
       let mcpServerDetection: MatchedProcess | undefined
 
       for (const [pid, processData] of processMap) {
-        const commandMatchLinux = this.isCommandMatch(processData.commandTokens, pid, processData.ppid)
+        const commandMatchLinux = this.isCommandMatch(processData.commandTokens)
         let commandMatchWin32 = false
         if (platform() === 'win32') {
           // for Windows, we need to change commandTokens to also match another pattern
@@ -160,7 +160,7 @@ export class MCPServerManagerService {
             }
           }
 
-          commandMatchWin32 = this.isCommandMatch(commandTokensOnWin32, pid, processData.ppid)
+          commandMatchWin32 = this.isCommandMatch(commandTokensOnWin32)
         }
 
         const commandMatch = commandMatchLinux || commandMatchWin32
@@ -196,7 +196,7 @@ export class MCPServerManagerService {
       }
 
       return false
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -233,7 +233,7 @@ export class MCPServerManagerService {
     }
   }
 
-  private isCommandMatch (commandTokens: string[], pid: string, ppid: string): boolean {
+  private isCommandMatch (commandTokens: string[]): boolean {
     // If no command tokens, cannot match
     if (commandTokens.length === 0) return false
 
@@ -534,7 +534,7 @@ export class MCPServerManagerService {
     // Check if it's the expected npm exec pattern
     if (commandTokens[1] !== 'exec') return false
 
-    let argsToMatch: string[] = []
+    let argsToMatch: string[]
     const yIndex = this.args.indexOf('-y')
 
     if (yIndex !== -1 && yIndex + 1 < this.args.length) {
