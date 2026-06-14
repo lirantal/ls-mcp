@@ -13,7 +13,7 @@ interface MCPServerInfo {
   source?: string
   env?: Record<string, string>
   status?: 'running' | 'stopped'
-  credentials?: any
+  credentials?: unknown
 }
 
 // Parse command-line arguments

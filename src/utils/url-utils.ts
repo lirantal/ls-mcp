@@ -17,7 +17,7 @@ export function extractHostname (urlString: string): string {
 
     const url = new URL(urlToParse)
     return url.hostname
-  } catch (error) {
+  } catch {
     // If URL parsing fails, return the original string
     return urlString
   }

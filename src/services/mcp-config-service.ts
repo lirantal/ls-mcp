@@ -18,6 +18,15 @@ export interface MCPConfigServiceOptions {
   enableDirectoryBubbling?: boolean
 }
 
+interface RawMCPServerConfig {
+  url?: string
+  command?: string
+  args?: string[]
+  type?: 'sse' | 'http' | 'stdio' | 'streamable-http'
+  env?: Record<string, string>
+  headers?: Record<string, string>
+}
+
 export class MCPConfigService {
   private pathRegistry: MCPPathRegistry
   private currentOS: string
@@ -42,7 +51,7 @@ export class MCPConfigService {
     try {
       return this.pathRegistry.getPathsForApp(this.currentOS, appName) as MCPFilePath[]
     } catch (error) {
-      throw new Error(`Failed to get config files for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get config files for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -53,7 +62,7 @@ export class MCPConfigService {
     try {
       return this.pathRegistry.getPathsForOS(this.currentOS) as MCPAppPathsRecord
     } catch (error) {
-      throw new Error(`Failed to get all config files: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get all config files: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -72,7 +81,7 @@ export class MCPConfigService {
 
       return allServers
     } catch (error) {
-      throw new Error(`Failed to get MCP servers for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get MCP servers for app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -96,7 +105,7 @@ export class MCPConfigService {
 
       return allServers
     } catch (error) {
-      throw new Error(`Failed to get all MCP servers: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get all MCP servers: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -114,7 +123,7 @@ export class MCPConfigService {
         paths: (appPaths as MCPAppPathsRecord)[appName] || []
       }))
     } catch (error) {
-      throw new Error(`Failed to get supported apps: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get supported apps: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -133,7 +142,7 @@ export class MCPConfigService {
       await fs.access(filePath)
       const parser = this.createParser(filePath)
       return await parser.isValidSyntax()
-    } catch (error) {
+    } catch {
       return false
     }
   }
@@ -174,7 +183,7 @@ export class MCPConfigService {
             try {
               await fs.access(resolvedPath)
               // File exists in current directory, no need to bubble up
-            } catch (error) {
+            } catch {
               // File not found in current directory, try to bubble up
               const bubbledPath = await this.directoryBubbleService.findLocalConfigInParentDirectories(
                 filePathData.filePath,
@@ -221,7 +230,7 @@ export class MCPConfigService {
 
       return mcpFilesPathsData
     } catch (error) {
-      throw new Error(`Failed to get MCP file groups: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to get MCP file groups: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -290,7 +299,7 @@ export class MCPConfigService {
 
       return mcpFilesPathsData
     } catch (error) {
-      throw new Error(`Failed to parse custom files: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to parse custom files: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -301,7 +310,7 @@ export class MCPConfigService {
     try {
       this.pathRegistry.registerCustomApp(this.currentOS, appName, paths)
     } catch (error) {
-      throw new Error(`Failed to register custom app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to register custom app '${appName}': ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
@@ -322,7 +331,7 @@ export class MCPConfigService {
   /**
    * Convert parsed server configs to MCPServerInfo format
    */
-  private async convertToMCPServerInfo (servers: Record<string, any>): Promise<MCPServerInfo[]> {
+  private async convertToMCPServerInfo (servers: Record<string, RawMCPServerConfig>): Promise<MCPServerInfo[]> {
     const serverInfos: MCPServerInfo[] = []
 
     for (const [serverName, serverConfig] of Object.entries(servers)) {

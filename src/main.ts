@@ -98,7 +98,7 @@ export class MCPFiles {
 
       return mcpFilesPathsData
     } catch (error) {
-      throw new Error(`Failed to find MCP files: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Failed to find MCP files: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error })
     }
   }
 
