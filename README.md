@@ -112,6 +112,10 @@ For detailed information about the project architecture and features:
 - **[URL Hostname Extraction](./docs/url-hostname-extraction.md)**: Clean display of hostnames for URL-based servers
 - **[Credential Detection](./docs/credential-detection.md)**: Security analysis features
 
+## Documentation
+
+- [Project documentation](./docs/README.md) - development, testing, architecture, and conventions.
+
 ## Contributing
 
 Please consult [CONTRIBUTING](./CONTRIBUTING.md) for guidelines on contributing to this project.
