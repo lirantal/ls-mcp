@@ -90,7 +90,7 @@ If any of the above doesn't work on a fresh checkout, that's a bug, please open 
 
 ### Environment setup
 
-Before making changes, use the project's devcontainer when possible so local tools, dependencies, and environment hooks match the expected setup. AI coding agents running from the host should follow the portless SSH workflow in [`.devcontainer/README.md`](.devcontainer/README.md#coding-agents-over-ssh) to start or reuse the devcontainer, configure the SSH alias, and select the mounted repository folder.
+Before making changes, use the project's devcontainer when one is available so local tools, dependencies, and environment hooks match the expected setup. AI coding agents running from the host should use the repository's documented environment setup, if present, before selecting the mounted repository folder.
 
 ### Release readiness
 
