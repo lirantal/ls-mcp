@@ -1,4 +1,4 @@
-name: Links Checker (On Schedule)
+name: Links Checker (Lychee, On Schedule)
 
 on:
   repository_dispatch:
@@ -16,18 +16,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repo
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
+
+      - name: Restore lychee cache
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.sha }}
+          restore-keys: cache-lychee-
 
       - name: Link Checker
         id: lychee
         uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --root-dir "$(pwd)" --cache --max-cache-age 1d . --max-retries 5 --retry-wait-time 60 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Safari/537.36"  --remap '.*npmjs\.org/package/(.*) https://registry.npmjs.com/$1' --remap '.*npmjs\.com/package/(.*) https://registry.npmjs.com/$1' --max-concurrency 1 -vv
+          fail: false
 
       - name: Create Issue From File
         if: steps.lychee.outputs.exit_code != 0
         uses: peter-evans/create-issue-from-file@fca9117c27cdc29c6c4db3b86c48e4115a786710 # v6.0.0
         with:
-          title: Link Checker Report
+          title: Link Checker Report (lycheeverse/lychee-action)
           content-filepath: ./lychee/out.md
           labels: report, automated issue
