@@ -80,7 +80,7 @@
   "devDependencies": {
     "@changesets/changelog-git": "^1.0.0",
     "@changesets/changelog-github": "^0.7.0",
-    "@changesets/cli": "^2.31.0",
+    "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
     "@types/node": "^26.0.1",
     "c8": "^12.0.0",
