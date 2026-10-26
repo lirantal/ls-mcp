@@ -94,7 +94,7 @@
     "tsx": "^4.19.4",
     "typescript": "^6.0.2",
     "typescript-eslint": "^8.59.0",
-    "validate-conventional-commit": "^1.0.4"
+    "validate-conventional-commit": "^2.0.0"
   },
   "lint-staged": {
     "**/*.{js,json}": [
