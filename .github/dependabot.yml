@@ -52,6 +52,11 @@ updates:
         update-types:
         - "minor"
         - "patch"
+    # typescript-eslint requires TypeScript >=4.8.4 <6.1.0.
+    # Revisit when the parser supports newer compiler releases.
+    ignore:
+      - dependency-name: typescript
+        versions: [">=6.1.0"]
     # example for ignoring dependencies:
     # ignore:
     #   - dependency-name: tap
