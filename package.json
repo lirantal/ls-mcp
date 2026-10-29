@@ -39,7 +39,7 @@
     "build": "tsc && tsup",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:markdown": "npx --no-install markdownlint-cli -c .github/.markdownlint.yml '**/**.md'",
+    "lint:markdown": "npx --no-install markdownlint-cli -i '**/node_modules/**' -c .github/.markdownlint.yml '**/**.md'",
     "test": "c8 node --import tsx --test __tests__/**/*.test.ts",
     "test:watch": "c8 node --import tsx --test --watch __tests__/**/*.test.ts",
     "coverage:view": "open coverage/lcov-report/index.html",
