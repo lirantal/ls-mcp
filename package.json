@@ -118,5 +118,6 @@
       "lcov",
       "html"
     ]
-  }
+  },
+  "packageManager": "npm@11.21.0"
 }
