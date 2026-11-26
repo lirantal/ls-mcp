@@ -4,7 +4,7 @@ export default defineConfig(['main', 'bin/cli'].map((entry) => ({
   entry: { [entry]: `src/${entry}.ts` },
   format: ['esm', 'cjs'],
   dts: { sourcemap: false },
-  sourcemap: false,
+  sourcemap: true,
   platform: 'node',
   target: 'es2022',
   treeshake: false,

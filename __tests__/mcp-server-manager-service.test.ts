@@ -1,12 +1,8 @@
-import { test, describe, beforeEach, mock } from 'node:test'
+import { test, describe } from 'vitest'
 import assert from 'node:assert'
 import { MCPServerManagerService } from '../src/services/mcp-server-manager-service.ts'
 
 describe('MCPServerManagerService', () => {
-  beforeEach(() => {
-    mock.reset()
-  })
-
   test('constructor initializes with correct server configuration', async (t) => {
     const serverConfig = {
       name: 'test-server',

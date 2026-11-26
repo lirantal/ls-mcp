@@ -1,10 +1,10 @@
-import { test, describe, beforeEach, mock } from 'node:test'
+import { test, describe, vi } from 'vitest'
 import assert from 'node:assert'
 import { MCPFiles } from '../src/main.ts'
 
 // Mock the MCPConfigService to prevent real filesystem access
 const mockMCPConfigService = {
-  getMCPFileGroups: mock.fn(() => Promise.resolve({
+  getMCPFileGroups: vi.fn(() => Promise.resolve({
     claude: {
       name: 'claude',
       friendlyName: 'Claude Desktop',
@@ -18,18 +18,13 @@ const mockMCPConfigService = {
       stats: { serversCount: 0 }
     }
   })),
-  getAllMCPServers: mock.fn(() => Promise.resolve({
+  getAllMCPServers: vi.fn(() => Promise.resolve({
     claude: [],
     vscode: []
   }))
 }
 
 describe('MCPFiles Class', () => {
-  beforeEach(() => {
-    // Reset all mocks
-    mock.reset()
-  })
-
   test('constructor initializes without errors', async () => {
     // This test verifies that the new MCPFiles class can be instantiated
     // without accessing real filesystem
@@ -44,7 +39,7 @@ describe('MCPFiles Class', () => {
     assert.ok(typeof mcpFilesManager.findFiles === 'function')
     
     // Mock the internal MCPConfigService to prevent real filesystem access
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         claude: {
           name: 'claude',
@@ -64,7 +59,7 @@ describe('MCPFiles Class', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return test data
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         claude: {
           name: 'claude',
@@ -104,7 +99,7 @@ describe('MCPFiles Class', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to simulate an error
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       throw new Error('Test error')
     })
     
@@ -122,7 +117,7 @@ describe('CLI Integration Tests', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return test data
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         claude: {
           name: 'claude',
@@ -143,7 +138,7 @@ describe('CLI Integration Tests', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to simulate an error
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       throw new Error('Invalid JSON error')
     })
     

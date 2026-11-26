@@ -40,11 +40,12 @@
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "lint:markdown": "npx --no-install markdownlint-cli -i '**/node_modules/**' -c .github/.markdownlint.yml '**/**.md'",
-    "test": "c8 node --import tsx --test __tests__/**/*.test.ts",
-    "test:watch": "c8 node --import tsx --test --watch __tests__/**/*.test.ts",
+    "test": "vitest run --coverage",
+    "test:watch": "vitest watch --coverage",
     "coverage:view": "open coverage/lcov-report/index.html",
     "version": "changeset version",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "coverage:cli": "c8 --reports-dir coverage/c8 node --import tsx src/bin/cli.ts"
   },
   "author": {
     "name": "Liran Tal",
@@ -81,6 +82,7 @@
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@types/node": "^26.0.1",
+    "@vitest/coverage-v8": "5.0.5",
     "c8": "^12.0.0",
     "eslint-plugin-n": "^18.1.0",
     "eslint-plugin-security": "^4.0.0",
@@ -92,7 +94,8 @@
     "tsdown": "0.23.2",
     "tsx": "^4.19.4",
     "typescript": "~6.0.3",
-    "validate-conventional-commit": "^2.0.0"
+    "validate-conventional-commit": "^2.0.0",
+    "vitest": "5.0.5"
   },
   "lint-staged": {
     "**/*.{js,json}": [

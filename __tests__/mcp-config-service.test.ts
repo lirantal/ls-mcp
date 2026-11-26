@@ -1,4 +1,4 @@
-import { test, describe, mock } from 'node:test'
+import { test, describe, beforeEach, afterEach, vi } from 'vitest'
 import assert from 'node:assert'
 import path from 'node:path'
 import fs from 'fs'
@@ -8,7 +8,7 @@ import { MCPConfigService } from '../src/services/mcp-config-service.js'
 describe('MCPConfigService', () => {
   let service: MCPConfigService
 
-  test.beforeEach(() => {
+  beforeEach(() => {
     // Create service
     service = new MCPConfigService()
   })
@@ -154,7 +154,7 @@ describe('MCPConfigService', () => {
   describe('validateConfigFile', () => {
     test('should return false for non-existent file', async () => {
       // Mock the fs.access to simulate file not found
-      const mockAccess = mock.method(service, 'validateConfigFile', () => Promise.resolve(false))
+      const mockAccess = vi.spyOn(service, 'validateConfigFile').mockImplementation(() => Promise.resolve(false))
       
       const isValid = await service.validateConfigFile('/path/that/does/not/exist.json')
       
@@ -262,17 +262,17 @@ describe('MCPConfigService', () => {
     let getAllConfigFilesMock: any
     let mockConfigFiles: any
 
-    test.beforeEach(() => {
+    beforeEach(() => {
       service = new MCPConfigService()
       tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ls-mcp-test-'))
       mockConfigFiles = {}
       // Mock getAllConfigFiles to return our custom object
-      getAllConfigFilesMock = mock.method(service, 'getAllConfigFiles', () => mockConfigFiles)
+      getAllConfigFilesMock = vi.spyOn(service, 'getAllConfigFiles').mockImplementation(() => mockConfigFiles)
     })
 
-    test.afterEach(() => {
+    afterEach(() => {
       fs.rmSync(tempDir, { recursive: true, force: true })
-      getAllConfigFilesMock.mock.restore()
+      getAllConfigFilesMock.mockRestore()
     })
 
     describe('transport type mapping', () => {

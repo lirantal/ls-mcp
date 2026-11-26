@@ -1,4 +1,4 @@
-import { describe, it, mock } from 'node:test'
+import { describe, it } from 'vitest'
 import assert from 'node:assert'
 import { exec } from 'node:child_process'
 import { promisify } from 'node:util'

@@ -1,4 +1,4 @@
-import { test, describe, beforeEach, afterEach, mock } from 'node:test'
+import { test, describe, beforeEach, afterEach } from 'vitest'
 import assert from 'node:assert'
 import { RenderService } from '../src/services/render-service.ts'
 
@@ -7,7 +7,6 @@ describe('RenderService', () => {
   let logOutput: string[]
 
   beforeEach(() => {
-    mock.reset()
     logOutput = []
 
     // Mock console.log to capture output
@@ -145,9 +144,4 @@ describe('RenderService', () => {
     assert.ok(output.includes('running-server'))
     assert.ok(output.includes('stopped-server'))
   })
-
-  // Cleanup after each test
-  test.afterEach = () => {
-    console.log = originalConsoleLog
-  }
 })

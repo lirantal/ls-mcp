@@ -1,11 +1,10 @@
-import { test, describe, beforeEach, mock } from 'node:test'
+import { test, describe, beforeEach, vi } from 'vitest'
 import assert from 'node:assert'
 import { MCPFiles } from '../src/main.ts'
 
 describe('Edge Cases and Error Handling', () => {
   beforeEach(() => {
     // Reset the mocks before each test
-    mock.reset()
   })
 
   test('handles empty configuration gracefully', async () => {
@@ -13,7 +12,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return empty test data
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {}
     })
     
@@ -29,7 +28,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return test data with empty paths
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         empty: {
           name: 'empty',
@@ -53,7 +52,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to simulate a permission error
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       throw new Error('Permission denied')
     })
     
@@ -68,7 +67,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to simulate a JSON parsing error
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       throw new Error('Invalid JSON format')
     })
     
@@ -83,7 +82,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to simulate a large file error
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       throw new Error('File too large')
     })
     
@@ -98,7 +97,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return test data with duplicate paths
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         test: {
           name: 'test',
@@ -129,7 +128,7 @@ describe('Edge Cases and Error Handling', () => {
     const mcpFilesManager = new MCPFiles()
     
     // Mock the findFiles method to return test data with unusual structures
-    mock.method(mcpFilesManager, 'findFiles', async () => {
+    vi.spyOn(mcpFilesManager, 'findFiles').mockImplementation(async () => {
       return {
         unusual: {
           name: 'unusual',
