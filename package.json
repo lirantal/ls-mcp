@@ -78,7 +78,6 @@
     "jsonc-parser": "^3.3.1"
   },
   "devDependencies": {
-    "@changesets/changelog-git": "^1.0.0",
     "@changesets/changelog-github": "^1.0.1",
     "@changesets/cli": "^3.0.3",
     "@eslint/js": "^10.0.1",
@@ -90,7 +89,7 @@
     "husky": "^9.0.11",
     "lint-staged": "^17.0.7",
     "markdownlint-cli": "0.49.1",
-    "prettier": "^3.9.9",
+    "oxfmt": "0.74.0",
     "tsup": "^9.0.0",
     "tsx": "^4.19.4",
     "typescript": "~6.0.3",

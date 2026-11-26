@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": ["@changesets/changelog-github", { "repo": "lirantal/ls-mcp" }],
+  "format": "oxfmt",
   "commit": false,
   "fixed": [],
   "linked": [],

@@ -24,7 +24,7 @@ jobs:
       - name: install dependencies
         run: npm ci
       - name: verify release formatter
-        run: npm exec --no -- prettier README.md > /dev/null
+        run: npm exec --no -- oxfmt --stdin-filepath README.md < README.md > /dev/null
       - name: lint code
         run: npm run lint
       - name: build project
