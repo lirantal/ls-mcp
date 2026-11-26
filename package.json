@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "start": "npm run build && node --import tsx src/bin/cli.ts",
-    "build": "tsc && tsup",
+    "build": "tsc && tsdown",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:markdown": "npx --no-install markdownlint-cli -i '**/node_modules/**' -c .github/.markdownlint.yml '**/**.md'",
@@ -90,7 +90,7 @@
     "lint-staged": "^17.0.7",
     "markdownlint-cli": "0.49.1",
     "oxfmt": "0.74.0",
-    "tsup": "^9.0.0",
+    "tsdown": "0.23.2",
     "tsx": "^4.19.4",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.59.0",
