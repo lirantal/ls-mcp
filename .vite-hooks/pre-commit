@@ -1,0 +1,2 @@
+#!/bin/sh
+npm exec --no -- vp staged

@@ -60,7 +60,7 @@ The `__fixtures__` directory contains sample configuration files:
 npm run build
 
 # Run a single test file
-npm exec --no -- vitest run __tests__/render-service.test.ts
+npm exec --no -- vp test run __tests__/render-service.test.ts
 
 # Run all tests with coverage
 npm test
