@@ -1,4 +1,4 @@
-import { test, describe, mock } from 'node:test'
+import { test, describe, beforeEach, afterEach, vi } from 'vitest'
 import assert from 'node:assert'
 import path from 'node:path'
 import { MCPConfigService } from '../src/services/mcp-config-service.js'
@@ -7,13 +7,13 @@ import { DirectoryBubbleService } from 'agent-files'
 describe('MCPConfigService Directory Bubbling Integration', () => {
   let mockDirectoryBubbleService: any
 
-  test.beforeEach(() => {
+  beforeEach(() => {
     // Mock the DirectoryBubbleService instead of fs.access
-    mockDirectoryBubbleService = mock.method(DirectoryBubbleService.prototype, 'findLocalConfigInParentDirectories')
+    mockDirectoryBubbleService = vi.spyOn(DirectoryBubbleService.prototype, 'findLocalConfigInParentDirectories')
   })
 
-  test.afterEach(() => {
-    mockDirectoryBubbleService.mock.restore()
+  afterEach(() => {
+    mockDirectoryBubbleService.mockRestore()
   })
 
   describe('directory bubbling behavior control', () => {
@@ -27,7 +27,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, false)
       
       // Verify that the directory bubble service is not called
-      mockDirectoryBubbleService.mock.mockImplementation(() => {
+      mockDirectoryBubbleService.mockImplementation(() => {
         assert.fail('Directory bubble service should not be called when disabled')
       })
       
@@ -46,7 +46,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that directory bubbling would work
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         if (localPath.includes('.vscode/mcp.json')) {
           // Return a path in parent directory
           return Promise.resolve(path.join(path.dirname(startDir), '.vscode', 'mcp.json'))
@@ -85,7 +85,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that no bubbling is needed (file exists in current directory)
-      mockDirectoryBubbleService.mock.mockImplementation(() => {
+      mockDirectoryBubbleService.mockImplementation(() => {
         return Promise.resolve(null) // No bubbling needed
       })
       
@@ -104,7 +104,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that .vscode/mcp.json exists in parent directory
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         if (localPath.includes('.vscode/mcp.json')) {
           // Return a path in parent directory
           return Promise.resolve(path.join(path.dirname(startDir), '.vscode', 'mcp.json'))
@@ -127,7 +127,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that no bubbling is needed for global paths
-      mockDirectoryBubbleService.mock.mockImplementation(() => {
+      mockDirectoryBubbleService.mockImplementation(() => {
         return Promise.resolve(null) // No bubbling up
       })
       
@@ -146,7 +146,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that some files exist in current directory, others need bubbling
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         if (localPath.includes('.mcp.json')) {
           // .mcp.json exists in current directory
           return Promise.resolve(null)
@@ -173,7 +173,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that .vscode/mcp.json exists in current directory
-      mockDirectoryBubbleService.mock.mockImplementation(() => {
+      mockDirectoryBubbleService.mockImplementation(() => {
         return Promise.resolve(null) // No bubbling needed
       })
       
@@ -194,7 +194,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that directory bubbling throws an error
-      mockDirectoryBubbleService.mock.mockImplementation(() => {
+      mockDirectoryBubbleService.mockImplementation(() => {
         throw new Error('Permission denied')
       })
       
@@ -213,7 +213,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       assert.strictEqual(service.enableDirectoryBubbling, true)
       
       // Mock that some paths fail and others succeed
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         if (localPath.includes('.vscode/mcp.json')) {
           // This path succeeds
           return Promise.resolve(path.join(startDir, '.vscode', 'mcp.json'))
@@ -237,7 +237,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       
       // Mock the directory bubble service to track calls
       let callCount = 0
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         callCount++
         return Promise.resolve(null)
       })
@@ -257,7 +257,7 @@ describe('MCPConfigService Directory Bubbling Integration', () => {
       
       // Mock the directory bubble service to track calls
       let callCount = 0
-      mockDirectoryBubbleService.mock.mockImplementation((localPath: string, startDir: string) => {
+      mockDirectoryBubbleService.mockImplementation((localPath: string, startDir: string) => {
         callCount++
         return Promise.resolve(null)
       })

@@ -1,11 +1,11 @@
-import { test, describe } from 'node:test'
+import { test, describe, beforeEach } from 'vitest'
 import assert from 'node:assert'
 import { MCPVersionDetectionService } from '../src/services/mcp-version-detection-service.js'
 
 describe('MCPVersionDetectionService', () => {
   let service: MCPVersionDetectionService
 
-  test.beforeEach(() => {
+  beforeEach(() => {
     service = new MCPVersionDetectionService()
   })
 

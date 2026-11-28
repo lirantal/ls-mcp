@@ -1,4 +1,4 @@
-import { test, describe } from 'node:test'
+import { test, describe } from 'vitest'
 import assert from 'node:assert'
 import MCPServerVersionComponent from '../src/components/mcp-server-version.js'
 import type { PackageVersionInfo } from '../src/types/mcp-config-service.types.js'

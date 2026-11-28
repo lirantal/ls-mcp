@@ -1,4 +1,4 @@
-import { describe, test } from 'node:test'
+import { describe, test } from 'vitest'
 import assert from 'node:assert'
 import { extractHostname } from '../src/utils/url-utils.js'
 

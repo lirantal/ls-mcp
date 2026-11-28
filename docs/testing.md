@@ -2,11 +2,28 @@
 
 ## Test Command
 
-Run the test suite with:
+Build the CLI before running the suite because the integration tests execute
+the packaged entry point.
 
 ```sh
-npm run test
+npm run build
+npm test
 ```
+
+Vitest writes V8 coverage to `coverage/`, including `lcov.info` for Codecov
+and an HTML report. The CLI bundle source map lets Vitest include coverage
+from the Node subprocesses run by the integration tests.
+
+Use `npm run test:watch` to watch source and test files. Rebuild after editing
+the CLI when you want to rerun the integration tests against those changes.
+
+To collect c8 coverage for a direct invocation of the CLI source using tsx:
+
+```sh
+npm run coverage:cli -- --files __tests__/test-configs/empty-servers.json --json
+```
+
+c8 writes its reports to `coverage/c8/`.
 
 ## Linting
 

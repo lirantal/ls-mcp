@@ -4,7 +4,7 @@ This directory contains comprehensive tests for the `ls-mcp` command-line tool.
 
 ## Test Coverage
 
-The test suite provides **80.91% statement coverage** and covers the following areas:
+The test suite covers the following areas. Run `npm test` for current coverage.
 
 ### Core Functionality Tests (`app.test.ts`)
 
@@ -56,8 +56,11 @@ The `__fixtures__` directory contains sample configuration files:
 ## Running Tests
 
 ```bash
+# Build the CLI for the integration tests
+npm run build
+
 # Run a single test file
-node --import tsx --test __tests__/render-service.test.ts
+npm exec --no -- vp test run __tests__/render-service.test.ts
 
 # Run all tests with coverage
 npm test
@@ -71,7 +74,7 @@ npm run coverage:view
 
 ## Test Framework
 
-The tests use Node.js's built-in test runner (`node:test`) with the following features:
+The tests use Vitest with Node’s assertion library and cover the following:
 
 - **Async/await support** for testing asynchronous operations
 - **Mocking capabilities** for isolating units under test
@@ -147,12 +150,12 @@ const { stdout } = await execFileAsync('node', [cliPath], {
 
 ### 4. Mock-Based Testing
 
-Uses Node.js test runner mocks for isolation:
+Uses Vitest spies for isolation:
 
 ```typescript
-const consoleLogMock = mock.method(console, 'log')
+const consoleLogMock = vi.spyOn(console, 'log')
 // ... perform operations ...
-assert.ok(consoleLogMock.mock.callCount() > 0)
+assert.ok(consoleLogMock.mock.calls.length > 0)
 ```
 
 ## Adding New Tests
@@ -172,9 +175,9 @@ When adding new features, ensure to add tests for:
 
 ## Coverage Goals
 
-- **Statements**: > 80% (currently 80.91%)
-- **Branches**: > 70% (currently 73.61%)
-- **Functions**: > 90% (currently 90.9%)
-- **Lines**: > 80% (currently 80.91%)
+- **Statements**: > 80%
+- **Branches**: > 70%
+- **Functions**: > 90%
+- **Lines**: > 80%
 
 The test suite provides robust coverage while being maintainable and fast-running, ensuring the `ls-mcp` tool works reliably across different environments and configurations.
