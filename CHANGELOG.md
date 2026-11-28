@@ -1,5 +1,11 @@
 # ls-mcp
 
+## 1.15.3
+
+### Patch Changes
+
+- [#230](https://github.com/lirantal/ls-mcp/pull/230) [`8274c5d`](https://github.com/lirantal/ls-mcp/commit/8274c5d1e1dc68baf5f339973b07d8b8c708c011) Thanks [@lirantal](https://github.com/lirantal)! - Build the CLI and library with tsdown and remove the redundant direct JSONC parser dependency.
+
 ## 1.15.2
 
 ### Patch Changes
