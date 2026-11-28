@@ -18,7 +18,7 @@ configuration files. The pre-push hook runs lint, build, and tests.
 
 ## Common Commands
 
-- `npm run build` - builds the project.
+- `npm run build` - type-checks the source and packages the CLI and library with `vp pack`.
 - `npm run lint` - runs lint checks.
 - `npm test` - runs the test suite.
 
