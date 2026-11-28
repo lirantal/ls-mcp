@@ -2,6 +2,9 @@ import { defineConfig } from 'vite-plus'
 import type { PackUserConfig } from 'vite-plus/pack'
 
 export default defineConfig({
+  lint: {
+    options: { typeAware: true, typeCheck: true }
+  },
   pack: ['main', 'bin/cli'].map((entry): PackUserConfig => ({
     entry: { [entry]: `src/${entry}.ts` },
     format: ['esm', 'cjs'],

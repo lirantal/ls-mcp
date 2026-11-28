@@ -36,7 +36,7 @@
   ],
   "scripts": {
     "start": "npm run build && vpx ./src/bin/cli.ts",
-    "build": "tsc && vp pack",
+    "build": "vp check --no-fmt --no-lint src && vp pack",
     "lint": "vp lint -c .oxlintrc.json .",
     "lint:fix": "vp lint -c .oxlintrc.json --fix",
     "lint:markdown": "npx --no-install markdownlint-cli -i '**/node_modules/**' -c .github/.markdownlint.yml '**/**.md'",
