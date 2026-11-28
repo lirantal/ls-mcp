@@ -17,7 +17,7 @@ from the Node subprocesses run by the integration tests.
 Use `npm run test:watch` to watch source and test files. Rebuild after editing
 the CLI when you want to rerun the integration tests against those changes.
 
-To collect c8 coverage for a direct invocation of the CLI source using tsx:
+To collect c8 coverage for a direct invocation of the CLI source using Vite+'s vpx runner:
 
 ```sh
 npm run coverage:cli -- --files __tests__/test-configs/empty-servers.json --json
